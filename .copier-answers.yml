@@ -1,0 +1,14 @@
+_commit: v0.4.73
+_src_path: git@github.com:tschm/package.git
+description: Minibook for reporting
+gh_create: gh repo create tschm/minibook --public --description 'Minibook for reporting'
+page: https://tschm.github.io/minibook
+project_name: minibook
+repository: https://github.com/tschm/minibook
+ssh_uri: git@github.com:tschm/minibook.git
+status: public
+use_dependabot: false
+use_devcontainer: false
+use_latex: false
+use_renovate: true
+username: tschm
