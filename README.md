@@ -8,6 +8,13 @@
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/tschm/minibook)
 
+## 📚 MiniBook
+
+MiniBook is a simple tool that creates a minibook from a list of links. It supports two different output formats:
+
+1. **HTML** - A clean, responsive webpage using Jinja2 templates and Tailwind CSS
+2. **MkDocs** - A complete MkDocs project structure that can be built into a static site
+
 ## 🚀 Getting Started
 
 ### **🔧 Set Up Environment**
@@ -38,6 +45,60 @@ Installs hooks to maintain code quality and formatting.
 
 - Edit `pyproject.toml` to update authors and email addresses
 - Configure GitHub Pages (branch: gh-pages) in repository settings
+
+## 📋 Usage
+
+MiniBook can be used to create either an HTML page or a MkDocs project from a list of links.
+
+### Command-line Arguments
+
+```bash
+./run_minibook.py [-h] [-t TITLE] [-d DESCRIPTION] [-o OUTPUT] [-l LINKS [LINKS ...]] [--format {html,mkdocs}]
+```
+
+Arguments:
+- `-h, --help`: Show the help message and exit
+- `-t, --title TITLE`: Title of the minibook (default: "My Links")
+- `-d, --description DESCRIPTION`: Description of the minibook
+- `-o, --output OUTPUT`: Output file or directory (default: "minibook.html")
+- `-l, --links LINKS [LINKS ...]`: List of URLs (space-separated)
+- `--format {html,mkdocs}`: Output format: html or mkdocs (default: html)
+
+### Interactive Mode
+
+If you don't provide links via command-line arguments, MiniBook will enter interactive mode, allowing you to enter links one by one:
+
+```bash
+./run_minibook.py
+```
+
+Then follow the prompts to enter your links.
+
+### Examples
+
+#### HTML Output
+
+Create an HTML page with a custom title and three links:
+
+```bash
+./run_minibook.py --title "My Favorite Sites" --format html --links https://www.python.org https://www.github.com https://www.wikipedia.org
+```
+
+#### MkDocs Output
+
+Create a MkDocs project with a custom title and three links:
+
+```bash
+./run_minibook.py --title "My Favorite Sites" --format mkdocs --output minibook_site --links https://www.python.org https://www.github.com https://www.wikipedia.org
+```
+
+After generating the MkDocs project, you can build and serve it using MkDocs:
+
+```bash
+cd minibook_site
+mkdocs build  # Build the site
+mkdocs serve  # Serve the site locally at http://127.0.0.1:8000/
+```
 
 ## 🛠️ Development Commands
 
