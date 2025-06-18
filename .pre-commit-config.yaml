@@ -4,13 +4,16 @@ repos:
     hooks:
       - id: check-toml
       - id: end-of-file-fixer
+        exclude: src/tests/resources/*
       - id: trailing-whitespace
+        exclude: src/tests/resources/*
 
   - repo: https://github.com/charliermarsh/ruff-pre-commit
     rev: 'v0.11.11'
     hooks:
       - id: ruff
         args: [ --fix, --exit-non-zero-on-fix ]
+        exclude: src/tests/resources
       # Run the formatter
       - id: ruff-format
         exclude: src/tests
