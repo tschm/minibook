@@ -21,9 +21,7 @@ install: venv ## Install a virtual environment
 # Mark 'fmt' as a phony target
 .PHONY: fmt
 fmt: venv ## Run autoformatting and linting
-	@uv pip install pre-commit  # Install pre-commit in the virtual environment
-	@uv run pre-commit install  # Install pre-commit hooks in the git repository
-	@uv run pre-commit run --all-files  # Run all pre-commit hooks on all files
+	@uvx pre-commit run --all-files  # Run all pre-commit hooks on all files
 
 
 # Mark 'clean' as a phony target
@@ -41,13 +39,6 @@ help:  ## Display this help screen
 	# Find all targets with comments (##) and display them as a help menu
 	# This grep/awk command extracts target names and their descriptions from the Makefile
 	@grep -E '^[a-z.A-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}' | sort
-
-
-# Mark 'marimo' as a phony target
-.PHONY: marimo
-marimo: install ## Install Marimo
-	@uv pip install marimo  # Install Marimo interactive notebook tool
-	@uv run marimo edit book/marimo  # Start Marimo in edit mode, opening the book/marimo directory
 
 
 # Mark 'test' as a phony target
