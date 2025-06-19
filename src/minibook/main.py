@@ -135,13 +135,6 @@ def main(
 
     # links_tuples = [(name, url) for name,url in pairs.split(";")]  # (name, url) tuples
     typer.echo(f"links_tuples: {links_tuples}")
-    # logger.info(f"links_tuples: {links_tuples}")
-
-    # print(links_tuples)
-
-    # else:
-    #    # Get links interactively
-    #    links_tuples = get_links_interactively()
 
     if not links_tuples:
         typer.echo("No links provided. Exiting.", err=True)
