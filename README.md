@@ -60,8 +60,8 @@ or a MkDocs project from a list of links.
 Create an HTML page with a custom title and three links:
 
 ```bash
-./run_minibook.py --title "My Favorite Sites" 
-                  --format html 
+./run_minibook.py --title "My Favorite Sites"
+                  --format html
                   --links python;https://www.python.org,github;https://www.github.com,wikipedia;https://www.wikipedia.org
 ```
 

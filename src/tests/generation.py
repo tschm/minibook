@@ -5,8 +5,8 @@ Test script for MiniBook
 
 import os
 import subprocess
-import sys
 from pathlib import Path
+
 
 def test_html_generation():
     """Test HTML generation"""
@@ -32,20 +32,20 @@ def test_html_generation():
 
 
     result = subprocess.run(cmd, capture_output=True, text=True)
-    
+
     if result.returncode == 0:
         print("HTML generation test successful!")
         print(result.stdout)
-        
+
         # Check the generated HTML file
         file_path = Path(output_file).absolute()
         print(f"Generated file: {file_path}")
-        
+
         if os.path.exists(file_path):
             print(f"File size: {os.path.getsize(file_path)} bytes")
-            
+
             # Print the first few lines of the file
-            with open(file_path, 'r') as f:
+            with open(file_path) as f:
                 print("\nFirst 10 lines of the HTML file:")
                 for i, line in enumerate(f):
                     if i < 10:
@@ -64,7 +64,7 @@ def test_html_generation():
 def test_mkdocs_generation():
     """Test MkDocs generation"""
     output_dir = "test_mkdocs_site"
-    
+
     # Run the minibook script with command-line arguments for MkDocs generation
     cmd = [
         "./run_minibook.py",
@@ -72,34 +72,34 @@ def test_mkdocs_generation():
         "--description", "This is a test page created by MiniBook",
         "--output", output_dir,
         "--format", "mkdocs",
-        "--links", 
+        "--links",
         "https://www.python.org",
         "https://www.github.com",
         "https://www.wikipedia.org"
     ]
-    
+
     result = subprocess.run(cmd, capture_output=True, text=True)
-    
+
     if result.returncode == 0:
         print("MkDocs generation test successful!")
         print(result.stdout)
-        
+
         # Check the generated MkDocs project
         dir_path = Path(output_dir).absolute()
         print(f"Generated directory: {dir_path}")
-        
+
         if os.path.exists(dir_path):
             # List the files in the directory
             print("\nFiles in the MkDocs project:")
             for root, dirs, files in os.walk(dir_path):
                 for file in files:
                     print(os.path.join(root, file))
-            
+
             # Print the contents of the index.md file
             index_file = os.path.join(dir_path, "docs", "index.md")
             if os.path.exists(index_file):
                 print("\nContents of index.md:")
-                with open(index_file, 'r') as f:
+                with open(index_file) as f:
                     print(f.read())
             else:
                 print("Error: index.md not found")
@@ -115,8 +115,8 @@ def test_mkdocs_generation():
 if __name__ == "__main__":
     print("Testing HTML generation...")
     test_html_generation()
-    
+
     print("\n" + "="*50 + "\n")
-    
+
     print("Testing MkDocs generation...")
     test_mkdocs_generation()

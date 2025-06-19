@@ -3,7 +3,6 @@ Tests for the MiniBook package.
 """
 
 import os
-from pathlib import Path
 
 from minibook.main import generate_html, generate_mkdocs_project
 
@@ -160,7 +159,6 @@ def test_command_line_execution(resource_dir, tmp_path):
 def test_uvx_command_execution(tmp_path):
     """Test command-line execution of MiniBook using the uvx command."""
     import subprocess
-    import sys
 
     # Test HTML generation
     html_output = tmp_path / "uvx_test_output.html"
