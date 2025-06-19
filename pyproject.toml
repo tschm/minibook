@@ -16,7 +16,7 @@ dependencies = [
 repository = "https://github.com/tschm/minibook"
 
 [project.scripts]
-compile = "minibook.main:app"
+minibook = "minibook.main:app"
 
 [project.optional-dependencies]
 dev = [
