@@ -70,4 +70,4 @@ jobs:
 
     steps:
       - name: Upload the book
-        uses: tschm/cradle/actions/book@v0.1.68  # Custom action to build and upload the book
+        uses: tschm/cradle/actions/book@v0.1.72  # Custom action to build and upload the book
