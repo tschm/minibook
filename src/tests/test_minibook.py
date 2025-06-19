@@ -210,3 +210,22 @@ def test_compile_command_execution(tmp_path):
     # Check that the mkdocs.yml file was created
     mkdocs_file = mkdocs_output / "mkdocs.yml"
     assert os.path.exists(mkdocs_file)
+
+
+def test_no_links_provided():
+    """Test command-line execution of MiniBook when no links are provided."""
+    import subprocess
+
+    # Test with no links parameter
+    cmd = [
+        "minibook",
+        "--title", "Test Links",
+        "--description", "This is a test page created by MiniBook",
+        "--format", "html",
+    ]
+
+    result = subprocess.run(cmd, capture_output=True, text=True)
+
+    # Check that the command failed with the expected error message
+    assert result.returncode == 1, "Command should fail when no links are provided"
+    assert "No links provided. Exiting." in result.stderr

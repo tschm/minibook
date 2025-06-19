@@ -5,6 +5,7 @@ Supports both MkDocs and Jinja2/HTML generation.
 """
 
 import os
+import sys
 from datetime import datetime
 
 import typer
@@ -115,6 +116,10 @@ def main(
     if format not in ["html", "mkdocs"]:
         typer.echo(f"Invalid format: {format}. Must be 'html' or 'mkdocs'.", err=True)
         return 1
+
+    if links is None:
+        typer.echo("No links provided. Exiting.", err=True)
+        sys.exit(1)
 
     pairs = links.split(",")
 
