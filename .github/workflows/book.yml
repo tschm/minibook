@@ -4,7 +4,9 @@
 name: "book"
 
 on:
-- push  # Trigger on push events
+  push:
+    branches:
+      - main
 
 
 # Permissions needed for the workflow
