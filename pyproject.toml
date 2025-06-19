@@ -3,7 +3,7 @@ name = 'minibook'
 version = "0.0.0"
 description = "Minibook for reporting"
 # Please add authors and correct the email...
-authors = [{name='tschm', email= 'tschm@mailinator.com'}]
+authors = [{name='Thomas Schmelzer', email= 'thomas.schmelzer@gmail.com'}]
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
@@ -16,6 +16,9 @@ dependencies = [
 
 [project.urls]
 repository = "https://github.com/tschm/minibook"
+
+[project.scripts]
+compile = "minibook.main:app"
 
 [project.optional-dependencies]
 dev = [
@@ -47,9 +50,6 @@ include = [
     "README.md",
     "src/minibook"
 ]
-
-[tool.bandit]
-exclude_dirs = ["tests"]
 
 [tool.deptry]
 # see https://deptry.com/usage/#pep-621-dev-dependency-groups

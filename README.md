@@ -10,10 +10,12 @@
 
 ## 📚 MiniBook
 
-MiniBook is a simple tool that creates a minibook from a list of links. It supports two different output formats:
+MiniBook is a simple tool that creates a minibook
+from a list of links. It supports two different output formats:
 
 1. **HTML** - A clean, responsive webpage using Jinja2 templates and Tailwind CSS
-2. **MkDocs** - A complete MkDocs project structure that can be built into a static site
+2. **MkDocs** - A complete MkDocs project structure
+that can be built into a static site
 
 ## 🚀 Getting Started
 
@@ -48,31 +50,8 @@ Installs hooks to maintain code quality and formatting.
 
 ## 📋 Usage
 
-MiniBook can be used to create either an HTML page or a MkDocs project from a list of links.
-
-### Command-line Arguments
-
-```bash
-./run_minibook.py [-h] [-t TITLE] [-d DESCRIPTION] [-o OUTPUT] [-l LINKS [LINKS ...]] [--format {html,mkdocs}]
-```
-
-Arguments:
-- `-h, --help`: Show the help message and exit
-- `-t, --title TITLE`: Title of the minibook (default: "My Links")
-- `-d, --description DESCRIPTION`: Description of the minibook
-- `-o, --output OUTPUT`: Output file or directory (default: "minibook.html")
-- `-l, --links LINKS [LINKS ...]`: List of URLs (space-separated)
-- `--format {html,mkdocs}`: Output format: html or mkdocs (default: html)
-
-### Interactive Mode
-
-If you don't provide links via command-line arguments, MiniBook will enter interactive mode, allowing you to enter links one by one:
-
-```bash
-./run_minibook.py
-```
-
-Then follow the prompts to enter your links.
+MiniBook can be used to create either an HTML page
+or a MkDocs project from a list of links.
 
 ### Examples
 
@@ -81,7 +60,9 @@ Then follow the prompts to enter your links.
 Create an HTML page with a custom title and three links:
 
 ```bash
-./run_minibook.py --title "My Favorite Sites" --format html --links https://www.python.org https://www.github.com https://www.wikipedia.org
+./run_minibook.py --title "My Favorite Sites" 
+                  --format html 
+                  --links python;https://www.python.org,github;https://www.github.com,wikipedia;https://www.wikipedia.org
 ```
 
 #### MkDocs Output
@@ -100,6 +81,17 @@ mkdocs build  # Build the site
 mkdocs serve  # Serve the site locally at http://127.0.0.1:8000/
 ```
 
+#### Using Links Tuples
+
+You can also provide links as tuples with custom names for each link:
+
+```bash
+./run_minibook.py --title "My Favorite Sites" --links-tuples '[("Python", "https://www.python.org"), ("GitHub", "https://www.github.com"), ("Wikipedia", "https://www.wikipedia.org")]'
+```
+
+This allows you to specify a different name for
+each link, rather than using the URL as the name.
+
 ## 🛠️ Development Commands
 
 ```bash
@@ -114,32 +106,3 @@ make marimo  # Start Marimo notebooks
 - 💾 Commit your changes (git commit -m 'Add some amazing feature')
 - 🚢 Push to the branch (git push origin feature/amazing-feature)
 - 🔍 Open a Pull Request
-
-## ⚠️ Trusted publishing failure
-
-That's good news!
-
-You are not able to publish to PyPI unless you have registered your project
-on PyPI. You get the following message:
-
-```bash
-Trusted publishing exchange failure:
-
-Token request failed: the server refused the request for
-the following reasons:
-
-invalid-publisher: valid token, but no corresponding
-publisher (All lookup strategies exhausted)
-This generally indicates a trusted publisher
-configuration error, but could
-also indicate an internal error on GitHub or PyPI's part.
-
-The claims rendered below are for debugging purposes only.
-You should not
-use them to configure a trusted publisher unless they
-already match your expectations.
-```
-
-Please register your repository. The 'release.yml' flow is
-publishing from the 'release' environment. Once you have
-registered your new repo it should all work.
