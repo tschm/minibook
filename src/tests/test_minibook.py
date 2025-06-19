@@ -156,14 +156,14 @@ def test_command_line_execution(resource_dir, tmp_path):
     assert os.path.exists(mkdocs_file)
 
 
-def test_uvx_command_execution(tmp_path):
+def test_compile_command_execution(tmp_path):
     """Test command-line execution of MiniBook using the uvx command."""
     import subprocess
 
     # Test HTML generation
     html_output = tmp_path / "uvx_test_output.html"
     html_cmd = [
-        "uvx",
+        "compile",
         "--title", "Test Links",
         "--description", "This is a test page created by MiniBook",
         "--output", str(html_output),
@@ -183,7 +183,7 @@ def test_uvx_command_execution(tmp_path):
     # Test MkDocs generation
     mkdocs_output = tmp_path / "uvx_test_mkdocs_site"
     mkdocs_cmd = [
-        "uvx",
+        "compile",
         "--title", "Test Links",
         "--description", "This is a test page created by MiniBook",
         "--output", str(mkdocs_output),
