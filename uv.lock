@@ -276,7 +276,6 @@ version = "0.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "jinja2" },
-    { name = "mkdocs" },
     { name = "pyyaml" },
     { name = "typer" },
 ]
@@ -292,7 +291,6 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "jinja2", specifier = ">=3.1.6" },
-    { name = "mkdocs", specifier = ">=1.6.1" },
     { name = "mkdocs", marker = "extra == 'dev'", specifier = ">=1.6.1" },
     { name = "pre-commit", marker = "extra == 'dev'", specifier = ">=4.2.0" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.3.3" },
