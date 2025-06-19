@@ -65,12 +65,9 @@ jobs:
 
     # Additional write permissions needed for publishing
     permissions:
-      contents: write  # Allows the workflow to write to the repository (for publishing)
+      pages: write  # Allows the workflow to write to the repository (for publishing)
+      id-token: write
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4  # Check out the repository code
-
       - name: Upload the book
-        if: ${{ env.ACT != 'true' }}  # Skip if running with 'act'
         uses: tschm/cradle/actions/book@v0.1.68  # Custom action to build and upload the book
