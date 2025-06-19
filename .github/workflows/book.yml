@@ -20,9 +20,9 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Build the virtual environment"
-        uses: tschm/cradle/actions/environment@v0.1.68  # Custom action to set up Python environment
+        uses: tschm/cradle/actions/environment@v0.1.72  # Custom action to set up Python environment
 
-      - uses: tschm/cradle/actions/marimo@v0.1.68  # Custom action to run Marimo notebooks
+      - uses: tschm/cradle/actions/marimo@v0.1.72  # Custom action to run Marimo notebooks
         with:
           source_folder: book/marimo  # Folder containing the Marimo notebooks
 
@@ -31,9 +31,9 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Build the virtual environment"
-        uses: tschm/cradle/actions/environment@v0.1.68  # Custom action to set up Python environment
+        uses: tschm/cradle/actions/environment@v0.1.72  # Custom action to set up Python environment
 
-      - uses: tschm/cradle/actions/pdoc@v0.1.68  # Custom action to generate API documentation
+      - uses: tschm/cradle/actions/pdoc@v0.1.72  # Custom action to generate API documentation
         with:
           source-folder: src/minibook  # Source code folder to document
 
@@ -43,9 +43,9 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Build the virtual environment"
-        uses: tschm/cradle/actions/environment@v0.1.68  # Custom action to set up Python environment
+        uses: tschm/cradle/actions/environment@v0.1.72  # Custom action to set up Python environment
 
-      - uses: tschm/cradle/actions/coverage@v0.1.68  # Custom action to run tests with coverage
+      - uses: tschm/cradle/actions/coverage@v0.1.72  # Custom action to run tests with coverage
         with:
           tests-folder: src/tests  # Folder containing the tests
           source-folder: src/minibook  # Source code folder to test
@@ -56,9 +56,9 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Build the virtual environment"
-        uses: tschm/cradle/actions/environment@v0.1.68  # Custom action to set up Python environment
+        uses: tschm/cradle/actions/environment@v0.1.72  # Custom action to set up Python environment
 
-      - uses: tschm/cradle/actions/jupyter@v0.1.68  # Custom action to run Jupyter notebooks
+      - uses: tschm/cradle/actions/jupyter@v0.1.72  # Custom action to run Jupyter notebooks
 
   # Job to build and publish the book documentation
   book:

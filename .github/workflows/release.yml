@@ -22,7 +22,7 @@ jobs:
     steps:
       - name: Generate Tag
         id: tag
-        uses: tschm/cradle/actions/tag@v0.1.68  # Custom action to generate a new tag
+        uses: tschm/cradle/actions/tag@v0.1.72  # Custom action to generate a new tag
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}  # GitHub token for authentication
 
