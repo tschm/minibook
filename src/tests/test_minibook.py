@@ -103,7 +103,7 @@ def test_command_line_execution(resource_dir, tmp_path):
     html_output = tmp_path / "test_output.html"
     html_cmd = [
         #str(run_script),
-        "uv", "run", "compile",
+        "uv", "run", "minibook",
         "--title", "Test Links",
         "--description", "This is a test page created by MiniBook",
         "--output", str(html_output),
@@ -125,7 +125,7 @@ def test_command_line_execution(resource_dir, tmp_path):
     # Test MkDocs generation
     mkdocs_output = tmp_path / "test_mkdocs_site"
     mkdocs_cmd = [
-        "uv", "run", "compile",
+        "uv", "run", "minibook",
         "--title", "Test Links",
         "--description", "This is a test page created by MiniBook",
         "--output", str(mkdocs_output),
@@ -163,7 +163,7 @@ def test_compile_command_execution(tmp_path):
     # Test HTML generation
     html_output = tmp_path / "uvx_test_output.html"
     html_cmd = [
-        "compile",
+        "minibook",
         "--title", "Test Links",
         "--description", "This is a test page created by MiniBook",
         "--output", str(html_output),
@@ -183,7 +183,7 @@ def test_compile_command_execution(tmp_path):
     # Test MkDocs generation
     mkdocs_output = tmp_path / "uvx_test_mkdocs_site"
     mkdocs_cmd = [
-        "compile",
+        "minibook",
         "--title", "Test Links",
         "--description", "This is a test page created by MiniBook",
         "--output", str(mkdocs_output),
