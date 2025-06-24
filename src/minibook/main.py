@@ -121,7 +121,7 @@ def main(
         typer.echo("No links provided. Exiting.", err=True)
         sys.exit(1)
 
-    pairs = links.split(",")
+    pairs = links.strip().splitlines()   # split(",")
 
     typer.echo(f"pairs: {pairs}")
 
