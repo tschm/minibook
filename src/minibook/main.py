@@ -124,7 +124,15 @@ def main(
     typer.echo(f"Parsing links: {links}")
 
     # Accept either newlines or commas
-    raw_pairs = links.strip().splitlines() if "\n" in links else links.strip().split(",")
+    # First check if there are actual newlines in the string
+    if "\n" in links:
+        raw_pairs = links.strip().splitlines()
+    # Then check if there are escaped newlines (\n) in the string
+    elif "\\n" in links:
+        raw_pairs = links.strip().split("\\n")
+    # Otherwise, split by commas
+    else:
+        raw_pairs = links.strip().split(",")
 
     typer.echo(f"raw_pairs: {raw_pairs}")
 

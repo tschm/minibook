@@ -229,3 +229,68 @@ def test_no_links_provided():
     # Check that the command failed with the expected error message
     assert result.returncode == 1, "Command should fail when no links are provided"
     assert "No links provided. Exiting." in result.stderr
+
+
+def test_multiline_links(tmp_path):
+    """Test command-line execution of MiniBook with multi-line links."""
+    import subprocess
+
+    # Test HTML generation with multi-line links
+    html_output = tmp_path / "multiline_test_output.html"
+
+    # Create a multi-line string with different formats
+    multiline_links = "Python;https://www.python.org\nGitHub;https://www.github.com"
+    escaped_links = "Wikipedia;https://www.wikipedia.org\\nMiniBook;https://github.com/tschm/minibook"
+
+    # Test with actual newlines
+    html_cmd_newlines = [
+        "minibook",
+        "--title", "Multi-line Links Test",
+        "--description", "Testing multi-line links",
+        "--output", str(html_output),
+        "--format", "html",
+        "--links", multiline_links,
+    ]
+
+    html_result_newlines = subprocess.run(html_cmd_newlines, capture_output=True, text=True)
+
+    # Check that the command executed successfully
+    assert html_result_newlines.returncode == 0, f"HTML command with newlines failed with error: {html_result_newlines.stderr}"
+
+    # Check that the HTML file was created
+    assert os.path.exists(html_output)
+
+    # Read the file and check its contents
+    with open(html_output) as f:
+        content = f.read()
+
+    # Check that all links are in the content
+    assert "https://www.python.org" in content
+    assert "https://www.github.com" in content
+
+    # Test with escaped newlines
+    html_output_escaped = tmp_path / "escaped_test_output.html"
+    html_cmd_escaped = [
+        "minibook",
+        "--title", "Escaped Newlines Test",
+        "--description", "Testing escaped newlines in links",
+        "--output", str(html_output_escaped),
+        "--format", "html",
+        "--links", escaped_links,
+    ]
+
+    html_result_escaped = subprocess.run(html_cmd_escaped, capture_output=True, text=True)
+
+    # Check that the command executed successfully
+    assert html_result_escaped.returncode == 0, f"HTML command with escaped newlines failed with error: {html_result_escaped.stderr}"
+
+    # Check that the HTML file was created
+    assert os.path.exists(html_output_escaped)
+
+    # Read the file and check its contents
+    with open(html_output_escaped) as f:
+        content = f.read()
+
+    # Check that all links are in the content
+    assert "https://www.wikipedia.org" in content
+    assert "https://github.com/tschm/minibook" in content
