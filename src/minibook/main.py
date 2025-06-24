@@ -121,27 +121,40 @@ def main(
         typer.echo("No links provided. Exiting.", err=True)
         sys.exit(1)
 
-    pairs = links.strip().splitlines()  # split(",")
+    # Accept either newlines or commas
+    raw_pairs = links.strip().splitlines() if "\n" in links else links.strip().split(",")
 
-    typer.echo(f"pairs: {pairs}")
+    link_tuples = []
+    for i, pair in enumerate(raw_pairs, 1):
+        if ";" not in pair:
+            typer.echo(f"Invalid link format on line {i}: {pair}", err=True)
+            return 1
+        name, url = map(str.strip, pair.split(";", 1))
+        link_tuples.append((name, url))
 
-    links_tuples = []
+    typer.echo(f"Parsed links: {link_tuples}")
 
-    for pair in pairs:
-        typer.echo(f"pair: {pair}")
+    #pairs = links.strip().splitlines()  # split(",")
 
-        try:
-            name, url = pair.strip().split(";")
-            if not name or not url:
-                raise ValueError(f"Invalid pair: {pair}")
-            links_tuples.append((name.strip(), url.strip()))
-        except ValueError as e:
-            raise ValueError(f"Invalid link format: {pair}. Expected 'name;url'") from e
+    #typer.echo(f"pairs: {pairs}")
+
+    #links_tuples = []
+
+    #for pair in pairs:
+    #    typer.echo(f"pair: {pair}")
+
+    #    try:
+    #        name, url = pair.strip().split(";")
+    #        if not name or not url:
+    #            raise ValueError(f"Invalid pair: {pair}")
+    #        links_tuples.append((name.strip(), url.strip()))
+    #    except ValueError as e:
+    #        raise ValueError(f"Invalid link format: {pair}. Expected 'name;url'") from e
 
     # links_tuples = [(name, url) for name,url in pairs.split(";")]  # (name, url) tuples
-    typer.echo(f"links_tuples: {links_tuples}")
+    #typer.echo(f"links_tuples: {links_tuples}")
 
-    if not links_tuples:
+    if not link_tuples:
         typer.echo("No links provided. Exiting.", err=True)
         return 1
 
@@ -151,7 +164,7 @@ def main(
         if os.path.isdir(output_file):
             output_file = os.path.join(output_file, "minibook.html")
 
-        output_path = generate_html(title, links_tuples, description, timestamp, output_file)
+        output_path = generate_html(title, link_tuples, description, timestamp, output_file)
         typer.echo(f"HTML minibook created successfully: {os.path.abspath(output_path)}")
     else:
         # Generate MkDocs project
@@ -161,7 +174,7 @@ def main(
             # use a default directory name
             output_dir = "minibook_site"
 
-        output_path = generate_mkdocs_project(title, links_tuples, description, timestamp, output_dir)
+        output_path = generate_mkdocs_project(title, link_tuples, description, timestamp, output_dir)
         typer.echo(f"MkDocs minibook created successfully: {os.path.abspath(output_path)}")
         typer.echo(f"To build the site, run: cd {output_path} && mkdocs build")
         typer.echo(f"To serve the site locally, run: cd {output_path} && mkdocs serve")
