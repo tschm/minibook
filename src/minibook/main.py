@@ -121,8 +121,12 @@ def main(
         typer.echo("No links provided. Exiting.", err=True)
         sys.exit(1)
 
+    typer.echo(f"Parsing links: {links}")
+
     # Accept either newlines or commas
     raw_pairs = links.strip().splitlines() if "\n" in links else links.strip().split(",")
+
+    typer.echo(f"raw_pairs: {raw_pairs}")
 
     link_tuples = []
     for i, pair in enumerate(raw_pairs, 1):
