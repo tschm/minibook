@@ -34,4 +34,3 @@ def test_rows():
         print(row)
         a,b = row.split(";")
         print(f"a: {a}, b: {b}")
-    assert False
