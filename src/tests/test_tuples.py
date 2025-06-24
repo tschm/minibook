@@ -25,3 +25,13 @@ def test_tuple_no_comma():
     links = "1;2"
     pairs = links.split(",")
     assert pairs[0] == "1;2"
+
+def test_rows():
+    links="GitHub;https://github.com\nPython;https://python.org"
+    rows = links.splitlines()
+    print(f"Rows: {rows}")
+    for row in rows:
+        print(row)
+        a,b = row.split(";")
+        print(f"a: {a}, b: {b}")
+    assert False
