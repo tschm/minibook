@@ -14,8 +14,8 @@ def test_tuple_unpacking_strings():
     assert isinstance(b, str)
 
 def test_tuple_unpacking_strings_with_spaces():
-    links = "1;2,3;4"
-    a,b = links.split(",")
+    links = "1;2\n3;4"
+    a,b = links.splitlines()
     assert a == "1;2"
     assert b == "3;4"
     assert isinstance(a, str)
