@@ -1,10 +1,10 @@
 name: "Test Minibook Action"
 
 on:
-  workflow_dispatch:  # Allow manual triggering
+  #workflow_dispatch:  # Allow manual triggering
   push:
-    paths:
-      - '.github/actions/minibook/**'  # Run when the action is modified
+  #  paths:
+  #    - '.github/actions/minibook/**'  # Run when the action is modified
 
 jobs:
   test-html:
