@@ -53,6 +53,12 @@ jobs:
     environment:
       gith
     steps:
+      # Step 1: Checkout the repository code
+      - name: Checkout ${{ github.repository }}
+        uses: actions/checkout@v4
+
+
+      # Step 2: Make the minibook
       - name: Upload the book
         uses: ./.github/actions/minibook
         with:
