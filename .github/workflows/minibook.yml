@@ -20,7 +20,7 @@ jobs:
           description: "This is a test HTML minibook created by the Minibook Action"
           output: "test-html-minibook.html"
           format: "html"
-          links: |
+          links:
             GitHub;https://github.com
             Python;https://python.org
             Minibook;https://github.com/tschm/minibook
