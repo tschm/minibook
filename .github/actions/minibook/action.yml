@@ -14,7 +14,8 @@ inputs:
     required: false
     default: 'minibook.html'
   links:
-    description: 'JSON formatted links: can be a list of objects with name/url keys, a list of arrays, or a dictionary'
+    description: 'JSON formatted links: can be a list of objects with name/url keys,
+    a list of arrays, or a dictionary'
     required: true
   format:
     description: 'Output format: html or mkdocs'

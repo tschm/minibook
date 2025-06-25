@@ -107,7 +107,12 @@ def main(
     title: str = typer.Option("My Links", "--title", "-t", help="Title of the minibook"),
     description: str | None = typer.Option(None, "--description", "-d", help="Description of the minibook"),
     output: str = typer.Option("minibook.html", "--output", "-o", help="Output file or directory"),
-    links: str = typer.Option(None, "--links", "-l", help="JSON formatted links: can be a list of objects with name/url keys, a list of arrays, or a dictionary"),
+    links: str = typer.Option(
+        None,
+        "--links",
+        "-l",
+        help="JSON formatted links: can be a list of objects with name/url keys, a list of arrays, or a dictionary",
+    ),
     timestamp: str | None = typer.Option(None, "--timestamp", help="Fixed timestamp for testing purposes"),
     format: str = typer.Option(
         "html", "--format", help="Output format: html or mkdocs", show_choices=True, case_sensitive=False
