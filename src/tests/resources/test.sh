@@ -8,12 +8,12 @@ TITLE="Test Minibook"
 DESCRIPTION="This is a test minibook created by the test script"
 OUTPUT="test-minibook.html"
 FORMAT="html"
-LINKS="GitHub;https://github.com,Python;https://python.org"
+LINKS='{"GitHub": "https://github.com", "Python": "https://python.org"}'
 
 # Install minibook if not already installed
 if ! command -v minibook &> /dev/null; then
     echo "Installing minibook..."
-    pip install minibook
+    uv pip install minibook
 fi
 
 # Run the minibook command
@@ -25,7 +25,7 @@ echo "Format: $FORMAT"
 echo "Links: $LINKS"
 echo ""
 
-minibook \
+uv run minibook \
     --title "$TITLE" \
     --description "$DESCRIPTION" \
     --output "$OUTPUT" \

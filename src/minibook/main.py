@@ -4,6 +4,7 @@ MiniBook - A tool to create a minibook from a list of links.
 Supports both MkDocs and Jinja2/HTML generation.
 """
 
+import json
 import os
 import sys
 from datetime import datetime
@@ -106,7 +107,12 @@ def main(
     title: str = typer.Option("My Links", "--title", "-t", help="Title of the minibook"),
     description: str | None = typer.Option(None, "--description", "-d", help="Description of the minibook"),
     output: str = typer.Option("minibook.html", "--output", "-o", help="Output file or directory"),
-    links: str = typer.Option(None, "--links", "-l", help="Comma-separated list of tuples with (name;url)"),
+    links: str = typer.Option(
+        None,
+        "--links",
+        "-l",
+        help="JSON formatted links: can be a list of objects with name/url keys, a list of arrays, or a dictionary",
+    ),
     timestamp: str | None = typer.Option(None, "--timestamp", help="Fixed timestamp for testing purposes"),
     format: str = typer.Option(
         "html", "--format", help="Output format: html or mkdocs", show_choices=True, case_sensitive=False
@@ -121,27 +127,48 @@ def main(
         typer.echo("No links provided. Exiting.", err=True)
         sys.exit(1)
 
-    pairs = links.split(",")
+    # Ensure links is a string, not a list
+    # if isinstance(links, list):
+    #     links = "\n".join(links)
 
-    typer.echo(f"pairs: {pairs}")
+    typer.echo(f"Parsing links: {links}")
 
-    links_tuples = []
+    link_tuples = []
 
-    for pair in pairs:
-        typer.echo(f"pair: {pair}")
+    # Try to parse as JSON first
+    try:
+        # Parse the JSON string into a Python object
+        json_data = json.loads(links)
+        typer.echo(f"Parsed JSON data: {json_data}")
+        typer.echo(f"Instance of JSON data: {type(json_data)}")
 
-        try:
-            name, url = pair.strip().split(";")
-            if not name or not url:
-                raise ValueError(f"Invalid pair: {pair}")
-            links_tuples.append((name.strip(), url.strip()))
-        except ValueError as e:
-            raise ValueError(f"Invalid link format: {pair}. Expected 'name;url'") from e
+        # Handle different JSON formats
+        if isinstance(json_data, list):
+            # If it's a list of lists/arrays: [["name", "url"], ...]
+            if all(isinstance(item, list) for item in json_data):
+                for item in json_data:
+                    if len(item) >= 2:
+                        link_tuples.append((item[0], item[1]))
+            # If it's a list of objects: [{"name": "...", "url": "..."}, ...]
+            elif all(isinstance(item, dict) for item in json_data):
+                for item in json_data:
+                    if "name" in item and "url" in item:
+                        link_tuples.append((item["name"], item["url"]))
+        # If it's a dictionary: {"name1": "url1", "name2": "url2", ...}
+        elif isinstance(json_data, dict):
+            for name, url in json_data.items():
+                link_tuples.append((name, url))
 
-    # links_tuples = [(name, url) for name,url in pairs.split(";")]  # (name, url) tuples
-    typer.echo(f"links_tuples: {links_tuples}")
+        typer.echo(f"Parsed JSON links: {link_tuples}")
 
-    if not links_tuples:
+    # Fall back to the original parsing logic for backward compatibility
+    except (json.JSONDecodeError, TypeError):
+        typer.echo("JSON parsing failed, falling back to legacy format")
+        return 1
+
+    typer.echo(f"Final parsed links: {link_tuples}")
+
+    if not link_tuples:
         typer.echo("No links provided. Exiting.", err=True)
         return 1
 
@@ -151,7 +178,7 @@ def main(
         if os.path.isdir(output_file):
             output_file = os.path.join(output_file, "minibook.html")
 
-        output_path = generate_html(title, links_tuples, description, timestamp, output_file)
+        output_path = generate_html(title, link_tuples, description, timestamp, output_file)
         typer.echo(f"HTML minibook created successfully: {os.path.abspath(output_path)}")
     else:
         # Generate MkDocs project
@@ -161,7 +188,7 @@ def main(
             # use a default directory name
             output_dir = "minibook_site"
 
-        output_path = generate_mkdocs_project(title, links_tuples, description, timestamp, output_dir)
+        output_path = generate_mkdocs_project(title, link_tuples, description, timestamp, output_dir)
         typer.echo(f"MkDocs minibook created successfully: {os.path.abspath(output_path)}")
         typer.echo(f"To build the site, run: cd {output_path} && mkdocs build")
         typer.echo(f"To serve the site locally, run: cd {output_path} && mkdocs serve")
