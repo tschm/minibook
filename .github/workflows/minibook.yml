@@ -20,10 +20,7 @@ jobs:
           description: "This is a test HTML minibook created by the Minibook Action"
           output: "test-html-minibook.html"
           format: "html"
-          links: >-
-             [{"name": "GitHub", "url": "https://github.com"},
-              {"name": "Python", "url": "https://python.org"},
-              {"name": "Minibook", "url": "https://github.com/tschm/minibook"}]
+          links: '[{"name": "GitHub", "url": "https://github.com"}, {"name": "Python", "url": "https://python.org"}, {"name": "Minibook", "url": "https://github.com/tschm/minibook"}]'
 
       - name: Upload HTML Minibook
         uses: actions/upload-artifact@v4
