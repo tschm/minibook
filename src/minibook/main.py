@@ -121,6 +121,10 @@ def main(
         typer.echo("No links provided. Exiting.", err=True)
         sys.exit(1)
 
+    # Ensure links is a string, not a list
+    if isinstance(links, list):
+        links = ",".join(links)
+
     typer.echo(f"Parsing links: {links}")
 
     # Accept either newlines or commas
