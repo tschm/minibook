@@ -58,9 +58,9 @@ or a MkDocs project from a list of links.
 Create an HTML page with a custom title and three links:
 
 ```bash
-./run_minibook.py --title "My Favorite Sites"
-                  --format html
-                  --links python;https://www.python.org,github;https://www.github.com,wikipedia;https://www.wikipedia.org
+minibook --title "My Favorite Sites" \
+         --format html \
+         --links '{"python": "https://www.python.org", "github": "https://www.github.com", "wikipedia": "https://www.wikipedia.org"}'
 ```
 
 #### MkDocs Output
@@ -68,7 +68,10 @@ Create an HTML page with a custom title and three links:
 Create a MkDocs project with a custom title and three links:
 
 ```bash
-./run_minibook.py --title "My Favorite Sites" --format mkdocs --output minibook_site --links https://www.python.org https://www.github.com https://www.wikipedia.org
+minibook --title "My Favorite Sites" \
+         --format mkdocs \
+         --output minibook_site \
+         --links '{"python": "https://www.python.org", "github": "https://www.github.com", "wikipedia": "https://www.wikipedia.org"}'
 ```
 
 After generating the MkDocs project, you can build and serve it using MkDocs:
@@ -84,11 +87,24 @@ mkdocs serve  # Serve the site locally at http://127.0.0.1:8000/
 You can also provide links as tuples with custom names for each link:
 
 ```bash
-./run_minibook.py --title "My Favorite Sites" --links-tuples '[("Python", "https://www.python.org"), ("GitHub", "https://www.github.com"), ("Wikipedia", "https://www.wikipedia.org")]'
+minibook --title "My Favorite Sites" \
+         --links '[{"name": "Python", "url": "https://www.python.org"}, {"name": "GitHub", "url": "https://www.github.com"}, {"name": "Wikipedia", "url": "https://www.wikipedia.org"}]'
 ```
 
 This allows you to specify a different name for
 each link, rather than using the URL as the name.
+
+#### Validating Links
+
+You can validate that all links are accessible before creating the minibook:
+
+```bash
+minibook --title "My Favorite Sites" \
+         --links '{"python": "https://www.python.org", "github": "https://www.github.com"}' \
+         --validate-links
+```
+
+This will check each link to ensure it's accessible. If any links are invalid, you'll be prompted to continue or abort.
 
 ## 🛠️ Development Commands
 

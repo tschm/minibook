@@ -9,9 +9,47 @@ import os
 import sys
 from datetime import datetime
 
+import requests
 import typer
 import yaml
 from jinja2 import Environment, FileSystemLoader
+
+
+def validate_url(url, timeout=5):
+    """
+    Validate if a URL is accessible.
+
+    Args:
+        url (str): The URL to validate
+        timeout (int, optional): Timeout in seconds for the request
+
+    Returns:
+        tuple: (is_valid, error_message) where is_valid is a boolean and error_message is a string
+               error_message is None if the URL is valid
+    """
+    try:
+        # Make a HEAD request to check if the URL is accessible
+        # HEAD is more efficient than GET as it doesn't download the full content
+        response = requests.head(url, timeout=timeout, allow_redirects=True)
+
+        # If the HEAD request fails, try a GET request as some servers don't support HEAD
+        if response.status_code >= 400:
+            response = requests.get(url, timeout=timeout, allow_redirects=True)
+
+        # Check if the response status code indicates success
+        if response.status_code < 400:
+            return True, None
+        else:
+            return False, f"HTTP error: {response.status_code}"
+
+    except requests.exceptions.Timeout:
+        return False, "Timeout error"
+    except requests.exceptions.ConnectionError:
+        return False, "Connection error"
+    except requests.exceptions.RequestException as e:
+        return False, f"Request error: {str(e)}"
+    except Exception as e:
+        return False, f"Unexpected error: {str(e)}"
 
 
 def generate_html(title, links, description=None, timestamp=None, output_file="minibook.html"):
@@ -103,7 +141,7 @@ app = typer.Typer(help="Create a minibook from a list of links")
 
 
 @app.command()
-def main(
+def entrypoint(
     title: str = typer.Option("My Links", "--title", "-t", help="Title of the minibook"),
     description: str | None = typer.Option(None, "--description", "-d", help="Description of the minibook"),
     output: str = typer.Option("minibook.html", "--output", "-o", help="Output file or directory"),
@@ -117,6 +155,7 @@ def main(
     format: str = typer.Option(
         "html", "--format", help="Output format: html or mkdocs", show_choices=True, case_sensitive=False
     ),
+    validate_links: bool = typer.Option(False, "--validate-links", help="Validate that all links are accessible"),
 ) -> int:
     """Create a minibook from a list of links."""
     if format not in ["html", "mkdocs"]:
@@ -171,6 +210,30 @@ def main(
     if not link_tuples:
         typer.echo("No links provided. Exiting.", err=True)
         return 1
+
+    # Validate links if requested
+    if validate_links:
+        typer.echo("Validating links...")
+        invalid_links = []
+
+        with typer.progressbar(link_tuples) as progress:
+            for name, url in progress:
+                is_valid, error_message = validate_url(url)
+                if not is_valid:
+                    invalid_links.append((name, url, error_message))
+
+        # Report invalid links
+        if invalid_links:
+            typer.echo(f"\nFound {len(invalid_links)} invalid links:", err=True)
+            for name, url, error in invalid_links:
+                typer.echo(f"  - {name} ({url}): {error}", err=True)
+
+            # Ask user if they want to continue
+            if not typer.confirm("Do you want to continue with invalid links?"):
+                typer.echo("Aborting due to invalid links.", err=True)
+                return 1
+        else:
+            typer.echo("All links are valid!")
 
     if format == "html":
         # Generate HTML using Jinja2
