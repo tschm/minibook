@@ -109,7 +109,7 @@ def test_command_line_execution(resource_dir, tmp_path):
         "--output", str(html_output),
         "--format", "html",
         "--links",
-        "python;https://www.python.org",
+        '{"python": "https://www.python.org"}',
         #"--links github;https://www.github.com",
         #"--links wikipedia;https://www.wikipedia.org"
     ]
@@ -130,7 +130,7 @@ def test_command_line_execution(resource_dir, tmp_path):
         "--description", "This is a test page created by MiniBook",
         "--output", str(mkdocs_output),
         "--format", "mkdocs",
-        "--links", "python;https://www.python.org",
+        "--links", '{"python": "https://www.python.org"}',
         #"--links github;https://www.github.com",
         #"--links wikipedia;https://www.wikipedia.org"
     ]
@@ -169,7 +169,7 @@ def test_compile_command_execution(tmp_path):
         "--output", str(html_output),
         "--format", "html",
         "--links",
-        "python;https://www.python.org",
+        '{"python": "https://www.python.org"}',
     ]
 
     html_result = subprocess.run(html_cmd, capture_output=True, text=True)
@@ -188,7 +188,7 @@ def test_compile_command_execution(tmp_path):
         "--description", "This is a test page created by MiniBook",
         "--output", str(mkdocs_output),
         "--format", "mkdocs",
-        "--links", "python;https://www.python.org",
+        "--links", '{"python": "https://www.python.org"}',
     ]
 
     mkdocs_result = subprocess.run(mkdocs_cmd, capture_output=True, text=True)
@@ -238,9 +238,9 @@ def test_multiline_links(tmp_path):
     # Test HTML generation with multi-line links
     html_output = tmp_path / "multiline_test_output.html"
 
-    # Create a multi-line string with different formats
-    multiline_links = "Python;https://www.python.org\nGitHub;https://www.github.com"
-    escaped_links = "Wikipedia;https://www.wikipedia.org\\nMiniBook;https://github.com/tschm/minibook"
+    # Create JSON arrays for links
+    multiline_links = '[{"name": "Python", "url": "https://www.python.org"}, {"name": "GitHub", "url": "https://www.github.com"}]'
+    escaped_links = '[{"name": "Wikipedia", "url": "https://www.wikipedia.org"}, {"name": "MiniBook", "url": "https://github.com/tschm/minibook"}]'
 
     # Test with actual newlines
     html_cmd_newlines = [

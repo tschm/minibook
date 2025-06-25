@@ -4,6 +4,7 @@ MiniBook - A tool to create a minibook from a list of links.
 Supports both MkDocs and Jinja2/HTML generation.
 """
 
+import json
 import os
 import sys
 from datetime import datetime
@@ -127,28 +128,57 @@ def main(
 
     typer.echo(f"Parsing links: {links}")
 
-    # Accept either newlines or commas
-    # First check if there are actual newlines in the string
-    if "\n" in links:
-        raw_pairs = links.strip().split("\n")
-    # Then check if there are escaped newlines (\n) in the string
-    elif "\\n" in links:
-        raw_pairs = links.strip().split("\\n")
-    # Otherwise, split by commas
-    else:
-        raw_pairs = links.strip().split(",")
-
-    typer.echo(f"raw_pairs: {raw_pairs}")
-
     link_tuples = []
-    for i, pair in enumerate(raw_pairs, 1):
-        if ";" not in pair:
-            typer.echo(f"Invalid link format on line {i}: {pair}", err=True)
-            return 1
-        name, url = map(str.strip, pair.split(";", 1))
-        link_tuples.append((name, url))
 
-    typer.echo(f"Parsed links: {link_tuples}")
+    # Try to parse as JSON first
+    try:
+        # Parse the JSON string into a Python object
+        json_data = json.loads(links)
+
+        # Handle different JSON formats
+        if isinstance(json_data, list):
+            # If it's a list of lists/arrays: [["name", "url"], ...]
+            if all(isinstance(item, list) for item in json_data):
+                for item in json_data:
+                    if len(item) >= 2:
+                        link_tuples.append((item[0], item[1]))
+            # If it's a list of objects: [{"name": "...", "url": "..."}, ...]
+            elif all(isinstance(item, dict) for item in json_data):
+                for item in json_data:
+                    if "name" in item and "url" in item:
+                        link_tuples.append((item["name"], item["url"]))
+        # If it's a dictionary: {"name1": "url1", "name2": "url2", ...}
+        elif isinstance(json_data, dict):
+            for name, url in json_data.items():
+                link_tuples.append((name, url))
+
+        typer.echo(f"Parsed JSON links: {link_tuples}")
+
+    # Fall back to the original parsing logic for backward compatibility
+    except (json.JSONDecodeError, TypeError):
+        typer.echo("JSON parsing failed, falling back to legacy format")
+
+        # Accept either newlines or commas
+        # First check if there are actual newlines in the string
+        # if "\n" in links:
+        #    raw_pairs = links.strip().split("\n")
+        # Then check if there are escaped newlines (\n) in the string
+        # elif "\\n" in links:
+        #    raw_pairs = links.strip().split("\\n")
+        # Otherwise, split by commas
+        # else:
+        #    raw_pairs = links.strip().split(",")
+
+        # typer.echo(f"raw_pairs: {raw_pairs}")
+
+        # for i, pair in enumerate(raw_pairs, 1):
+        #    if ";" not in pair:
+        #        typer.echo(f"Invalid link format on line {i}: {pair}", err=True)
+        #        return 1
+        #    name, url = map(str.strip, pair.split(";", 1))
+        #    link_tuples.append((name, url))
+
+    typer.echo(f"Final parsed links: {link_tuples}")
 
     if not link_tuples:
         typer.echo("No links provided. Exiting.", err=True)
