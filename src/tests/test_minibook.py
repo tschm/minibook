@@ -3,6 +3,7 @@ Tests for the MiniBook package.
 """
 
 import os
+from unittest.mock import patch, MagicMock
 
 from minibook.main import generate_html, generate_mkdocs_project
 
