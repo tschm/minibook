@@ -139,6 +139,8 @@ def main(
     try:
         # Parse the JSON string into a Python object
         json_data = json.loads(links)
+        typer.echo(f"Parsed JSON data: {json_data}")
+        typer.echo(f"Instance of JSON data: {type(json_data)}")
 
         # Handle different JSON formats
         if isinstance(json_data, list):
@@ -162,26 +164,7 @@ def main(
     # Fall back to the original parsing logic for backward compatibility
     except (json.JSONDecodeError, TypeError):
         typer.echo("JSON parsing failed, falling back to legacy format")
-
-        # Accept either newlines or commas
-        # First check if there are actual newlines in the string
-        if "\n" in links:
-            raw_pairs = links.strip().split("\n")
-        # Then check if there are escaped newlines (\n) in the string
-        elif "\\n" in links:
-            raw_pairs = links.strip().split("\\n")
-        # Otherwise, split by commas
-        else:
-            raw_pairs = links.strip().split(",")
-
-        typer.echo(f"raw_pairs: {raw_pairs}")
-
-        for i, pair in enumerate(raw_pairs, 1):
-            if ";" not in pair:
-                typer.echo(f"Invalid link format on line {i}: {pair}", err=True)
-                return 1
-            name, url = map(str.strip, pair.split(";", 1))
-            link_tuples.append((name, url))
+        return 1
 
     typer.echo(f"Final parsed links: {link_tuples}")
 
