@@ -255,7 +255,8 @@ def test_multiline_links(tmp_path):
     html_result_newlines = subprocess.run(html_cmd_newlines, capture_output=True, text=True)
 
     # Check that the command executed successfully
-    assert html_result_newlines.returncode == 0, f"HTML command with newlines failed with error: {html_result_newlines.stderr}"
+    assert html_result_newlines.returncode == 0, \
+        f"HTML command with newlines failed with error: {html_result_newlines.stderr}"
 
     # Check that the HTML file was created
     assert os.path.exists(html_output)
@@ -282,7 +283,8 @@ def test_multiline_links(tmp_path):
     html_result_escaped = subprocess.run(html_cmd_escaped, capture_output=True, text=True)
 
     # Check that the command executed successfully
-    assert html_result_escaped.returncode == 0, f"HTML command with escaped newlines failed with error: {html_result_escaped.stderr}"
+    assert html_result_escaped.returncode == 0, \
+        f"HTML command with escaped newlines failed with error: {html_result_escaped.stderr}"
 
     # Check that the HTML file was created
     assert os.path.exists(html_output_escaped)
