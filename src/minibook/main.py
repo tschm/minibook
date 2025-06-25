@@ -126,7 +126,7 @@ def main(
     # Accept either newlines or commas
     # First check if there are actual newlines in the string
     if "\n" in links:
-        raw_pairs = links.strip().splitlines()
+        raw_pairs = links.strip().split("\n")
     # Then check if there are escaped newlines (\n) in the string
     elif "\\n" in links:
         raw_pairs = links.strip().split("\\n")
@@ -145,26 +145,6 @@ def main(
         link_tuples.append((name, url))
 
     typer.echo(f"Parsed links: {link_tuples}")
-
-    # pairs = links.strip().splitlines()  # split(",")
-
-    # typer.echo(f"pairs: {pairs}")
-
-    # links_tuples = []
-
-    # for pair in pairs:
-    #    typer.echo(f"pair: {pair}")
-
-    #    try:
-    #        name, url = pair.strip().split(";")
-    #        if not name or not url:
-    #            raise ValueError(f"Invalid pair: {pair}")
-    #        links_tuples.append((name.strip(), url.strip()))
-    #    except ValueError as e:
-    #        raise ValueError(f"Invalid link format: {pair}. Expected 'name;url'") from e
-
-    # links_tuples = [(name, url) for name,url in pairs.split(";")]  # (name, url) tuples
-    # typer.echo(f"links_tuples: {links_tuples}")
 
     if not link_tuples:
         typer.echo("No links provided. Exiting.", err=True)
