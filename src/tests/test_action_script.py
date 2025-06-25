@@ -37,4 +37,3 @@ def test_action_script(resource_dir, tmp_path):
     # Check that the output file was created
     output_file = tmp_path / "test-minibook.html"
     assert output_file.exists(), f"Output file not found at {output_file}"
-
