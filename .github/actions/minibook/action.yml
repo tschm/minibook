@@ -14,7 +14,7 @@ inputs:
     required: false
     default: 'minibook.html'
   links:
-    description: 'Comma-separated list of tuples with (name;url)'
+    description: 'JSON formatted links: can be a list of objects with name/url keys, a list of arrays, or a dictionary'
     required: true
   format:
     description: 'Output format: html or mkdocs'

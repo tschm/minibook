@@ -107,7 +107,7 @@ def main(
     title: str = typer.Option("My Links", "--title", "-t", help="Title of the minibook"),
     description: str | None = typer.Option(None, "--description", "-d", help="Description of the minibook"),
     output: str = typer.Option("minibook.html", "--output", "-o", help="Output file or directory"),
-    links: str = typer.Option(None, "--links", "-l", help="Comma-separated list of tuples with (name;url)"),
+    links: str = typer.Option(None, "--links", "-l", help="JSON formatted links: can be a list of objects with name/url keys, a list of arrays, or a dictionary"),
     timestamp: str | None = typer.Option(None, "--timestamp", help="Fixed timestamp for testing purposes"),
     format: str = typer.Option(
         "html", "--format", help="Output format: html or mkdocs", show_choices=True, case_sensitive=False
@@ -123,8 +123,8 @@ def main(
         sys.exit(1)
 
     # Ensure links is a string, not a list
-    if isinstance(links, list):
-        links = "\n".join(links)
+    # if isinstance(links, list):
+    #     links = "\n".join(links)
 
     typer.echo(f"Parsing links: {links}")
 
@@ -160,23 +160,23 @@ def main(
 
         # Accept either newlines or commas
         # First check if there are actual newlines in the string
-        # if "\n" in links:
-        #    raw_pairs = links.strip().split("\n")
+        if "\n" in links:
+            raw_pairs = links.strip().split("\n")
         # Then check if there are escaped newlines (\n) in the string
-        # elif "\\n" in links:
-        #    raw_pairs = links.strip().split("\\n")
+        elif "\\n" in links:
+            raw_pairs = links.strip().split("\\n")
         # Otherwise, split by commas
-        # else:
-        #    raw_pairs = links.strip().split(",")
+        else:
+            raw_pairs = links.strip().split(",")
 
-        # typer.echo(f"raw_pairs: {raw_pairs}")
+        typer.echo(f"raw_pairs: {raw_pairs}")
 
-        # for i, pair in enumerate(raw_pairs, 1):
-        #    if ";" not in pair:
-        #        typer.echo(f"Invalid link format on line {i}: {pair}", err=True)
-        #        return 1
-        #    name, url = map(str.strip, pair.split(";", 1))
-        #    link_tuples.append((name, url))
+        for i, pair in enumerate(raw_pairs, 1):
+            if ";" not in pair:
+                typer.echo(f"Invalid link format on line {i}: {pair}", err=True)
+                return 1
+            name, url = map(str.strip, pair.split(";", 1))
+            link_tuples.append((name, url))
 
     typer.echo(f"Final parsed links: {link_tuples}")
 
