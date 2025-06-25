@@ -127,7 +127,7 @@ def test_command_line_with_invalid_links_abort(tmp_path, monkeypatch):
         return True, None
 
     # Apply the mocks
-    monkeypatch.setattr(minibook.main, 'validate_url', mock_validate_url)
+    monkeypatch.setattr('minibook.main.validate_url', mock_validate_url)
     monkeypatch.setattr('typer.confirm', lambda _: False)
 
     # Run the command

@@ -15,17 +15,6 @@ permissions:
     contents: read  # Read-only access to repository contents
 
 jobs:
-  # Job to run Marimo notebooks for interactive documentation
-  marimo:
-    runs-on: "ubuntu-latest"
-    steps:
-      - name: "Build the virtual environment"
-        uses: tschm/cradle/actions/environment@v0.1.72  # Custom action to set up Python environment
-
-      - uses: tschm/cradle/actions/marimo@v0.1.72  # Custom action to run Marimo notebooks
-        with:
-          source_folder: book/marimo  # Folder containing the Marimo notebooks
-
   # Job to generate API documentation with pdoc
   pdoc:
     runs-on: "ubuntu-latest"
@@ -51,25 +40,21 @@ jobs:
           source-folder: src/minibook  # Source code folder to test
           coveralls: 'false'  # Don't upload to Coveralls
 
-  # Job to run Jupyter notebooks
-  jupyter:
-    runs-on: "ubuntu-latest"
-    steps:
-      - name: "Build the virtual environment"
-        uses: tschm/cradle/actions/environment@v0.1.72  # Custom action to set up Python environment
-
-      - uses: tschm/cradle/actions/jupyter@v0.1.72  # Custom action to run Jupyter notebooks
-
   # Job to build and publish the book documentation
   book:
     runs-on: "ubuntu-latest"
-    needs: [test, pdoc, jupyter, marimo]  # This job depends on all other jobs
+    needs: [test, pdoc]  # This job depends on all other jobs
 
     # Additional write permissions needed for publishing
     permissions:
       pages: write  # Allows the workflow to write to the repository (for publishing)
       id-token: write
 
+    environment:
+      gith
     steps:
       - name: Upload the book
-        uses: tschm/cradle/actions/book@v0.1.72  # Custom action to build and upload the book
+        uses: ./.github/actions/minibook
+        with:
+          links:
+            '{"GitHub": "https://github.com", "Python": "https://python.org"}'
