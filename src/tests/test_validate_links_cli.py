@@ -6,7 +6,6 @@ import os
 
 from typer.testing import CliRunner
 
-import minibook.main
 from minibook.main import app
 
 
