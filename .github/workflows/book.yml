@@ -63,4 +63,5 @@ jobs:
         uses: ./.github/actions/minibook
         with:
           links:
-            '{"GitHub": "https://github.com", "Python": "https://python.org"}'
+            '{"GitHub": "https://github.com", 
+              "Python": "https://python.org"}'
