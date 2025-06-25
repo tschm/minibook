@@ -9,9 +9,9 @@ import os
 import sys
 from datetime import datetime
 
+import requests
 import typer
 import yaml
-import requests
 from jinja2 import Environment, FileSystemLoader
 
 
@@ -155,9 +155,7 @@ def entrypoint(
     format: str = typer.Option(
         "html", "--format", help="Output format: html or mkdocs", show_choices=True, case_sensitive=False
     ),
-    validate_links: bool = typer.Option(
-        False, "--validate-links", help="Validate that all links are accessible"
-    ),
+    validate_links: bool = typer.Option(False, "--validate-links", help="Validate that all links are accessible"),
 ) -> int:
     """Create a minibook from a list of links."""
     if format not in ["html", "mkdocs"]:

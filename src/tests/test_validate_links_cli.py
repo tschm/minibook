@@ -3,9 +3,7 @@ Tests for the command-line functionality with the --validate-links flag.
 """
 
 import os
-import typer
-import requests
-from unittest.mock import patch, MagicMock
+
 from typer.testing import CliRunner
 
 import minibook.main
@@ -133,7 +131,7 @@ def test_command_line_with_invalid_links_abort(tmp_path, monkeypatch):
     monkeypatch.setattr('typer.confirm', lambda _: False)
 
     # Run the command
-    result = runner.invoke(app, args)
+    runner.invoke(app, args)
 
     # For now, we'll just check that the HTML file was NOT created
     # since the command is not failing as expected

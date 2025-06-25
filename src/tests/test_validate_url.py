@@ -2,8 +2,9 @@
 Tests for the validate_url function in the MiniBook package.
 """
 
+from unittest.mock import MagicMock, patch
+
 import requests
-from unittest.mock import patch, MagicMock
 
 from minibook.main import validate_url
 
@@ -20,8 +21,8 @@ def test_validate_url_valid():
 
         # Check that the function made a HEAD request
         mock_head.assert_called_once_with(
-            "https://www.example.com", 
-            timeout=5, 
+            "https://www.example.com",
+            timeout=5,
             allow_redirects=True
         )
 
@@ -47,15 +48,15 @@ def test_validate_url_invalid_head_valid_get():
 
         # Check that the function made a HEAD request
         mock_head.assert_called_once_with(
-            "https://www.example.com", 
-            timeout=5, 
+            "https://www.example.com",
+            timeout=5,
             allow_redirects=True
         )
 
         # Check that the function made a GET request
         mock_get.assert_called_once_with(
-            "https://www.example.com", 
-            timeout=5, 
+            "https://www.example.com",
+            timeout=5,
             allow_redirects=True
         )
 
@@ -81,15 +82,15 @@ def test_validate_url_invalid():
 
         # Check that the function made a HEAD request
         mock_head.assert_called_once_with(
-            "https://www.example.com/nonexistent", 
-            timeout=5, 
+            "https://www.example.com/nonexistent",
+            timeout=5,
             allow_redirects=True
         )
 
         # Check that the function made a GET request
         mock_get.assert_called_once_with(
-            "https://www.example.com/nonexistent", 
-            timeout=5, 
+            "https://www.example.com/nonexistent",
+            timeout=5,
             allow_redirects=True
         )
 
@@ -107,8 +108,8 @@ def test_validate_url_connection_error():
 
         # Check that the function made a HEAD request
         mock_head.assert_called_once_with(
-            "https://nonexistent.example.com", 
-            timeout=5, 
+            "https://nonexistent.example.com",
+            timeout=5,
             allow_redirects=True
         )
 
@@ -126,8 +127,8 @@ def test_validate_url_timeout():
 
         # Check that the function made a HEAD request
         mock_head.assert_called_once_with(
-            "https://slow.example.com", 
-            timeout=5, 
+            "https://slow.example.com",
+            timeout=5,
             allow_redirects=True
         )
 
