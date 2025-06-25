@@ -123,7 +123,7 @@ def main(
 
     # Ensure links is a string, not a list
     if isinstance(links, list):
-        links = ",".join(links)
+        links = "\n".join(links)
 
     typer.echo(f"Parsing links: {links}")
 
