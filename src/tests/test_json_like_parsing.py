@@ -18,7 +18,8 @@ def test_json_like_parsing(tmp_path):
     os.makedirs(output_dir, exist_ok=True)
 
     # Test with a properly formatted JSON object with quoted keys and values
-    json_like_input = '{"GitHub": "https://github.com", "Python": "https://python.org"}'
+    json_like_input = '{"GitHub": "https://github.com",\
+                        "Python": "https://python.org"}'
 
     # Create the command arguments
     args = [

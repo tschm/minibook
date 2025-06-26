@@ -8,7 +8,12 @@ TITLE="Test Minibook"
 DESCRIPTION="This is a test minibook created by the test script"
 OUTPUT="."
 FORMAT="html"
-LINKS='{"GitHub": "https://github.com", "Python": "https://python.org"}'
+# Multiline JSON string — valid, no escaped line continuations
+LINKS='{
+  "GitHub": "https://github.com",
+  "Python": "https://python.org"
+}'
+#LINKS='{"GitHub": "https://github.com", "Python": "https://python.org"}'
 
 # Install minibook if not already installed
 if ! command -v minibook &> /dev/null; then
