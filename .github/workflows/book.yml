@@ -47,7 +47,7 @@ jobs:
 
     # Additional write permissions needed for publishing
     permissions:
-      pages: write  # Allows the workflow to write to the repository (for publishing)
+      pages: write     # Allows the workflow to write to the repository (for publishing)
       id-token: write
 
     environment:
@@ -69,13 +69,12 @@ jobs:
         with:
           links: |
             {
-              "GitHub": "https://github.com",
-              "Python": "https://python.org",
               "API": "./pdoc/index.html",
               "Coverage": "./tests/html-coverage/index.html",
               "Test Report": "./tests/html-report/report.html"
             }
           output: 'artifacts'
+          title: 'MiniBook'
 
       - name: Inspect artifacts
         run: |

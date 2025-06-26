@@ -87,7 +87,7 @@ minibook --title "My Favorite Sites" \
          }'
 ```
 
-These formats allow you to specify different names for each link, 
+These formats allow you to specify different names for each link,
 rather than using the URL as the name.
 
 #### Validating Links
@@ -100,12 +100,12 @@ minibook --title "My Favorite Sites" \
          --validate-links
 ```
 
-This will check each link to ensure it's accessible. 
+This will check each link to ensure it's accessible.
 If any links are invalid, you'll be prompted to continue or abort.
 
 ## 🔄 GitHub Action
 
-MiniBook is also available as a GitHub Action that 
+MiniBook is also available as a GitHub Action that
 you can use in your workflows to generate documentation sites.
 
 ### Using the Action
