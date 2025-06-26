@@ -37,6 +37,7 @@ runs:
         format: 'html'
 
     - name: Inspect artifacts
+      shell: bash
       run: |
         tree artifacts
 
