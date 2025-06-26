@@ -2,7 +2,6 @@
 Tests for the main entry point of the MiniBook package.
 """
 
-import sys
 from unittest.mock import patch
 
 import minibook.main

@@ -3,6 +3,7 @@ Tests for the invalid format case in the entrypoint function.
 """
 
 import os
+
 from typer.testing import CliRunner
 
 from minibook.main import app

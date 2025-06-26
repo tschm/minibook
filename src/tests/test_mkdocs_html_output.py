@@ -4,6 +4,7 @@ Tests for the MkDocs generation with HTML output file.
 
 import os
 import shutil
+
 from typer.testing import CliRunner
 
 from minibook.main import app

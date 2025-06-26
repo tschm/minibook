@@ -2,7 +2,6 @@
 Tests for the JSON parsing error handling in the entrypoint function.
 """
 
-import os
 from typer.testing import CliRunner
 
 from minibook.main import app

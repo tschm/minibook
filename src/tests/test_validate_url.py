@@ -127,8 +127,8 @@ def test_validate_url_timeout():
 
         # Check that the function made a HEAD request
         mock_head.assert_called_once_with(
-            "https://slow.example.com", 
-            timeout=5, 
+            "https://slow.example.com",
+            timeout=5,
             allow_redirects=True
         )
 
@@ -146,8 +146,8 @@ def test_validate_url_request_exception():
 
         # Check that the function made a HEAD request
         mock_head.assert_called_once_with(
-            "https://example.com", 
-            timeout=5, 
+            "https://example.com",
+            timeout=5,
             allow_redirects=True
         )
 
@@ -165,8 +165,8 @@ def test_validate_url_general_exception():
 
         # Check that the function made a HEAD request
         mock_head.assert_called_once_with(
-            "https://example.com", 
-            timeout=5, 
+            "https://example.com",
+            timeout=5,
             allow_redirects=True
         )
 
