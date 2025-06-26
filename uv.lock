@@ -357,6 +357,7 @@ dependencies = [
     { name = "jinja2" },
     { name = "pyyaml" },
     { name = "requests" },
+    { name = "tomli" },
     { name = "typer" },
 ]
 
@@ -377,6 +378,7 @@ requires-dist = [
     { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=6.0.0" },
     { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "requests", specifier = ">=2.31.0" },
+    { name = "tomli", specifier = ">=2.2.1" },
     { name = "typer", specifier = ">=0.16.0" },
 ]
 provides-extras = ["dev"]
