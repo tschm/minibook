@@ -3,6 +3,7 @@ Test for parsing properly formatted JSON objects with quoted keys and values.
 """
 
 import os
+
 from typer.testing import CliRunner
 
 from minibook.main import app
