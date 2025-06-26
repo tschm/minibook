@@ -145,7 +145,7 @@ app = typer.Typer(help="Create a minibook from a list of links")
 def entrypoint(
     title: str = typer.Option("My Links", "--title", "-t", help="Title of the minibook"),
     description: str | None = typer.Option(None, "--description", "-d", help="Description of the minibook"),
-    output: str = typer.Option(None, "--output", "-o", help="Output file or directory"),
+    output: str = typer.Option(None, "--output", "-o", help="Output directory"),
     links: str = typer.Option(
         None,
         "--links",
