@@ -6,7 +6,7 @@
 # Set up test inputs
 TITLE="Test Minibook"
 DESCRIPTION="This is a test minibook created by the test script"
-OUTPUT="test-minibook.html"
+OUTPUT="."
 FORMAT="html"
 LINKS='{"GitHub": "https://github.com", "Python": "https://python.org"}'
 
@@ -33,8 +33,8 @@ uv run minibook \
     --links "$LINKS"
 
 # Check if the minibook was created successfully
-if [ -f "$OUTPUT" ]; then
-    echo "Minibook created successfully at $OUTPUT"
+if [ -f "$OUTPUT/index.html" ]; then
+    echo "Minibook created successfully at $OUTPUT/index.html"
     exit 0
 else
     echo "Failed to create minibook"

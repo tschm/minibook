@@ -14,7 +14,8 @@ def test_json_like_parsing(tmp_path):
     # Create a runner for testing Typer CLI applications
     runner = CliRunner()
 
-    output_file = tmp_path / "test_output.html"
+    output_dir = tmp_path
+    os.makedirs(output_dir, exist_ok=True)
 
     # Test with a properly formatted JSON object with quoted keys and values
     json_like_input = '{"GitHub": "https://github.com", "Python": "https://python.org"}'
@@ -23,7 +24,7 @@ def test_json_like_parsing(tmp_path):
     args = [
         "--title", "JSON-like Test",
         "--description", "Testing JSON-like parsing",
-        "--output", str(output_file),
+        "--output", str(output_dir),
         "--format", "html",
         "--links", json_like_input
     ]
@@ -38,6 +39,7 @@ def test_json_like_parsing(tmp_path):
     assert result.exit_code == 0, f"Command failed with error: {result.stdout}"
 
     # Check that the HTML file was created
+    output_file = output_dir / "index.html"
     assert os.path.exists(output_file)
 
     # Read the file and check its contents

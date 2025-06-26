@@ -35,5 +35,5 @@ def test_action_script(resource_dir, tmp_path):
     assert result.returncode == 0, f"Script execution failed with error: {result.stderr}"
 
     # Check that the output file was created
-    output_file = tmp_path / "test-minibook.html"
+    output_file = tmp_path / "index.html"
     assert output_file.exists(), f"Output file not found at {output_file}"

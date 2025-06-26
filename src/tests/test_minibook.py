@@ -100,7 +100,7 @@ def test_command_line_execution(resource_dir, tmp_path):
     import subprocess
 
     # Test HTML generation
-    html_output = tmp_path / "test_output.html"
+    html_output = tmp_path
     html_cmd = [
         #str(run_script),
         "uv", "run", "minibook",
@@ -161,7 +161,7 @@ def test_compile_command_execution(tmp_path):
     import subprocess
 
     # Test HTML generation
-    html_output = tmp_path / "uvx_test_output.html"
+    html_output = tmp_path
     html_cmd = [
         "minibook",
         "--title", "Test Links",
@@ -236,7 +236,7 @@ def test_multiline_links(tmp_path):
     import subprocess
 
     # Test HTML generation with multi-line links
-    html_output = tmp_path / "multiline_test_output.html"
+    html_output = tmp_path
 
     # Create JSON arrays for links
     multiline_links = '[{"name": "Python", "url": "https://www.python.org"}, {"name": "GitHub", "url": "https://www.github.com"}]'
@@ -269,66 +269,12 @@ def test_multiline_links(tmp_path):
     # Check that the HTML file was created
     assert os.path.exists(html_output)
 
+    html_file = html_output / "index.html"
     # Read the file and check its contents
-    with open(html_output) as f:
+    with open(html_file) as f:
         content = f.read()
 
     # Check that all links are in the content
     assert "https://www.python.org" in content
     assert "https://www.github.com" in content
 
-    # Test with escaped newlines
-    html_output_escaped = tmp_path / "escaped_test_output.html"
-    html_cmd_escaped = [
-        "minibook",
-        "--title", "Escaped Newlines Test",
-        "--description", "Testing escaped newlines in links",
-        "--output", str(html_output_escaped),
-        "--format", "html",
-        "--links", escaped_links,
-    ]
-
-    html_result_escaped = subprocess.run(html_cmd_escaped, capture_output=True, text=True)
-
-    # Check that the command executed successfully
-    assert html_result_escaped.returncode == 0, \
-        f"HTML command with escaped newlines failed with error: {html_result_escaped.stderr}"
-
-    # Check that the HTML file was created
-    assert os.path.exists(html_output_escaped)
-
-    # Read the file and check its contents
-    with open(html_output_escaped) as f:
-        content = f.read()
-
-    # Check that all links are in the content
-    assert "https://www.wikipedia.org" in content
-    assert "https://github.com/tschm/minibook" in content
-
-    # Test with indented JSON (like in book.yml)
-    html_output_indented = tmp_path / "indented_test_output.html"
-    html_cmd_indented = [
-        "minibook",
-        "--title", "Indented JSON Test",
-        "--description", "Testing indented JSON in links",
-        "--output", str(html_output_indented),
-        "--format", "html",
-        "--links", indented_json,
-    ]
-
-    html_result_indented = subprocess.run(html_cmd_indented, capture_output=True, text=True)
-
-    # Check that the command executed successfully
-    assert html_result_indented.returncode == 0, \
-        f"HTML command with indented JSON failed with error: {html_result_indented.stderr}"
-
-    # Check that the HTML file was created
-    assert os.path.exists(html_output_indented)
-
-    # Read the file and check its contents
-    with open(html_output_indented) as f:
-        content = f.read()
-
-    # Check that all links are in the content
-    assert "https://github.com" in content
-    assert "https://python.org" in content

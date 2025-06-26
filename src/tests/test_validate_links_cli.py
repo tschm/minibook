@@ -15,7 +15,7 @@ def test_command_line_with_validate_links(tmp_path, monkeypatch):
     runner = CliRunner()
 
     # Create a temporary output file
-    html_output = tmp_path / "validate_links_test_output.html"
+    html_output = tmp_path
 
     # Create the command arguments
     args = [
@@ -42,10 +42,10 @@ def test_command_line_with_validate_links(tmp_path, monkeypatch):
     assert result.exit_code == 0, f"Command failed with error: {result.stdout}"
 
     # Check that the HTML file was created
-    assert os.path.exists(html_output)
+    assert os.path.exists(html_output / "index.html")
 
     # Read the file and check its contents
-    with open(html_output) as f:
+    with open(html_output / "index.html") as f:
         content = f.read()
 
     # Check that all links are in the content
@@ -59,7 +59,7 @@ def test_command_line_with_invalid_links(tmp_path, monkeypatch):
     runner = CliRunner()
 
     # Create a temporary output file
-    html_output = tmp_path / "invalid_links_test_output.html"
+    html_output = tmp_path
 
     # Create the command arguments
     args = [
@@ -89,10 +89,10 @@ def test_command_line_with_invalid_links(tmp_path, monkeypatch):
     assert result.exit_code == 0, f"Command failed with error: {result.stdout}"
 
     # Check that the HTML file was created
-    assert os.path.exists(html_output)
+    assert os.path.exists(html_output / "index.html")
 
     # Read the file and check its contents
-    with open(html_output) as f:
+    with open(html_output / "index.html") as f:
         content = f.read()
 
     # Check that all links are in the content (even the invalid one)
