@@ -10,9 +10,8 @@ inputs:
     required: false
     default: ''
   output:
-    description: 'Output file or directory'
-    required: false
-    default: 'minibook.html'
+    description: 'Output directory'
+    required: true
   links:
     description: 'JSON formatted links: can be a list of objects with name/url keys,
     a list of arrays, or a dictionary'
@@ -41,16 +40,6 @@ runs:
       with:
         python-version: 3.12
 
-    #- name: Set up Python
-    #  uses: actions/setup-python@v5
-    #  with:
-    #    python-version: '3.12'
-
-    #- name: Install dependencies
-    #  shell: bash
-    #  run: |
-    #    python -m pip install --upgrade pip
-    #    pip install minibook
     - name: Create minibook
       shell: bash
       run: |
@@ -59,7 +48,7 @@ runs:
           TIMESTAMP_ARG="--timestamp ${{ inputs.timestamp }}"
         fi
 
-        uv run minibook \
+        uvx minibook \
           --title "${{ inputs.title }}" \
           --description "${{ inputs.description }}" \
           --output "${{ inputs.output }}" \
