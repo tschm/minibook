@@ -5,7 +5,6 @@ Supports both MkDocs and Jinja2/HTML generation.
 
 import json
 import os
-import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -22,7 +21,6 @@ def get_git_repo_url():
     if github_repo:
         return f"https://github.com/{github_repo}"
     return None
-
 
 
 def validate_url(url, timeout=5):
@@ -99,11 +97,7 @@ def generate_html(title, links, description=None, timestamp=None, output_file="m
 
     # Render the template with our data
     html = template.render(
-        title=title, 
-        links=links, 
-        description=description, 
-        timestamp=timestamp,
-        repository_url=get_git_repo_url()
+        title=title, links=links, description=description, timestamp=timestamp, repository_url=get_git_repo_url()
     )
 
     # Save the HTML to a file

@@ -1,6 +1,5 @@
 """Tests for the template not found error case in the generate_html function."""
 
-from pathlib import Path
 import pytest
 from typer.testing import CliRunner
 

@@ -1,6 +1,6 @@
 import os
+
 from minibook.main import get_git_repo_url
-from unittest.mock import patch
 
 
 def test_get_git_repo_url_with_environment_variable(monkeypatch):
@@ -26,4 +26,3 @@ def test_get_git_repo_url():
     assert repo == "tschm/minibook"
 
     #assert repo is None, f"Repo is {repo}"
-
