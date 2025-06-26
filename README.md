@@ -122,7 +122,7 @@ To use the MiniBook action in your GitHub workflow:
     links: |
       {
         "GitHub": "https://github.com",
-        "Documentation": "./docs/index.html",
+        "Tests": "./tests/index.html",
         "API Reference": "./api/index.html"
       }
 ```
@@ -154,6 +154,9 @@ permissions:
   contents: read
   pages: write
   id-token: write
+
+environment:
+  name: github-pages
 
 jobs:
   build:
