@@ -220,12 +220,73 @@ def entrypoint(
 
         typer.echo(f"raw_pairs: {raw_pairs}")
 
-        for i, pair in enumerate(raw_pairs, 1):
-            if ";" not in pair:
-                typer.echo(f"Invalid link format on line {i}: {pair}", err=True)
-                return 1
-            name, url = map(str.strip, pair.split(";", 1))
-            link_tuples.append((name, url))
+        # Initialize flag for legacy parsing
+        legacy_parsing_needed = True
+
+        # Check if this might be a malformed JSON object
+        if raw_pairs and raw_pairs[0].strip() == "{":
+            typer.echo("Detected JSON-like object, attempting to parse")
+            # Try to parse as a JSON-like object with unquoted keys/values
+            try:
+                # Reconstruct the input by joining all lines
+                json_like_text = "\n".join(raw_pairs)
+
+                # Extract key-value pairs using a simple line-by-line approach
+                in_object = False
+                for line in json_like_text.split("\n"):
+                    line = line.strip()
+
+                    # Skip empty lines
+                    if not line:
+                        continue
+
+                    # Check for opening brace
+                    if line == "{":
+                        in_object = True
+                        continue
+
+                    # Check for closing brace
+                    if line == "}" or line.startswith("}"):
+                        in_object = False
+                        continue
+
+                    # Process key-value pairs
+                    if in_object and ":" in line:
+                        # Remove trailing comma if present
+                        if line.endswith(","):
+                            line = line[:-1]
+
+                        # Split by first colon
+                        parts = line.split(":", 1)
+                        if len(parts) == 2:
+                            key, value = parts
+                            key = key.strip().strip('"')  # Remove quotes and whitespace
+                            value = value.strip().strip('"')  # Remove quotes and whitespace
+
+                            typer.echo(f"Parsed key-value pair: {key} -> {value}")
+                            link_tuples.append((key, value))
+
+                # If we successfully parsed some links, skip the legacy format parsing
+                if link_tuples:
+                    typer.echo(f"Successfully parsed {len(link_tuples)} links from JSON-like object")
+                    # Skip the legacy format parsing by setting a flag
+                    legacy_parsing_needed = False
+                else:
+                    # If no links were parsed, we still need to try the legacy format
+                    legacy_parsing_needed = True
+
+            except Exception as e:
+                typer.echo(f"Failed to parse as JSON-like object: {e}")
+                # Continue with the normal parsing
+
+        # Normal parsing for legacy format, only if needed
+        if legacy_parsing_needed:
+            for i, pair in enumerate(raw_pairs, 1):
+                if ";" not in pair:
+                    typer.echo(f"Invalid link format on line {i}: {pair}", err=True)
+                    return 1
+                name, url = map(str.strip, pair.split(";", 1))
+                link_tuples.append((name, url))
 
     typer.echo(f"Final parsed links: {link_tuples}")
 
