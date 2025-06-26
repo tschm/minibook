@@ -60,8 +60,8 @@ runs:
         fi
 
         uv run minibook \
-          --title ${{ inputs.title }} \
-          --description ${{ inputs.description }} \
+          --title "${{ inputs.title }}" \
+          --description "${{ inputs.description }}" \
           --output "${{ inputs.output }}" \
           --format "html" \
           --links '${{ inputs.links }}' \
