@@ -240,15 +240,8 @@ def test_multiline_links(tmp_path):
 
     # Create JSON arrays for links
     multiline_links = '[{"name": "Python", "url": "https://www.python.org"}, {"name": "GitHub", "url": "https://www.github.com"}]'
-    escaped_links = '[{"name": "Wikipedia", "url": "https://www.wikipedia.org"}, {"name": "MiniBook", "url": "https://github.com/tschm/minibook"}]'
 
     # Create a multi-line JSON object with newlines and indentation (like in book.yml)
-    indented_json = """
-    {
-      "GitHub": "https://github.com",
-      "Python": "https://python.org"
-    }
-    """
 
     # Test with actual newlines
     html_cmd_newlines = [
@@ -277,4 +270,3 @@ def test_multiline_links(tmp_path):
     # Check that all links are in the content
     assert "https://www.python.org" in content
     assert "https://www.github.com" in content
-

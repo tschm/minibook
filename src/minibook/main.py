@@ -322,7 +322,7 @@ def entrypoint(
     if format == "html":
         # Generate HTML using Jinja2
         output_file = Path(output) / "index.html"
-        #if os.path.isdir(output_file):
+        # if os.path.isdir(output_file):
         #    output_file = os.path.join(output_file, "minibook.html")
 
         output_path = generate_html(title, link_tuples, description, timestamp, output_file)
