@@ -67,7 +67,8 @@ jobs:
           links: |
             {
               "GitHub": "https://github.com",
-              "Python": "https://python.org"
+              "Python": "https://python.org",
+              "API": "./pdoc/index.html"
             }
           output: 'artifacts'
 
