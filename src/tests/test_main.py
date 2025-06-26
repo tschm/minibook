@@ -1,3 +1,4 @@
+"""Test cases for the main module."""
 import os
 
 from minibook.main import get_git_repo_url
@@ -20,9 +21,8 @@ def test_get_git_repo_url_with_empty_environment_variable(monkeypatch):
     monkeypatch.setenv("GITHUB_REPOSITORY", "")
     assert get_git_repo_url() is None
 
+
 def test_get_git_repo_url():
     """Test get_git_repo_url."""
     repo = os.getenv("GITHUB_REPOSITORY", default="tschm/minibook")
     assert repo == "tschm/minibook"
-
-    #assert repo is None, f"Repo is {repo}"
