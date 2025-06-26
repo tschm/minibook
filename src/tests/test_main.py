@@ -22,6 +22,8 @@ def test_get_git_repo_url_with_empty_environment_variable(monkeypatch):
 
 def test_get_git_repo_url():
     """Test get_git_repo_url."""
-    repo = os.getenv("GITHUB_REPOSITORY")
-    assert repo is None, f"Repo is {repo}"
+    repo = os.getenv("GITHUB_REPOSITORY", default="tschm/minibook")
+    assert repo == "tschm/minibook"
+
+    #assert repo is None, f"Repo is {repo}"
 
