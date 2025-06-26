@@ -1,8 +1,5 @@
-"""
-Tests for the command-line functionality with the --validate-links flag.
-"""
+"""Tests for the command-line functionality with the --validate-links flag."""
 
-import os
 
 from typer.testing import CliRunner
 
@@ -42,10 +39,10 @@ def test_command_line_with_validate_links(tmp_path, monkeypatch):
     assert result.exit_code == 0, f"Command failed with error: {result.stdout}"
 
     # Check that the HTML file was created
-    assert os.path.exists(html_output / "index.html")
+    assert (html_output / "index.html").exists()
 
     # Read the file and check its contents
-    with open(html_output / "index.html") as f:
+    with (html_output / "index.html").open() as f:
         content = f.read()
 
     # Check that all links are in the content
@@ -89,10 +86,10 @@ def test_command_line_with_invalid_links(tmp_path, monkeypatch):
     assert result.exit_code == 0, f"Command failed with error: {result.stdout}"
 
     # Check that the HTML file was created
-    assert os.path.exists(html_output / "index.html")
+    assert (html_output / "index.html").exists()
 
     # Read the file and check its contents
-    with open(html_output / "index.html") as f:
+    with (html_output / "index.html").open() as f:
         content = f.read()
 
     # Check that all links are in the content (even the invalid one)
@@ -134,4 +131,4 @@ def test_command_line_with_invalid_links_abort(tmp_path, monkeypatch):
 
     # For now, we'll just check that the HTML file was NOT created
     # since the command is not failing as expected
-    assert not os.path.exists(html_output)
+    assert not html_output.exists()

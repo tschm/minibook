@@ -1,4 +1,4 @@
-"""global fixtures"""
+"""global fixtures."""
 
 from __future__ import annotations
 
@@ -9,5 +9,5 @@ import pytest
 
 @pytest.fixture(scope="session", name="resource_dir")
 def resource_fixture():
-    """resource fixture"""
+    """Resource fixture."""
     return Path(__file__).parent / "resources"

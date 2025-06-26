@@ -1,8 +1,6 @@
-"""
-Tests for the MiniBook package.
-"""
+"""Tests for the MiniBook package."""
 
-import os
+from pathlib import Path
 
 from minibook.main import generate_html, generate_mkdocs_project
 
@@ -30,10 +28,10 @@ def test_generate_html(resource_dir):
     )
 
     # Check that the file was created
-    assert os.path.exists(result)
+    assert Path(result).exists()
 
     # Read the file and check its contents
-    with open(result) as f:
+    with Path(result).open() as f:
         content = f.read()
 
     # Check that the title, description, and links are in the content
@@ -68,22 +66,23 @@ def test_generate_mkdocs_project(resource_dir):
     )
 
     # Check that the directory was created
-    assert os.path.exists(result)
+    result_path = Path(result)
+    assert result_path.exists()
 
     # Check that the docs directory was created
-    docs_dir = os.path.join(result, "docs")
-    assert os.path.exists(docs_dir)
+    docs_dir = result_path / "docs"
+    assert docs_dir.exists()
 
     # Check that the index.md file was created
-    index_file = os.path.join(docs_dir, "index.md")
-    assert os.path.exists(index_file)
+    index_file = docs_dir / "index.md"
+    assert index_file.exists()
 
     # Check that the mkdocs.yml file was created
-    mkdocs_file = os.path.join(result, "mkdocs.yml")
-    assert os.path.exists(mkdocs_file)
+    mkdocs_file = result_path / "mkdocs.yml"
+    assert mkdocs_file.exists()
 
     # Read the index.md file and check its contents
-    with open(index_file) as f:
+    with index_file.open() as f:
         content = f.read()
 
     # Check that the title, description, and links are in the content
@@ -120,7 +119,7 @@ def test_command_line_execution(resource_dir, tmp_path):
     assert html_result.returncode == 0, f"HTML command failed with error: {html_result.stderr}"
 
     # Check that the HTML file was created
-    assert os.path.exists(html_output)
+    assert html_output.exists()
 
     # Test MkDocs generation
     mkdocs_output = tmp_path / "test_mkdocs_site"
@@ -141,19 +140,19 @@ def test_command_line_execution(resource_dir, tmp_path):
     assert mkdocs_result.returncode == 0, f"MkDocs command failed with error: {mkdocs_result.stderr}"
 
     # Check that the MkDocs directory was created
-    assert os.path.exists(mkdocs_output)
+    assert mkdocs_output.exists()
 
     # Check that the docs directory was created
     docs_dir = mkdocs_output / "docs"
-    assert os.path.exists(docs_dir)
+    assert docs_dir.exists()
 
     # Check that the index.md file was created
     index_file = docs_dir / "index.md"
-    assert os.path.exists(index_file)
+    assert index_file.exists()
 
     # Check that the mkdocs.yml file was created
     mkdocs_file = mkdocs_output / "mkdocs.yml"
-    assert os.path.exists(mkdocs_file)
+    assert mkdocs_file.exists()
 
 
 def test_compile_command_execution(tmp_path):
@@ -178,7 +177,7 @@ def test_compile_command_execution(tmp_path):
     assert html_result.returncode == 0, f"HTML command failed with error: {html_result.stderr}"
 
     # Check that the HTML file was created
-    assert os.path.exists(html_output)
+    assert html_output.exists()
 
     # Test MkDocs generation
     mkdocs_output = tmp_path / "uvx_test_mkdocs_site"
@@ -197,19 +196,19 @@ def test_compile_command_execution(tmp_path):
     assert mkdocs_result.returncode == 0, f"MkDocs command failed with error: {mkdocs_result.stderr}"
 
     # Check that the MkDocs directory was created
-    assert os.path.exists(mkdocs_output)
+    assert mkdocs_output.exists()
 
     # Check that the docs directory was created
     docs_dir = mkdocs_output / "docs"
-    assert os.path.exists(docs_dir)
+    assert docs_dir.exists()
 
     # Check that the index.md file was created
     index_file = docs_dir / "index.md"
-    assert os.path.exists(index_file)
+    assert index_file.exists()
 
     # Check that the mkdocs.yml file was created
     mkdocs_file = mkdocs_output / "mkdocs.yml"
-    assert os.path.exists(mkdocs_file)
+    assert mkdocs_file.exists()
 
 
 def test_no_links_provided():
@@ -260,11 +259,11 @@ def test_multiline_links(tmp_path):
         f"HTML command with newlines failed with error: {html_result_newlines.stderr}"
 
     # Check that the HTML file was created
-    assert os.path.exists(html_output)
+    assert html_output.exists()
 
     html_file = html_output / "index.html"
     # Read the file and check its contents
-    with open(html_file) as f:
+    with html_file.open() as f:
         content = f.read()
 
     # Check that all links are in the content

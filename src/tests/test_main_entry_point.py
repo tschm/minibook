@@ -1,6 +1,4 @@
-"""
-Tests for the main entry point of the MiniBook package.
-"""
+"""Tests for the main entry point of the MiniBook package."""
 
 from unittest.mock import patch
 

@@ -1,23 +1,19 @@
-"""
-Test for the minibook action script.
-This test executes the test.sh script in the tests/resources directory.
+"""Test for the minibook action script.
+
+This test executes the test.sh script in the
+tests/resources directory.
 """
 
-import os
 import subprocess
 
 
 def test_action_script(resource_dir, tmp_path):
     """Test the minibook action script."""
-
     # Path to the test.sh script
     test_script = resource_dir / "test.sh"
 
     # Check that the script exists
     assert test_script.exists(), f"Test script not found at {test_script}"
-
-    # Make sure the script is executable
-    os.chmod(test_script, 0o755)
 
     # Execute the script
     result = subprocess.run(

@@ -1,7 +1,4 @@
-#!/usr/bin/env python3
-"""
-Test script for MiniBook
-"""
+"""Test script for MiniBook."""
 
 import os
 import subprocess
@@ -9,15 +6,8 @@ from pathlib import Path
 
 
 def test_html_generation():
-    """Test HTML generation"""
+    """Test HTML generation."""
     output_file = "test_output.html"
-
-    #links = ["python;https://www.python.org", "github;https://www.github.com"]
-    #links_tuples = [(link.split(";")[0], link.split(";")[1]) for link in links]
-    #print(links_tuples)
-
-    #assert False
-
 
     # Run the minibook script with command-line arguments for HTML generation
     cmd = [
@@ -41,11 +31,11 @@ def test_html_generation():
         file_path = Path(output_file).absolute()
         print(f"Generated file: {file_path}")
 
-        if os.path.exists(file_path):
-            print(f"File size: {os.path.getsize(file_path)} bytes")
+        if file_path.exists():
+            print(f"File size: {file_path.stat().st_size} bytes")
 
             # Print the first few lines of the file
-            with open(file_path) as f:
+            with file_path.open() as f:
                 print("\nFirst 10 lines of the HTML file:")
                 for i, line in enumerate(f):
                     if i < 10:
@@ -62,7 +52,7 @@ def test_html_generation():
 
 
 def test_mkdocs_generation():
-    """Test MkDocs generation"""
+    """Test MkDocs generation."""
     output_dir = "test_mkdocs_site"
 
     # Run the minibook script with command-line arguments for MkDocs generation
@@ -88,18 +78,18 @@ def test_mkdocs_generation():
         dir_path = Path(output_dir).absolute()
         print(f"Generated directory: {dir_path}")
 
-        if os.path.exists(dir_path):
+        if dir_path.exists():
             # List the files in the directory
             print("\nFiles in the MkDocs project:")
-            for root, dirs, files in os.walk(dir_path):
+            for root, _dirs, files in os.walk(dir_path):
                 for file in files:
-                    print(os.path.join(root, file))
+                    print(Path(root) / file)
 
             # Print the contents of the index.md file
-            index_file = os.path.join(dir_path, "docs", "index.md")
-            if os.path.exists(index_file):
+            index_file = dir_path / "docs" / "index.md"
+            if index_file.exists():
                 print("\nContents of index.md:")
-                with open(index_file) as f:
+                with index_file.open() as f:
                     print(f.read())
             else:
                 print("Error: index.md not found")

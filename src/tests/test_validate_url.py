@@ -1,6 +1,4 @@
-"""
-Tests for the validate_url function in the MiniBook package.
-"""
+"""Tests for the validate_url function in the MiniBook package."""
 
 from unittest.mock import MagicMock, patch
 
@@ -115,7 +113,7 @@ def test_validate_url_connection_error():
 
         # Check that the function returned the expected result
         assert is_valid is False
-        assert "Connection error" == error_message
+        assert error_message == "Connection error"
 
 
 def test_validate_url_timeout():
@@ -134,7 +132,7 @@ def test_validate_url_timeout():
 
         # Check that the function returned the expected result
         assert is_valid is False
-        assert "Timeout error" == error_message
+        assert error_message == "Timeout error"
 
 
 def test_validate_url_request_exception():
@@ -153,7 +151,7 @@ def test_validate_url_request_exception():
 
         # Check that the function returned the expected result
         assert is_valid is False
-        assert "Request error: Request failed" == error_message
+        assert error_message == "Request error: Request failed"
 
 
 def test_validate_url_general_exception():
@@ -172,4 +170,4 @@ def test_validate_url_general_exception():
 
         # Check that the function returned the expected result
         assert is_valid is False
-        assert "Unexpected error: Something went wrong" == error_message
+        assert error_message == "Unexpected error: Something went wrong"

@@ -1,8 +1,5 @@
-"""
-Tests for the invalid format case in the entrypoint function.
-"""
+"""Tests for the invalid format case in the entrypoint function."""
 
-import os
 
 from typer.testing import CliRunner
 
@@ -38,4 +35,4 @@ def test_invalid_format(tmp_path):
     assert "Invalid format: invalid. Must be 'html' or 'mkdocs'." in result.stderr
 
     # Check that the HTML file was NOT created
-    assert not os.path.exists(output_file)
+    assert not output_file.exists()

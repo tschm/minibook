@@ -1,6 +1,4 @@
-"""
-Tests for the JSON parsing error handling in the entrypoint function.
-"""
+"""Tests for the JSON parsing error handling in the entrypoint function."""
 
 from typer.testing import CliRunner
 

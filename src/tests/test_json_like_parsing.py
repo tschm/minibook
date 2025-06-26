@@ -1,8 +1,4 @@
-"""
-Test for parsing properly formatted JSON objects with quoted keys and values.
-"""
-
-import os
+"""Test for parsing properly formatted JSON objects with quoted keys and values."""
 
 from typer.testing import CliRunner
 
@@ -15,7 +11,6 @@ def test_json_like_parsing(tmp_path):
     runner = CliRunner()
 
     output_dir = tmp_path
-    os.makedirs(output_dir, exist_ok=True)
 
     # Test with a properly formatted JSON object with quoted keys and values
     json_like_input = '{"GitHub": "https://github.com",\
@@ -41,10 +36,10 @@ def test_json_like_parsing(tmp_path):
 
     # Check that the HTML file was created
     output_file = output_dir / "index.html"
-    assert os.path.exists(output_file)
+    assert output_file.exists()
 
     # Read the file and check its contents
-    with open(output_file) as f:
+    with output_file.open() as f:
         content = f.read()
 
     # Check that all links are in the content

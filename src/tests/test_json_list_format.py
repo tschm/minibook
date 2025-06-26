@@ -1,8 +1,4 @@
-"""
-Tests for the JSON list format case in the entrypoint function.
-"""
-
-import os
+"""Tests for the JSON list format case in the entrypoint function."""
 
 from typer.testing import CliRunner
 
@@ -40,10 +36,10 @@ def test_json_list_format(tmp_path):
 
     # Check that the HTML file was created
     output_file = output_dir / "index.html"
-    assert os.path.exists(output_file)
+    assert output_file.exists()
 
     # Read the file and check its contents
-    with open(output_file) as f:
+    with output_file.open() as f:
         content = f.read()
 
     # Check that all links are in the content

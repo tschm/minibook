@@ -1,9 +1,6 @@
-"""
-Tests for the MkDocs generation with HTML output file.
-"""
+"""Tests for the MkDocs generation with HTML output file."""
 
-import os
-import shutil
+from pathlib import Path
 
 from typer.testing import CliRunner
 
@@ -37,20 +34,17 @@ def test_mkdocs_html_output(tmp_path):
     assert result.exit_code == 0, f"Command failed with error: {result.stdout}"
 
     # Check that the default directory was created
-    default_dir = "minibook_site"
-    assert os.path.exists(default_dir), f"Default directory {default_dir} not found"
+    default_dir_path = Path("minibook_site")
+    assert default_dir_path.exists(), f"Default directory {default_dir_path} not found"
 
     # Check that the docs directory was created
-    docs_dir = os.path.join(default_dir, "docs")
-    assert os.path.exists(docs_dir), f"Docs directory {docs_dir} not found"
+    docs_dir = default_dir_path / "docs"
+    assert docs_dir.exists(), f"Docs directory {docs_dir} not found"
 
     # Check that the index.md file was created
-    index_file = os.path.join(docs_dir, "index.md")
-    assert os.path.exists(index_file), f"Index file {index_file} not found"
+    index_file = docs_dir / "index.md"
+    assert index_file.exists(), f"Index file {index_file} not found"
 
     # Check that the mkdocs.yml file was created
-    mkdocs_file = os.path.join(default_dir, "mkdocs.yml")
-    assert os.path.exists(mkdocs_file), f"MkDocs file {mkdocs_file} not found"
-
-    # Clean up the default directory
-    shutil.rmtree(default_dir)
+    mkdocs_file = default_dir_path / "mkdocs.yml"
+    assert mkdocs_file.exists(), f"MkDocs file {mkdocs_file} not found"
