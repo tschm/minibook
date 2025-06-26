@@ -15,34 +15,10 @@ from a list of links. It supports two different output formats:
 2. **MkDocs** - A complete MkDocs project structure
 that can be built into a static site
 
-## 🚀 Getting Started
-
-### **🔧 Set Up Environment**
-
-```bash
-make install
-```
-
-This installs/updates [uv](https://github.com/astral-sh/uv),
-creates your virtual environment and installs dependencies.
-
-For adding or removing packages:
-
-```bash
-uv add/remove requests  # for main dependencies
-uv add/remove requests --dev  # for dev dependencies
-```
-
-### **✅ Configure Pre-commit Hooks**
-
-```bash
-make fmt
-```
-
 ## 📋 Usage
 
 MiniBook can be used to create either an HTML page
-or a MkDocs project from a list of links.
+or an MkDocs project from a list of links.
 
 ### Examples
 
@@ -58,7 +34,7 @@ minibook --title "My Favorite Sites" \
 
 #### MkDocs Output
 
-Create a MkDocs project with a custom title and three links:
+Create an MkDocs project with a custom title and three links:
 
 ```bash
 minibook --title "My Favorite Sites" \
@@ -77,7 +53,7 @@ mkdocs serve  # Serve the site locally at http://127.0.0.1:8000/
 
 #### Different JSON Formats for Links
 
-MiniBook supports several JSON formats for the links parameter:
+MiniBook supports several JSON formats for the `links' parameter:
 
 1. **Dictionary Format** (used in previous examples):
 
@@ -124,7 +100,8 @@ minibook --title "My Favorite Sites" \
          --validate-links
 ```
 
-This will check each link to ensure it's accessible. If any links are invalid, you'll be prompted to continue or abort.
+This will check each link to ensure it's accessible. 
+If any links are invalid, you'll be prompted to continue or abort.
 
 ## 👥 Contributing
 
