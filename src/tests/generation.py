@@ -1,22 +1,24 @@
 """Test script for MiniBook."""
 
-import os
 import subprocess
 from pathlib import Path
 
 
 def test_html_generation():
     """Test HTML generation."""
-    output_file = "test_output.html"
+    output_dir = "test_output_html"
+
+    # Create the output directory if it doesn't exist
+    Path(output_dir).mkdir(exist_ok=True)
 
     # Run the minibook script with command-line arguments for HTML generation
     cmd = [
-        "./run_minibook.py",
+        "uv", "run", "minibook",
         "--title", "Test Links",
         "--description", "This is a test page created by MiniBook",
-        "--output", output_file,
+        "--output", output_dir,
         "--format", "html",
-        "--links", "python;https://www.python.org,github;https://www.github.com,wikipedia;https://www.wikipedia.org"
+        "--links", '{"python": "https://www.python.org", "github": "https://www.github.com", "wikipedia": "https://www.wikipedia.org"}'
     ]
 
 
@@ -28,22 +30,28 @@ def test_html_generation():
         print(result.stdout)
 
         # Check the generated HTML file
-        file_path = Path(output_file).absolute()
-        print(f"Generated file: {file_path}")
+        dir_path = Path(output_dir).absolute()
+        print(f"Generated directory: {dir_path}")
 
-        if file_path.exists():
-            print(f"File size: {file_path.stat().st_size} bytes")
+        if dir_path.exists():
+            # Check for the index.html file
+            html_file = dir_path / "index.html"
+            if html_file.exists():
+                print(f"HTML file found: {html_file}")
+                print(f"File size: {html_file.stat().st_size} bytes")
 
-            # Print the first few lines of the file
-            with file_path.open() as f:
-                print("\nFirst 10 lines of the HTML file:")
-                for i, line in enumerate(f):
-                    if i < 10:
-                        print(line.strip())
-                    else:
-                        break
+                # Print the first few lines of the file
+                with html_file.open() as f:
+                    print("\nFirst 10 lines of the HTML file:")
+                    for i, line in enumerate(f):
+                        if i < 10:
+                            print(line.strip())
+                        else:
+                            break
+            else:
+                print("Error: index.html not found in output directory")
         else:
-            print("Error: Output file not found")
+            print("Error: Output directory not found")
     else:
         print("HTML generation test failed!")
         print(f"Return code: {result.returncode}")
@@ -55,17 +63,17 @@ def test_mkdocs_generation():
     """Test MkDocs generation."""
     output_dir = "test_mkdocs_site"
 
+    # Create the output directory if it doesn't exist
+    Path(output_dir).mkdir(exist_ok=True)
+
     # Run the minibook script with command-line arguments for MkDocs generation
     cmd = [
-        "./run_minibook.py",
+        "uv", "run", "minibook",
         "--title", "Test Links",
         "--description", "This is a test page created by MiniBook",
         "--output", output_dir,
         "--format", "mkdocs",
-        "--links",
-        "https://www.python.org",
-        "https://www.github.com",
-        "https://www.wikipedia.org"
+        "--links", '{"python": "https://www.python.org", "github": "https://www.github.com", "wikipedia": "https://www.wikipedia.org"}'
     ]
 
     result = subprocess.run(cmd, capture_output=True, text=True)
@@ -81,9 +89,9 @@ def test_mkdocs_generation():
         if dir_path.exists():
             # List the files in the directory
             print("\nFiles in the MkDocs project:")
-            for root, _dirs, files in os.walk(dir_path):
-                for file in files:
-                    print(Path(root) / file)
+            for file_path in dir_path.glob("**/*"):
+                if file_path.is_file():
+                    print(file_path)
 
             # Print the contents of the index.md file
             index_file = dir_path / "docs" / "index.md"
