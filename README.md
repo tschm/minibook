@@ -39,13 +39,6 @@ uv add/remove requests --dev  # for dev dependencies
 make fmt
 ```
 
-Installs hooks to maintain code quality and formatting.
-
-### **📝 Update Project Info**
-
-- Edit `pyproject.toml` to update authors and email addresses
-- Configure GitHub Pages (branch: gh-pages) in repository settings
-
 ## 📋 Usage
 
 MiniBook can be used to create either an HTML page
@@ -82,17 +75,44 @@ mkdocs build  # Build the site
 mkdocs serve  # Serve the site locally at http://127.0.0.1:8000/
 ```
 
-#### Using Links Tuples
+#### Different JSON Formats for Links
 
-You can also provide links as tuples with custom names for each link:
+MiniBook supports several JSON formats for the links parameter:
+
+1. **Dictionary Format** (used in previous examples):
+
+```bash
+minibook --title "My Favorite Sites" \
+         --links '{"python": "https://www.python.org", "github": "https://www.github.com", "wikipedia": "https://www.wikipedia.org"}'
+```
+
+2. **List of Objects Format**:
 
 ```bash
 minibook --title "My Favorite Sites" \
          --links '[{"name": "Python", "url": "https://www.python.org"}, {"name": "GitHub", "url": "https://www.github.com"}, {"name": "Wikipedia", "url": "https://www.wikipedia.org"}]'
 ```
 
-This allows you to specify a different name for
-each link, rather than using the URL as the name.
+3. **List of Arrays Format**:
+
+```bash
+minibook --title "My Favorite Sites" \
+         --links '[["Python", "https://www.python.org"], ["GitHub", "https://www.github.com"], ["Wikipedia", "https://www.wikipedia.org"]]'
+```
+
+4. **Multi-line JSON Format** (useful in YAML files):
+
+```bash
+minibook --title "My Favorite Sites" \
+         --links '{
+           "Python": "https://www.python.org",
+           "GitHub": "https://www.github.com",
+           "Wikipedia": "https://www.wikipedia.org"
+         }'
+```
+
+These formats allow you to specify different names for each link, 
+rather than using the URL as the name.
 
 #### Validating Links
 
@@ -105,13 +125,6 @@ minibook --title "My Favorite Sites" \
 ```
 
 This will check each link to ensure it's accessible. If any links are invalid, you'll be prompted to continue or abort.
-
-## 🛠️ Development Commands
-
-```bash
-make tests   # Run test suite
-make marimo  # Start Marimo notebooks
-```
 
 ## 👥 Contributing
 
