@@ -51,7 +51,7 @@ def validate_url(url, timeout=5):
         return False, f"Unexpected error: {e!s}"
 
 
-def generate_html(title, links, description=None, timestamp=None, output_file="minibook.html"):
+def generate_html(title, links, description=None, timestamp=None, output_file="minibook.html", template_path=None):
     """Generate an HTML page with the given title and links using Jinja2.
 
     Args:
@@ -60,15 +60,27 @@ def generate_html(title, links, description=None, timestamp=None, output_file="m
         description (str, optional): A description to include on the page
         timestamp (str, optional): A fixed timestamp for testing purposes
         output_file (str, optional): The output HTML file
+        template_path (str, optional): Path to a custom Jinja2 template file
 
     Returns:
         str: The path to the generated HTML file
 
     """
     # Set up Jinja2 environment
-    template_dir = Path(__file__).parent / "templates"
-    env = Environment(loader=FileSystemLoader(template_dir))
-    template = env.get_template("html.j2")
+    if template_path:
+        # Use custom template if provided
+        template_file = Path(template_path)
+        if not template_file.exists():
+            raise FileNotFoundError(f"Template file not found: {template_path}")
+
+        template_dir = template_file.parent
+        env = Environment(loader=FileSystemLoader(template_dir))
+        template = env.get_template(template_file.name)
+    else:
+        # Use default template
+        template_dir = Path(__file__).parent / "templates"
+        env = Environment(loader=FileSystemLoader(template_dir))
+        template = env.get_template("html.j2")
 
     # Use the provided timestamp or generate a new one
     if timestamp is None:
@@ -156,6 +168,9 @@ def entrypoint(
         "html", "--format", help="Output format: html or mkdocs", show_choices=True, case_sensitive=False
     ),
     validate_links: bool = typer.Option(False, "--validate-links", help="Validate that all links are accessible"),
+    template: str | None = typer.Option(
+        None, "--template", help="Path to a custom Jinja2 template file for HTML output"
+    ),
 ) -> int:
     """Create a minibook from a list of links."""
     if format not in ["html", "mkdocs"]:
@@ -234,8 +249,12 @@ def entrypoint(
     if format == "html":
         # Generate HTML using Jinja2
         output_file = Path(output) / "index.html"
-        output_path = generate_html(title, link_tuples, description, timestamp, output_file)
-        typer.echo(f"HTML minibook created successfully: {Path(output_path).absolute()}")
+        try:
+            output_path = generate_html(title, link_tuples, description, timestamp, output_file, template)
+            typer.echo(f"HTML minibook created successfully: {Path(output_path).absolute()}")
+        except FileNotFoundError as e:
+            typer.echo(f"Error: {e}", err=True)
+            return 1
     else:
         # Generate MkDocs project
         output_dir = output
