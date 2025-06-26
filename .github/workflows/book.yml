@@ -51,7 +51,8 @@ jobs:
       id-token: write
 
     environment:
-      gith
+      name: github-pages
+
     steps:
       # Step 1: Checkout the repository code
       - name: Checkout ${{ github.repository }}
@@ -63,5 +64,18 @@ jobs:
         uses: ./.github/actions/minibook
         with:
           links:
-            '{"GitHub": "https://github.com",
-              "Python": "https://python.org"}'
+            "{'GitHub': 'https://github.com',
+              'Python': 'https://python.org'}"
+          output: 'artifacts'
+
+        # Package all artifacts for GitHub Pages deployment
+        # This prepares the combined outputs for deployment
+      - name: Upload static files as artifact
+        id: upload
+        uses: actions/upload-pages-artifact@v3 # or specific "vX.X.X" version tag for this action
+        with:
+          path: artifacts/  # Path to the directory containing all artifacts
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
