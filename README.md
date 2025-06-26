@@ -1,4 +1,4 @@
-# 📦 [minibook](https://tschm.github.io/minibook/book)
+# 📦 [minibook](https://tschm.github.io/minibook/)
 
 [![PyPI version](https://badge.fury.io/py/minibook.svg)](https://badge.fury.io/py/minibook)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.txt)
