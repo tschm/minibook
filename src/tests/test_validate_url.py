@@ -127,11 +127,49 @@ def test_validate_url_timeout():
 
         # Check that the function made a HEAD request
         mock_head.assert_called_once_with(
-            "https://slow.example.com",
-            timeout=5,
+            "https://slow.example.com", 
+            timeout=5, 
             allow_redirects=True
         )
 
         # Check that the function returned the expected result
         assert is_valid is False
         assert "Timeout error" == error_message
+
+
+def test_validate_url_request_exception():
+    """Test the validate_url function with a request exception."""
+    # Mock a request exception
+    with patch('requests.head', side_effect=requests.exceptions.RequestException("Request failed")) as mock_head:
+        # Test a URL that causes a request exception
+        is_valid, error_message = validate_url("https://example.com")
+
+        # Check that the function made a HEAD request
+        mock_head.assert_called_once_with(
+            "https://example.com", 
+            timeout=5, 
+            allow_redirects=True
+        )
+
+        # Check that the function returned the expected result
+        assert is_valid is False
+        assert "Request error: Request failed" == error_message
+
+
+def test_validate_url_general_exception():
+    """Test the validate_url function with a general exception."""
+    # Mock a general exception
+    with patch('requests.head', side_effect=Exception("Something went wrong")) as mock_head:
+        # Test a URL that causes a general exception
+        is_valid, error_message = validate_url("https://example.com")
+
+        # Check that the function made a HEAD request
+        mock_head.assert_called_once_with(
+            "https://example.com", 
+            timeout=5, 
+            allow_redirects=True
+        )
+
+        # Check that the function returned the expected result
+        assert is_valid is False
+        assert "Unexpected error: Something went wrong" == error_message

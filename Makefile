@@ -43,6 +43,6 @@ help:  ## Display this help screen
 
 # Mark 'test' as a phony target
 .PHONY: test
-test: install  ## Run pytests
-	@uv pip install pytest  # Install pytest testing framework
-	@uv run pytest src/tests  # Run all tests in the src/tests directory
+test: install  ## Run pytests with coverage
+	@uv pip install pytest pytest-cov  # Install pytest and coverage testing frameworks
+	@uv run pytest --cov=src/minibook src/tests  # Run all tests with coverage reporting
