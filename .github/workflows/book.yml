@@ -63,9 +63,11 @@ jobs:
       - name: Upload the book
         uses: ./.github/actions/minibook
         with:
-          links:
-            "{'GitHub': 'https://github.com',
-              'Python': 'https://python.org'}"
+          links: |
+            {
+              "GitHub": "https://github.com",
+              "Python": "https://python.org"
+            }
           output: 'artifacts'
 
         # Package all artifacts for GitHub Pages deployment
