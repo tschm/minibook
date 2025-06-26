@@ -8,6 +8,7 @@ import json
 import os
 import sys
 from datetime import datetime
+from pathlib import Path
 
 import requests
 import typer
@@ -144,7 +145,7 @@ app = typer.Typer(help="Create a minibook from a list of links")
 def entrypoint(
     title: str = typer.Option("My Links", "--title", "-t", help="Title of the minibook"),
     description: str | None = typer.Option(None, "--description", "-d", help="Description of the minibook"),
-    output: str = typer.Option("minibook.html", "--output", "-o", help="Output file or directory"),
+    output: str = typer.Option(None, "--output", "-o", help="Output file or directory"),
     links: str = typer.Option(
         None,
         "--links",
@@ -320,9 +321,9 @@ def entrypoint(
 
     if format == "html":
         # Generate HTML using Jinja2
-        output_file = output
-        if os.path.isdir(output_file):
-            output_file = os.path.join(output_file, "minibook.html")
+        output_file = Path(output) / "index.html"
+        #if os.path.isdir(output_file):
+        #    output_file = os.path.join(output_file, "minibook.html")
 
         output_path = generate_html(title, link_tuples, description, timestamp, output_file)
         typer.echo(f"HTML minibook created successfully: {os.path.abspath(output_path)}")
