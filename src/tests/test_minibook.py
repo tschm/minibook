@@ -242,6 +242,14 @@ def test_multiline_links(tmp_path):
     multiline_links = '[{"name": "Python", "url": "https://www.python.org"}, {"name": "GitHub", "url": "https://www.github.com"}]'
     escaped_links = '[{"name": "Wikipedia", "url": "https://www.wikipedia.org"}, {"name": "MiniBook", "url": "https://github.com/tschm/minibook"}]'
 
+    # Create a multi-line JSON object with newlines and indentation (like in book.yml)
+    indented_json = """
+    {
+      "GitHub": "https://github.com",
+      "Python": "https://python.org"
+    }
+    """
+
     # Test with actual newlines
     html_cmd_newlines = [
         "minibook",
@@ -296,3 +304,31 @@ def test_multiline_links(tmp_path):
     # Check that all links are in the content
     assert "https://www.wikipedia.org" in content
     assert "https://github.com/tschm/minibook" in content
+
+    # Test with indented JSON (like in book.yml)
+    html_output_indented = tmp_path / "indented_test_output.html"
+    html_cmd_indented = [
+        "minibook",
+        "--title", "Indented JSON Test",
+        "--description", "Testing indented JSON in links",
+        "--output", str(html_output_indented),
+        "--format", "html",
+        "--links", indented_json,
+    ]
+
+    html_result_indented = subprocess.run(html_cmd_indented, capture_output=True, text=True)
+
+    # Check that the command executed successfully
+    assert html_result_indented.returncode == 0, \
+        f"HTML command with indented JSON failed with error: {html_result_indented.stderr}"
+
+    # Check that the HTML file was created
+    assert os.path.exists(html_output_indented)
+
+    # Read the file and check its contents
+    with open(html_output_indented) as f:
+        content = f.read()
+
+    # Check that all links are in the content
+    assert "https://github.com" in content
+    assert "https://python.org" in content
