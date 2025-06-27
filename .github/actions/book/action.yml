@@ -51,10 +51,10 @@ runs:
       with:
         path: artifacts  # Directory where artifacts will be downloaded
 
-    - name: Install minibook from source
-      shell: bash
-      run: |
-        pip install .
+    #- name: Install minibook from source
+    #  shell: bash
+    #  run: |
+    #    pip install minibook==0.0.13
     # now the `minibook` CLI is on your PATH
 
     # Step 3: Generate the minibook using the minibook CLI tool
@@ -63,8 +63,7 @@ runs:
       shell: bash  # Use bash shell to run the command
       run: |
         # Run minibook CLI tool with uvx (uv execute)
-        #uvx minibook@v0.0.11 \
-        minibook \
+        uvx minibook@v0.0.13 \
           --title "${{ inputs.title }}" \
           --subtitle "${{ inputs.subtitle }}" \
           --links '${{ inputs.links }}' \
