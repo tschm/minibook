@@ -61,8 +61,15 @@ runs:
     - name: Create minibook
       shell: bash  # Use bash shell to run the command
       run: |
+        # Install the minibook package
+        uv pip install -e .
+        
+        echo 'Title ${{ inputs.title }}'
+        echo 'Links ${{ inputs.links }}'
+        echo 'Template ${{ inputs.template }}'
+        
         # Run minibook CLI tool
-        uvx minibook \
+        minibook \
           --title "${{ inputs.title }}"  # Pass the title input parameter
           --description "${{ inputs.subtitle }}"  # Pass the subtitle input parameter
           --output 'artifacts'  # Output to the artifacts directory
