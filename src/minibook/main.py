@@ -67,13 +67,13 @@ def validate_url(url, timeout=5):
         return False, f"Unexpected error: {e!s}"
 
 
-def generate_html(title, links, description=None, output_file="index.html", template_path=None):
+def generate_html(title, links, subtitle=None, output_file="index.html", template_path=None):
     """Generate an HTML page with the given title and links using Jinja2.
 
     Args:
         title (str): The title of the webpage
         links (list): A list of tuples with (name, url)
-        description (str, optional): A description to include on the page
+        subtitle (str, optional): A description to include on the page
         output_file (str, optional): The output HTML file
         template_path (str, optional): Path to a custom Jinja2 template file
 
@@ -101,7 +101,7 @@ def generate_html(title, links, description=None, output_file="index.html", temp
 
     # Render the template with our data
     html = template.render(
-        title=title, links=links, description=description, timestamp=timestamp, repository_url=get_git_repo_url()
+        title=title, links=links, description=subtitle, timestamp=timestamp, repository_url=get_git_repo_url()
     )
 
     # Save the HTML to a file
