@@ -1,7 +1,7 @@
 # 📦 [minibook](https://tschm.github.io/minibook/)
 
 [![PyPI version](https://badge.fury.io/py/minibook.svg)](https://badge.fury.io/py/minibook)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.txt)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/tschm/minibook/actions/workflows/ci.yml/badge.svg)](https://github.com/tschm/minibook/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/tschm/minibook/badge.svg?branch=main)](https://coveralls.io/github/tschm/minibook?branch=main)
 [![Created with qCradle](https://img.shields.io/badge/Created%20with-qCradle-blue?style=flat-square)](https://github.com/tschm/package)
@@ -21,18 +21,20 @@ Create an HTML page with a custom title and three links:
 
 ```bash
 minibook --title "My Favorite Sites" \
+         --output "artifacts" \
          --links '{"python": "https://www.python.org", "github": "https://www.github.com", "wikipedia": "https://www.wikipedia.org"}'
 ```
 
 
 #### Different JSON Formats for Links
 
-MiniBook supports several JSON formats for the `links' parameter:
+MiniBook supports several JSON formats for the `links` parameter:
 
 1. **Dictionary Format** (used in previous examples):
 
 ```bash
 minibook --title "My Favorite Sites" \
+         --output "artifacts" \
          --links '{"python": "https://www.python.org", "github": "https://www.github.com", "wikipedia": "https://www.wikipedia.org"}'
 ```
 
@@ -40,6 +42,7 @@ minibook --title "My Favorite Sites" \
 
 ```bash
 minibook --title "My Favorite Sites" \
+         --output "artifacts" \
          --links '[{"name": "Python", "url": "https://www.python.org"}, {"name": "GitHub", "url": "https://www.github.com"}, {"name": "Wikipedia", "url": "https://www.wikipedia.org"}]'
 ```
 
@@ -47,6 +50,7 @@ minibook --title "My Favorite Sites" \
 
 ```bash
 minibook --title "My Favorite Sites" \
+         --output "artifacts" \
          --links '[["Python", "https://www.python.org"], ["GitHub", "https://www.github.com"], ["Wikipedia", "https://www.wikipedia.org"]]'
 ```
 
@@ -54,6 +58,7 @@ minibook --title "My Favorite Sites" \
 
 ```bash
 minibook --title "My Favorite Sites" \
+         --output "artifacts" \
          --links '{
            "Python": "https://www.python.org",
            "GitHub": "https://www.github.com",
@@ -70,6 +75,7 @@ You can validate that all links are accessible before creating the minibook:
 
 ```bash
 minibook --title "My Favorite Sites" \
+         --output "artifacts" \
          --links '{"python": "https://www.python.org", "github": "https://www.github.com"}' \
          --validate-links
 ```
@@ -108,6 +114,7 @@ To use the MiniBook action in your GitHub workflow:
 | `subtitle` | Description of the minibook | No | "" |
 | `links` | JSON formatted links | Yes | N/A |
 | `template` | Path to a custom Jinja2 template file for HTML output | No | "" |
+| `output` | Output directory for generated files | No | "artifacts" |
 
 ### Complete Example
 

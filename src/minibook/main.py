@@ -1,6 +1,6 @@
 """MiniBook - A tool to create a webpage from a list of links.
 
-Supports both MkDocs and Jinja2/HTML generation.
+Generates a clean, responsive HTML webpage using Jinja2 templates.
 """
 
 import json
