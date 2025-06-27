@@ -18,8 +18,14 @@ inputs:
     required: false
     default: ''
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 runs:
   using: 'composite'
+
   steps:
     - name: Set up Python 3.12
       uses: astral-sh/setup-uv@v6

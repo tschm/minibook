@@ -46,9 +46,9 @@ jobs:
     needs: [test, pdoc]  # This job depends on all other jobs
 
     # Additional write permissions needed for publishing
-    permissions:
-      pages: write     # Allows the workflow to write to the repository (for publishing)
-      id-token: write
+    # permissions:
+    #   pages: write     # Allows the workflow to write to the repository (for publishing)
+    #   id-token: write
 
     environment:
       name: github-pages
