@@ -131,6 +131,9 @@ def entrypoint(
     ),
 ) -> int:
     """Create a minibook from a list of links."""
+    typer.echo(f"Creating minibook: {title}")
+    typer.echo(f"Links: {links}")
+
     if links is None:
         typer.echo("No links provided. Exiting.", err=True)
         sys.exit(1)

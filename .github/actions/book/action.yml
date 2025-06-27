@@ -70,8 +70,8 @@ runs:
         
         # Run minibook CLI tool
         uvx minibook \
-          --title "${{ inputs.title }}"  # Pass the title input parameter
-          --description "${{ inputs.subtitle }}"  # Pass the subtitle input parameter
+          --title '${{ inputs.title }}'  # Pass the title input parameter
+          --description '${{ inputs.subtitle }}'  # Pass the subtitle input parameter
           --output 'artifacts'  # Output to the artifacts directory
           --links '${{ inputs.links }}'  # Pass the links input parameter
           --template '${{ inputs.template }}'  # Pass the template input parameter (if provided)
