@@ -117,8 +117,8 @@ app = typer.Typer(help="Create a minibook from a list of links")
 @app.command()
 def entrypoint(
     title: str = typer.Option("My Links", "--title", "-t", help="Title of the minibook"),
-    description: str | None = typer.Option(None, "--description", "-d", help="Description of the minibook"),
-    output: str = typer.Option(None, "--output", "-o", help="Output directory"),
+    subtitle: str | None = typer.Option(None, "--description", "-d", help="Description of the minibook"),
+    output: str = typer.Option("artifacts", "--output", "-o", help="Output directory"),
     links: str = typer.Option(
         None,
         "--links",
@@ -203,7 +203,7 @@ def entrypoint(
     # Generate HTML using Jinja2
     output_file = Path(output) / "index.html"
     try:
-        output_path = generate_html(title, link_tuples, description, output_file, template)
+        output_path = generate_html(title, link_tuples, subtitle, output_file, template)
         typer.echo(f"HTML minibook created successfully: {Path(output_path).absolute()}")
     except FileNotFoundError as e:
         typer.echo(f"Error: {e}", err=True)
