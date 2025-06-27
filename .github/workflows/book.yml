@@ -11,7 +11,7 @@ on:
 
 # Permissions needed for the workflow
 permissions:
-    checks: write  # Allows the workflow to write check results
+    checks: write   # Allows the workflow to write check results
     contents: read  # Read-only access to repository contents
 
 jobs:
