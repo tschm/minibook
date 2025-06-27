@@ -51,6 +51,12 @@ runs:
       with:
         path: artifacts  # Directory where artifacts will be downloaded
 
+    - name: Install minibook from source
+      shell: bash
+      run: |
+        pip install .
+    # now the `minibook` CLI is on your PATH
+
     # Step 3: Generate the minibook using the minibook CLI tool
     # This step runs the minibook command with the input parameters
     - name: Create minibook

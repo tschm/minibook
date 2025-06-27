@@ -2,7 +2,6 @@
 name = 'minibook'
 version = "0.0.0"
 description = "Minibook for reporting"
-# Please add authors and correct the email...
 authors = [{name='Thomas Schmelzer', email= 'thomas.schmelzer@gmail.com'}]
 readme = "README.md"
 requires-python = ">=3.10"
