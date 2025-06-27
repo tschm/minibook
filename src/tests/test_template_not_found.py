@@ -45,7 +45,6 @@ def test_entrypoint_template_not_found(tmp_path):
         "--title", "Template Not Found Test",
         "--description", "Testing template not found error",
         "--output", str(output_dir),
-        "--format", "html",
         "--template", "nonexistent_template.j2",
         "--links", '{"python": "https://www.python.org"}'
     ]
