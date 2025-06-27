@@ -325,7 +325,6 @@ version = "0.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "jinja2" },
-    { name = "pyyaml" },
     { name = "requests" },
     { name = "typer" },
 ]
@@ -343,7 +342,6 @@ requires-dist = [
     { name = "pre-commit", marker = "extra == 'dev'", specifier = ">=4.2.0" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.3.3" },
     { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=6.0.0" },
-    { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "requests", specifier = ">=2.31.0" },
     { name = "typer", specifier = ">=0.16.0" },
 ]

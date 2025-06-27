@@ -4,9 +4,9 @@ Supports both MkDocs and Jinja2/HTML generation.
 """
 
 import json
-import os
 import sys
 from datetime import datetime
+from os import getenv
 from pathlib import Path
 
 import requests
@@ -15,8 +15,7 @@ from jinja2 import Environment, FileSystemLoader
 
 
 def get_git_repo_url():
-    """
-    Retrieve the GitHub repository URL.
+    """Retrieve the GitHub repository URL.
 
     This function generates the GitHub repository URL based on the repository name
     retrieved from the environment variable 'GITHUB_REPOSITORY'. If the environment
@@ -27,7 +26,7 @@ def get_git_repo_url():
     :rtype: str
     """
     # Fallback to environment variable if git command fails
-    github_repo = os.getenv("GITHUB_REPOSITORY", default="tschm/minibook")
+    github_repo = getenv("GITHUB_REPOSITORY", default="tschm/minibook")
     return f"https://github.com/{github_repo}"
 
 
@@ -126,12 +125,10 @@ def entrypoint(
         "-l",
         help="JSON formatted links: can be a list of objects with name/url keys, a list of arrays, or a dictionary",
     ),
-    timestamp: str | None = typer.Option(None, "--timestamp", help="Fixed timestamp for testing purposes"),
     validate_links: bool = typer.Option(False, "--validate-links", help="Validate that all links are accessible"),
     template: str | None = typer.Option(
         None, "--template", help="Path to a custom Jinja2 template file for HTML output"
     ),
-    format: str = typer.Option("html", "--format", help="Output format: html or mkdocs (mkdocs not implemented yet)")
 ) -> int:
     """Create a minibook from a list of links."""
     if links is None:

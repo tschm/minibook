@@ -29,7 +29,7 @@ def test_generate_html(resource_dir):
     assert Path(result).exists()
 
     # Read the file and check its contents
-    with open(result) as f:
+    with Path(result).open() as f:
         content = f.read()
 
     # Check that the title, description, and links are in the content
@@ -141,7 +141,7 @@ def test_multiline_links(tmp_path):
 
     html_file = html_output / "index.html"
     # Read the file and check its contents
-    with open(html_file) as f:
+    with html_file.open() as f:
         content = f.read()
 
     # Check that all links are in the content

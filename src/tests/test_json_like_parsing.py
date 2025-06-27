@@ -38,7 +38,7 @@ def test_json_like_parsing(tmp_path):
     assert output_file.exists()
 
     # Read the file and check its contents
-    with open(output_file) as f:
+    with output_file.open() as f:
         content = f.read()
 
     # Check that all links are in the content

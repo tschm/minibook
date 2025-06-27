@@ -41,7 +41,7 @@ def test_command_line_with_validate_links(tmp_path, monkeypatch):
     assert (html_output / "index.html").exists()
 
     # Read the file and check its contents
-    with open(html_output / "index.html") as f:
+    with (html_output / "index.html").open() as f:
         content = f.read()
 
     # Check that all links are in the content
@@ -87,7 +87,7 @@ def test_command_line_with_invalid_links(tmp_path, monkeypatch):
     assert (html_output / "index.html").exists()
 
     # Read the file and check its contents
-    with open(html_output / "index.html") as f:
+    with (html_output / "index.html").open() as f:
         content = f.read()
 
     # Check that all links are in the content (even the invalid one)
