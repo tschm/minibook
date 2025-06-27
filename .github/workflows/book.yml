@@ -11,7 +11,7 @@ on:
 
 # Permissions needed for the workflow
 permissions:
-    checks: write  # Allows the workflow to write check results
+    checks: write   # Allows the workflow to write check results
     contents: read  # Read-only access to repository contents
 
 jobs:
@@ -68,6 +68,5 @@ jobs:
               "Coverage": "./tests/html-coverage/index.html",
               "Test Report": "./tests/html-report/report.html"
             }
-          #output: 'artifacts'
           title: 'MiniBook'
           subtitle: 'by Jebel Quant'
