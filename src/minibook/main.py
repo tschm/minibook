@@ -135,10 +135,6 @@ def entrypoint(
         typer.echo("No links provided. Exiting.", err=True)
         sys.exit(1)
 
-    # Ensure links is a string, not a list
-    # if isinstance(links, list):
-    #     links = "\n".join(links)
-
     typer.echo(f"Parsing links: {links}")
 
     link_tuples = []
@@ -175,23 +171,7 @@ def entrypoint(
     # Fall back to the original parsing logic for backward compatibility
     except (json.JSONDecodeError, TypeError):
         typer.echo("JSON parsing failed, falling back to legacy format")
-
-        # Parse semicolon-separated format: "name;url,name;url,..."
-        if ";" in links and "," in links:
-            for link_pair in links.split(","):
-                parts = link_pair.split(";")
-                if len(parts) >= 2:
-                    link_tuples.append((parts[0], parts[1]))
-        # Parse semicolon-separated format without commas: "name;url"
-        elif ";" in links:
-            parts = links.split(";")
-            if len(parts) >= 2:
-                link_tuples.append((parts[0], parts[1]))
-        # If no recognized format, use the string as both name and URL
-        else:
-            link_tuples.append((links, links))
-
-        typer.echo(f"Parsed legacy format links: {link_tuples}")
+        return 1
 
     # Validate links if requested
     if validate_links:
