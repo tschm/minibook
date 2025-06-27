@@ -5,7 +5,7 @@ from pathlib import Path
 from minibook.main import generate_html
 
 
-def test_generate_html(resource_dir):
+def test_generate_html(tmp_path):
     """Test generating HTML with Jinja2."""
     # Define test data
     title = "Test Links"
@@ -15,7 +15,7 @@ def test_generate_html(resource_dir):
         ("GitHub", "https://www.github.com"),
         ("Wikipedia", "https://www.wikipedia.org")
     ]
-    output_file = resource_dir / "test_output.html"
+    output_file = tmp_path / "test_output.html"
 
     # Generate the HTML
     result = generate_html(
@@ -40,7 +40,7 @@ def test_generate_html(resource_dir):
     assert "https://www.wikipedia.org" in content
 
 
-def test_command_line_execution(resource_dir, tmp_path):
+def test_command_line_execution(tmp_path):
     """Test command-line execution of MiniBook."""
     import subprocess
 
