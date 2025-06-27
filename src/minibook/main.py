@@ -8,6 +8,7 @@ import sys
 from datetime import datetime
 from os import getenv
 from pathlib import Path
+from typing import Optional
 
 import requests
 import typer
@@ -117,18 +118,11 @@ app = typer.Typer(help="Create a minibook from a list of links")
 @app.command()
 def entrypoint(
     title: str = typer.Option("My Links", "--title", "-t", help="Title of the minibook"),
-    subtitle: str | None = typer.Option(None, "--description", "-d", help="Description of the minibook"),
+    subtitle: Optional[str] = typer.Option(None, "--description", "-d", help="Description of the minibook"),
     output: str = typer.Option("artifacts", "--output", "-o", help="Output directory"),
-    links: str = typer.Option(
-        None,
-        "--links",
-        "-l",
-        help="JSON formatted links: can be a list of objects with name/url keys, a list of arrays, or a dictionary",
-    ),
+    links: str = typer.Option(None, "--links", "-l", help="JSON formatted links"),
     validate_links: bool = typer.Option(False, "--validate-links", help="Validate that all links are accessible"),
-    template: str | None = typer.Option(
-        None, "--template", help="Path to a custom Jinja2 template file for HTML output"
-    ),
+    template: Optional[str] = typer.Option(None, "--template", help="Path to a custom Jinja2 template file")
 ) -> int:
     """Create a minibook from a list of links."""
     typer.echo(f"Creating minibook: {title}")
