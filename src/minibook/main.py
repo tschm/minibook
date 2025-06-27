@@ -8,7 +8,6 @@ import sys
 from datetime import datetime
 from os import getenv
 from pathlib import Path
-from typing import Optional
 
 import requests
 import typer
@@ -118,16 +117,20 @@ app = typer.Typer(help="Create a minibook from a list of links")
 @app.command()
 def entrypoint(
     title: str = typer.Option("My Links", "--title", "-t", help="Title of the minibook"),
-    subtitle: Optional[str] = typer.Option(None, "--description", "-d", help="Description of the minibook"),
+    description: str | None = typer.Option(None, "--description", "-d", help="Description of the minibook"),
     output: str = typer.Option("artifacts", "--output", "-o", help="Output directory"),
-    links: str = typer.Option(None, "--links", "-l", help="JSON formatted links"),
+    links: str = typer.Option(
+        None,
+        "--links",
+        "-l",
+        help="JSON formatted links: can be a list of objects with name/url keys, a list of arrays, or a dictionary",
+    ),
     validate_links: bool = typer.Option(False, "--validate-links", help="Validate that all links are accessible"),
-    template: Optional[str] = typer.Option(None, "--template", help="Path to a custom Jinja2 template file")
+    template: str | None = typer.Option(
+        None, "--template", help="Path to a custom Jinja2 template file for HTML output"
+    ),
 ) -> int:
     """Create a minibook from a list of links."""
-    typer.echo(f"Creating minibook: {title}")
-    typer.echo(f"Links: {links}")
-
     if links is None:
         typer.echo("No links provided. Exiting.", err=True)
         sys.exit(1)
@@ -197,7 +200,7 @@ def entrypoint(
     # Generate HTML using Jinja2
     output_file = Path(output) / "index.html"
     try:
-        output_path = generate_html(title, link_tuples, subtitle, output_file, template)
+        output_path = generate_html(title, link_tuples, description, output_file, template)
         typer.echo(f"HTML minibook created successfully: {Path(output_path).absolute()}")
     except FileNotFoundError as e:
         typer.echo(f"Error: {e}", err=True)
