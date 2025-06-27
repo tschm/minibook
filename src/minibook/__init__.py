@@ -3,6 +3,6 @@
 Supports both MkDocs and Jinja2/HTML generation.
 """
 
-from .main import entrypoint, generate_html, generate_mkdocs_project
+from .main import entrypoint, generate_html
 
-__all__ = ["entrypoint", "generate_html", "generate_mkdocs_project"]
+__all__ = ["entrypoint", "generate_html"]

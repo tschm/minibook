@@ -21,7 +21,6 @@ def test_json_parsing_error(tmp_path):
         "--title", "JSON Parsing Error Test",
         "--description", "Testing JSON parsing error handling",
         "--output", str(output_dir),
-        "--format", "html",
         "--links", invalid_json
     ]
 

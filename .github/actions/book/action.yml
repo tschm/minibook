@@ -5,7 +5,7 @@ inputs:
     description: 'Title of the minibook'
     required: false
     default: 'My Links'
-  description:
+  subtitle:
     description: 'Description of the minibook'
     required: false
     default: ''
@@ -21,20 +21,26 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - name: Set up Python 3.12
+      uses: astral-sh/setup-uv@v6
+      with:
+        python-version: 3.12
+
     - name: Download all artifacts
       uses: actions/download-artifact@v4
       with:
         path: artifacts
 
     # Step 2: Make the minibook
-    - name: Upload the book
-      uses: tschm/miniBook/.github/actions/minibook@v0.0.8
-      with:
-        links: ${{ inputs.links }}
-        output: 'artifacts'
-        title: ${{ inputs.title }}
-        template: ${{ inputs.template }}
-        format: 'html'
+    - name: Create minibook
+      shell: bash
+      run: |
+        uvx minibook \
+          --title "${{ inputs.title }}" \
+          --description "${{ inputs.subtitle }}" \
+          --output 'artifacts' \
+          --links '${{ inputs.links }}' \
+          --template '${{ inputs.template }}'
 
     - name: Inspect artifacts
       shell: bash

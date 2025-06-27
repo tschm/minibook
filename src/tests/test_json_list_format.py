@@ -21,7 +21,6 @@ def test_json_list_format(tmp_path):
         "--title", "JSON List Format Test",
         "--description", "Testing JSON list format",
         "--output", str(output_dir),
-        "--format", "html",
         "--links", json_list_input
     ]
 

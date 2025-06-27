@@ -21,7 +21,6 @@ def test_json_like_parsing(tmp_path):
         "--title", "JSON-like Test",
         "--description", "Testing JSON-like parsing",
         "--output", str(output_dir),
-        "--format", "html",
         "--links", json_like_input
     ]
 
