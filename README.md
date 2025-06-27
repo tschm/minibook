@@ -111,7 +111,7 @@ To use the MiniBook action in your GitHub workflow:
 
 ### Complete Example
 
-When using this action with GitHub Pages, you must set 
+When using this action with GitHub Pages, you must set
 the following permissions in your workflow:
 
 - `contents: read`: To read repository contents
