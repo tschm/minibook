@@ -19,7 +19,7 @@ def test_json_like_parsing(tmp_path):
     # Create the command arguments
     args = [
         "--title", "JSON-like Test",
-        "--description", "Testing JSON-like parsing",
+        "--subtitle", "Testing JSON-like parsing",
         "--output", str(output_dir),
         "--links", json_like_input
     ]

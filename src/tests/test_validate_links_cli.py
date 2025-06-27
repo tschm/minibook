@@ -17,7 +17,7 @@ def test_command_line_with_validate_links(tmp_path, monkeypatch):
     # Create the command arguments
     args = [
         "--title", "Validate Links Test",
-        "--description", "Testing link validation",
+        "--subtitle", "Testing link validation",
         "--output", str(html_output),
         "--links", '{"Python": "https://www.python.org", "GitHub": "https://www.github.com"}',
         "--validate-links"
@@ -60,7 +60,7 @@ def test_command_line_with_invalid_links(tmp_path, monkeypatch):
     # Create the command arguments
     args = [
         "--title", "Invalid Links Test",
-        "--description", "Testing invalid links",
+        "--subtitle", "Testing invalid links",
         "--output", str(html_output),
         "--links", '{"Python": "https://www.python.org", "GitHub": "https://www.github.com"}',
         "--validate-links"
@@ -106,7 +106,7 @@ def test_command_line_with_invalid_links_abort(tmp_path, monkeypatch):
     # Create the command arguments
     args = [
         "--title", "Abort Links Test",
-        "--description", "Testing aborting with invalid links",
+        "--subtitle", "Testing aborting with invalid links",
         "--output", str(html_output),
         "--links", '{"Python": "https://www.python.org", "GitHub": "https://www.github.com"}',
         "--validate-links"

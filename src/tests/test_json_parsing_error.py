@@ -19,7 +19,7 @@ def test_json_parsing_error(tmp_path):
     # Create the command arguments
     args = [
         "--title", "JSON Parsing Error Test",
-        "--description", "Testing JSON parsing error handling",
+        "--subtitle", "Testing JSON parsing error handling",
         "--output", str(output_dir),
         "--links", invalid_json
     ]

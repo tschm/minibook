@@ -52,7 +52,7 @@ def test_command_line_execution(tmp_path):
         #str(run_script),
         "uv", "run", "minibook",
         "--title", "Test Links",
-        "--description", "This is a test page created by MiniBook",
+        "--subtitle", "This is a test page created by MiniBook",
         "--output", str(html_output),
         "--links",
         '{"python": "https://www.python.org"}',
@@ -78,7 +78,7 @@ def test_compile_command_execution(tmp_path):
     html_cmd = [
         "minibook",
         "--title", "Test Links",
-        "--description", "This is a test page created by MiniBook",
+        "--subtitle", "This is a test page created by MiniBook",
         "--output", str(html_output),
         "--links",
         '{"python": "https://www.python.org"}',
@@ -101,7 +101,7 @@ def test_no_links_provided():
     cmd = [
         "minibook",
         "--title", "Test Links",
-        "--description", "This is a test page created by MiniBook"
+        "--subtitle", "This is a test page created by MiniBook"
     ]
 
     result = subprocess.run(cmd, capture_output=True, text=True)
@@ -127,7 +127,7 @@ def test_multiline_links(tmp_path):
     html_cmd_newlines = [
         "minibook",
         "--title", "Multi-line Links Test",
-        "--description", "Testing multi-line links",
+        "--subtitle", "Testing multi-line links",
         "--output", str(html_output),
         "--links", multiline_links,
     ]
@@ -252,7 +252,7 @@ def test_command_line_with_nonexistent_template(tmp_path):
     # Create the command arguments
     args = [
         "--title", "Nonexistent Template Test",
-        "--description", "Testing nonexistent template",
+        "--subtitle", "Testing nonexistent template",
         "--output", str(output_dir),
         "--links", '{"Python": "https://www.python.org"}',
         "--template", str(nonexistent_template)
