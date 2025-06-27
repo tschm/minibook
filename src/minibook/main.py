@@ -68,14 +68,13 @@ def validate_url(url, timeout=5):
         return False, f"Unexpected error: {e!s}"
 
 
-def generate_html(title, links, description=None, timestamp=None, output_file="minibook.html", template_path=None):
+def generate_html(title, links, description=None, output_file="index.html", template_path=None):
     """Generate an HTML page with the given title and links using Jinja2.
 
     Args:
         title (str): The title of the webpage
         links (list): A list of tuples with (name, url)
         description (str, optional): A description to include on the page
-        timestamp (str, optional): A fixed timestamp for testing purposes
         output_file (str, optional): The output HTML file
         template_path (str, optional): Path to a custom Jinja2 template file
 
@@ -99,9 +98,7 @@ def generate_html(title, links, description=None, timestamp=None, output_file="m
         env = Environment(loader=FileSystemLoader(template_dir))
         template = env.get_template("html.j2")
 
-    # Use the provided timestamp or generate a new one
-    if timestamp is None:
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     # Render the template with our data
     html = template.render(
@@ -134,6 +131,7 @@ def entrypoint(
     template: str | None = typer.Option(
         None, "--template", help="Path to a custom Jinja2 template file for HTML output"
     ),
+    format: str = typer.Option("html", "--format", help="Output format: html or mkdocs (mkdocs not implemented yet)")
 ) -> int:
     """Create a minibook from a list of links."""
     if links is None:
@@ -225,7 +223,7 @@ def entrypoint(
     # Generate HTML using Jinja2
     output_file = Path(output) / "index.html"
     try:
-        output_path = generate_html(title, link_tuples, description, timestamp, output_file, template)
+        output_path = generate_html(title, link_tuples, description, output_file, template)
         typer.echo(f"HTML minibook created successfully: {Path(output_path).absolute()}")
     except FileNotFoundError as e:
         typer.echo(f"Error: {e}", err=True)

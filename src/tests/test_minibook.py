@@ -15,7 +15,6 @@ def test_generate_html(resource_dir):
         ("GitHub", "https://www.github.com"),
         ("Wikipedia", "https://www.wikipedia.org")
     ]
-    timestamp = "2023-06-18 12:00:00"
     output_file = resource_dir / "test_output.html"
 
     # Generate the HTML
@@ -23,7 +22,6 @@ def test_generate_html(resource_dir):
         title=title,
         links=links,
         description=description,
-        timestamp=timestamp,
         output_file=str(output_file)
     )
 
@@ -40,23 +38,6 @@ def test_generate_html(resource_dir):
     assert "https://www.python.org" in content
     assert "https://www.github.com" in content
     assert "https://www.wikipedia.org" in content
-    assert timestamp in content
-
-
-def test_generate_mkdocs_project(resource_dir):
-    """Test generating a MkDocs project."""
-    # Define test data
-    title = "Test Links"
-    description = "This is a test page created by MiniBook"
-    links = [
-        ("Python", "https://www.python.org"),
-        ("GitHub", "https://www.github.com"),
-        ("Wikipedia", "https://www.wikipedia.org")
-    ]
-    timestamp = "2023-06-18 12:00:00"
-    output_dir = resource_dir / "test_mkdocs_site"
-
-
 
 
 def test_command_line_execution(resource_dir, tmp_path):
