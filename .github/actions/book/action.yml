@@ -37,7 +37,12 @@ inputs:
 runs:
   using: 'composite'  # Composite actions combine multiple steps
   steps:
-    # Step 1: Set up Python environment with uv (faster alternative to pip)
+    # Step 1: Checkout the repository code
+    # This is needed to access the package code for installation
+    - name: Checkout repository
+      uses: actions/checkout@v4  # Official GitHub checkout action
+
+    # Step 2: Set up Python environment with uv (faster alternative to pip)
     # This step installs Python 3.12 and the uv package manager
     - name: Set up Python 3.12
       uses: astral-sh/setup-uv@v6  # Official action for setting up uv
@@ -51,12 +56,15 @@ runs:
       with:
         path: artifacts  # Directory where artifacts will be downloaded
 
-    # Step 3: Generate the minibook using the minibook CLI tool
-    # This step runs the minibook command with the input parameters
+    # Step 3: Install and run the minibook CLI tool
+    # This step installs the minibook package and runs it with the input parameters
     - name: Create minibook
       shell: bash  # Use bash shell to run the command
       run: |
-        # Run minibook CLI tool with uvx (uv execute)
+        # Install the minibook package
+        # uv pip install -e .
+
+        # Run minibook CLI tool
         uvx minibook \
           --title "${{ inputs.title }}"  # Pass the title input parameter
           --description "${{ inputs.subtitle }}"  # Pass the subtitle input parameter
