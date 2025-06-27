@@ -58,11 +58,11 @@ runs:
       run: |
         # Run minibook CLI tool with uvx (uv execute)
         uvx minibook@v0.0.11 \
-          --title "${{ inputs.title }}"  # Pass the title input parameter
-          --description "${{ inputs.subtitle }}"  # Pass the subtitle input parameter
-          --output 'artifacts'  # Output to the artifacts directory
-          --links '${{ inputs.links }}'  # Pass the links input parameter
-          --template '${{ inputs.template }}'  # Pass the template input parameter (if provided)
+          --title "${{ inputs.title }}" \
+          --description "${{ inputs.subtitle }}" \
+          --output 'artifacts' \
+          --links '${{ inputs.links }}' \
+          --template '${{ inputs.template }}' 
 
     # Step 4: Display the structure of the artifacts directory
     # This helps with debugging by showing what files were generated
