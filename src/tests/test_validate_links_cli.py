@@ -101,20 +101,18 @@ def test_command_line_with_invalid_links_abort(tmp_path, monkeypatch):
     runner = CliRunner()
 
     # Create a temporary output file
-    html_output = tmp_path / "abort_links_test_output.html"
+    html_output = tmp_path
 
     # Create the command arguments
     args = [
         "--title", "Abort Links Test",
         "--description", "Testing aborting with invalid links",
         "--output", str(html_output),
-        "--format", "html",
         "--links", '{"Python": "https://www.python.org", "GitHub": "https://www.github.com"}',
         "--validate-links"
     ]
 
     # Mock the validate_url function to return invalid for GitHub
-
     def mock_validate_url(url, timeout=5):
         if "github.com" in url:
             return False, "Connection error"
@@ -125,8 +123,13 @@ def test_command_line_with_invalid_links_abort(tmp_path, monkeypatch):
     monkeypatch.setattr('typer.confirm', lambda _: False)
 
     # Run the command
-    runner.invoke(app, args)
+    result = runner.invoke(app, args, catch_exceptions=False)
 
-    # For now, we'll just check that the HTML file was NOT created
-    # since the command is not failing as expected
-    assert not html_output.exists()
+    # Check that the error message is in the stderr output
+    assert "Aborting due to invalid links." in result.stderr
+
+    # Since we're using the CLI runner, we can't rely on the exit code
+    # but we can check that the HTML file was NOT created
+
+    # Check that the HTML file was NOT created
+    assert not (html_output / "index.html").exists()
