@@ -5,6 +5,7 @@ Supports both MkDocs and Jinja2/HTML generation.
 
 import json
 import os
+import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -17,19 +18,31 @@ from jinja2 import Environment, FileSystemLoader
 def get_git_repo_url():
     """Retrieve the Git repository URL.
 
-    This function attempts to fetch the Git repository URL by using the value
-    of the environment variable ``GITHUB_REPOSITORY``. If the environment
+    This function attempts to fetch the Git repository URL by first using the
+    ``git config get-url origin`` command. If that fails, it falls back to using
+    the value of the environment variable ``GITHUB_REPOSITORY``. If the environment
     variable is present, the function constructs the appropriate repository URL
     in the format of ``https://github.com/{repository}``.
-    If not, it returns ``https://github.com/tschm/minibook`` by default.``.
+    If not, it returns ``https://github.com/tschm/minibook`` by default.
 
-    :return: The URL of the Git repository if the ``GITHUB_REPOSITORY`` environment
-             variable exists.
+    :return: The URL of the Git repository if either the git command succeeds or the
+             ``GITHUB_REPOSITORY`` environment variable exists.
     :rtype: str
     """
-    # Fallback to environment variable if git command fails
-    github_repo = os.getenv("GITHUB_REPOSITORY", default="tschm/minibook")
-    return f"https://github.com/{github_repo}"
+    try:
+        url = (
+            subprocess.check_output(
+                ["git", "config", "get-url", "origin"],
+                stderr=subprocess.DEVNULL,
+            )
+            .decode("utf-8")
+            .strip()
+        )
+        return url
+    except subprocess.CalledProcessError:
+        # Fallback to environment variable if git command fails
+        github_repo = os.getenv("GITHUB_REPOSITORY", default="tschm/minibook")
+        return f"https://github.com/{github_repo}"
 
 
 def validate_url(url, timeout=5):
