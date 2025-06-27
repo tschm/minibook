@@ -62,7 +62,7 @@ runs:
           --description "${{ inputs.subtitle }}" \
           --output 'artifacts' \
           --links '${{ inputs.links }}' \
-          --template '${{ inputs.template }}' 
+          --template '${{ inputs.template }}'
 
     # Step 4: Display the structure of the artifacts directory
     # This helps with debugging by showing what files were generated
