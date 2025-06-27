@@ -35,7 +35,7 @@ runs:
     - name: Create minibook
       shell: bash
       run: |
-        uvx minibook \
+        uvx minibook@v0.0.11 \
           --title "${{ inputs.title }}" \
           --description "${{ inputs.subtitle }}" \
           --output 'artifacts' \
