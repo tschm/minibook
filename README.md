@@ -9,47 +9,21 @@
 ## 📚 MiniBook
 
 MiniBook is a simple tool that creates a minibook
-from a list of links. It supports two different output formats:
-
-1. **HTML** - A clean, responsive webpage using Jinja2 templates and Tailwind CSS
-2. **MkDocs** - A complete MkDocs project structure
-that can be built into a static site
+from a list of links. It generates a clean, responsive HTML webpage using Jinja2 templates and Tailwind CSS.
 
 ## 📋 Usage
 
-MiniBook can be used to create either an HTML page
-or an MkDocs project from a list of links.
+MiniBook can be used to create an HTML page from a list of links.
 
-### Examples
-
-#### HTML Output
+### Example
 
 Create an HTML page with a custom title and three links:
 
 ```bash
 minibook --title "My Favorite Sites" \
-         --format html \
          --links '{"python": "https://www.python.org", "github": "https://www.github.com", "wikipedia": "https://www.wikipedia.org"}'
 ```
 
-#### MkDocs Output
-
-Create an MkDocs project with a custom title and three links:
-
-```bash
-minibook --title "My Favorite Sites" \
-         --format mkdocs \
-         --output minibook_site \
-         --links '{"python": "https://www.python.org", "github": "https://www.github.com", "wikipedia": "https://www.wikipedia.org"}'
-```
-
-After generating the MkDocs project, you can build and serve it using MkDocs:
-
-```bash
-cd minibook_site
-mkdocs build  # Build the site
-mkdocs serve  # Serve the site locally at http://127.0.0.1:8000/
-```
 
 #### Different JSON Formats for Links
 
@@ -114,11 +88,10 @@ To use the MiniBook action in your GitHub workflow:
 
 ```yaml
 - name: Generate Minibook
-  uses: tschm/minibook/.github/actions/minibook@main
+  uses: tschm/minibook/.github/actions/book@main
   with:
     title: "My Documentation"
-    description: "Documentation for my project"
-    output: "docs"
+    subtitle: "Documentation for my project"
     links: |
       {
         "GitHub": "https://github.com",
@@ -132,11 +105,9 @@ To use the MiniBook action in your GitHub workflow:
 | Input | Description | Required | Default |
 |-------|-------------|----------|---------|
 | `title` | Title of the minibook | No | "My Links" |
-| `description` | Description of the minibook | No | "" |
-| `output` | Output directory | Yes | N/A |
+| `subtitle` | Description of the minibook | No | "" |
 | `links` | JSON formatted links | Yes | N/A |
-| `format` | Output format: html or mkdocs | No | "html" |
-| `timestamp` | Fixed timestamp for testing purposes | No | "" |
+| `template` | Path to a custom Jinja2 template file for HTML output | No | "" |
 
 ### Complete Example
 
@@ -169,26 +140,17 @@ jobs:
         # Your API documentation generation step here
         # This could be another action or custom script
 
-      - name: Generate Minibook
-        uses: tschm/minibook/.github/actions/minibook@main
+      - name: Generate Minibook and Deploy to GitHub Pages
+        uses: tschm/minibook/.github/actions/book@main
         with:
           title: "Project Documentation"
-          description: "Documentation and useful links for the project"
-          output: "docs"
+          subtitle: "Documentation and useful links for the project"
           links: |
             {
               "GitHub": "https://github.com/username/repo",
               "API Reference": "./api/index.html",
               "User Guide": "./guide/index.html"
             }
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: docs
-
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
 ```
 
 ## 👥 Contributing
