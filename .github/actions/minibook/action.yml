@@ -24,10 +24,6 @@ inputs:
     description: 'Fixed timestamp for testing purposes'
     required: false
     default: ''
-  template:
-    description: 'Path to a custom Jinja2 template file for HTML output'
-    required: false
-    default: ''
 
 runs:
   using: 'composite'
@@ -39,10 +35,10 @@ runs:
     #  with:
     #    path: ${{ inputs.output }}
 
-    #- name: Set up Python 3.12
-    #  uses: astral-sh/setup-uv@v6
-    #  with:
-    #    python-version: 3.12
+    - name: Set up Python 3.12
+      uses: astral-sh/setup-uv@v6
+      with:
+        python-version: 3.12
 
     - name: Create minibook
       shell: bash
@@ -52,16 +48,10 @@ runs:
           TIMESTAMP_ARG="--timestamp ${{ inputs.timestamp }}"
         fi
 
-        TEMPLATE_ARG=""
-        if [ -n "${{ inputs.template }}" ]; then
-          TEMPLATE_ARG="--template ${{ inputs.template }}"
-        fi
-
         uvx minibook \
           --title "${{ inputs.title }}" \
           --description "${{ inputs.description }}" \
           --output "${{ inputs.output }}" \
-          --format "${{ inputs.format }}" \
+          --format "html" \
           --links '${{ inputs.links }}' \
-          $TIMESTAMP_ARG \
-          $TEMPLATE_ARG
+          $TIMESTAMP_ARG

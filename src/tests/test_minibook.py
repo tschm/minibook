@@ -31,7 +31,7 @@ def test_generate_html(resource_dir):
     assert Path(result).exists()
 
     # Read the file and check its contents
-    with Path(result).open() as f:
+    with open(result) as f:
         content = f.read()
 
     # Check that the title, description, and links are in the content
@@ -41,6 +41,22 @@ def test_generate_html(resource_dir):
     assert "https://www.github.com" in content
     assert "https://www.wikipedia.org" in content
     assert timestamp in content
+
+
+def test_generate_mkdocs_project(resource_dir):
+    """Test generating a MkDocs project."""
+    # Define test data
+    title = "Test Links"
+    description = "This is a test page created by MiniBook"
+    links = [
+        ("Python", "https://www.python.org"),
+        ("GitHub", "https://www.github.com"),
+        ("Wikipedia", "https://www.wikipedia.org")
+    ]
+    timestamp = "2023-06-18 12:00:00"
+    output_dir = resource_dir / "test_mkdocs_site"
+
+
 
 
 def test_command_line_execution(resource_dir, tmp_path):
@@ -144,7 +160,7 @@ def test_multiline_links(tmp_path):
 
     html_file = html_output / "index.html"
     # Read the file and check its contents
-    with html_file.open() as f:
+    with open(html_file) as f:
         content = f.read()
 
     # Check that all links are in the content
