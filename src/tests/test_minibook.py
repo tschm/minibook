@@ -23,7 +23,7 @@ def test_generate_html(tmp_path):
     result = generate_html(
         title=title,
         links=links,
-        description=description,
+        subtitle=description,
         output_file=str(output_file)
     )
 
@@ -192,7 +192,7 @@ def test_generate_html_with_custom_template(tmp_path):
     result = generate_html(
         title=title,
         links=links,
-        description=description,
+        subtitle=description,
         output_file=str(output_file),
         template_path=str(template_file)
     )

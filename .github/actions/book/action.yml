@@ -63,11 +63,11 @@ runs:
       run: |
         # Install the minibook package
         # uv pip install -e .
-        
+
         echo 'Title ${{ inputs.title }}'
         echo 'Links ${{ inputs.links }}'
         echo 'Template ${{ inputs.template }}'
-        
+
         # Run minibook CLI tool
         uvx minibook \
           --title '${{ inputs.title }}'  # Pass the title input parameter
