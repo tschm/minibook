@@ -62,12 +62,12 @@ jobs:
       - name: Upload the book
         uses: ./.github/actions/book
         with:
-          links: |
-            {
-              "API": "./pdoc/index.html",
-              "Coverage": "./tests/html-coverage/index.html",
+          links:
+            '{
+              "API": "./pdoc/index.html", \
+              "Coverage": "./tests/html-coverage/index.html", \
               "Test Report": "./tests/html-report/report.html"
-            }
+            }'
           #output: 'artifacts'
           title: 'MiniBook'
           subtitle: 'by Jebel Quant'

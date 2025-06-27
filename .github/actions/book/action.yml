@@ -61,9 +61,6 @@ runs:
     - name: Create minibook
       shell: bash  # Use bash shell to run the command
       run: |
-        # Install the minibook package
-        # uv pip install -e .
-
         # Run minibook CLI tool
         uvx minibook \
           --title "${{ inputs.title }}"  # Pass the title input parameter
