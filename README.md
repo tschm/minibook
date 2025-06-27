@@ -111,45 +111,102 @@ To use the MiniBook action in your GitHub workflow:
 
 ### Complete Example
 
+When using this action with GitHub Pages, you must set
+the following permissions in your workflow:
+
+- `contents: read`: To read repository contents
+- `pages: write`: To deploy to GitHub Pages
+- `id-token: write`: For authentication during deployment
+
+You must also set the environment to `github-pages` for GitHub Pages deployment:
+
 Here's a complete workflow example that generates a minibook and deploys it to GitHub Pages:
 
 ```yaml
+# Workflow name - appears in the GitHub Actions UI
 name: "Documentation"
 
+# Trigger configuration - when should this workflow run
 on:
   push:
     branches:
-      - main
+      - main  # Run only when changes are pushed to the main branch
 
+# Permissions required for GitHub Pages deployment
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: read  # Read access to repository contents
+  pages: write    # Write access to GitHub Pages
+  id-token: write # Write access to OIDC token for authentication
 
+# Environment configuration for GitHub Pages
 environment:
-  name: github-pages
+  name: github-pages  # Predefined GitHub Pages environment
 
+# Jobs that make up this workflow
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  # Job to run tests and generate test reports
+  test:
+    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
     steps:
+      # Step 1: Check out the repository code
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4  # Official GitHub checkout action
 
+      # Step 2: Run your test suite
+      - name: Run tests
+        # Your test execution step here
+        # This could be another action or custom script
+        # Example: run pytest, jest, or other test frameworks
+
+      # Step 3: Upload test results as an artifact for later use
+      - name: Upload test results
+        uses: actions/upload-artifact@v4  # Official GitHub artifact upload action
+        with:
+          name: test-results  # Name of the artifact
+          path: tests/        # Directory containing test results to upload
+
+  # Job to generate API documentation
+  pdoc:
+    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
+    steps:
+      # Step 1: Check out the repository code
+      - name: Checkout repository
+        uses: actions/checkout@v4  # Official GitHub checkout action
+
+      # Step 2: Generate API documentation
       - name: Generate API docs
         # Your API documentation generation step here
-        # This could be another action or custom script
+        # This could be pdoc3, Sphinx, JSDoc, or other documentation tools
+        # Example: pdoc --html --output-dir pdoc/ your_package/
 
-      - name: Generate Minibook and Deploy to GitHub Pages
-        uses: tschm/minibook/.github/actions/book@main
+      # Step 3: Upload API documentation as an artifact for later use
+      - name: Upload API documentation
+        uses: actions/upload-artifact@v4  # Official GitHub artifact upload action
         with:
+          name: api-docs  # Name of the artifact
+          path: pdoc/     # Directory containing API docs to upload
+
+  # Job to build and publish the book documentation
+  book:
+    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
+    needs: [test, pdoc]     # This job will only run after test and pdoc jobs complete successfully
+    steps:
+      # Generate Minibook and Deploy to GitHub Pages
+      # The book action automatically downloads all artifacts from the jobs defined in needs
+      - name: Generate Minibook and Deploy to GitHub Pages
+        uses: tschm/minibook/.github/actions/book@main  # Use the minibook action
+        with:
+          # Title that appears at the top of the generated page
           title: "Project Documentation"
+          # Subtitle/description that appears below the title
           subtitle: "Documentation and useful links for the project"
+          # JSON object defining links to include in the minibook
+          # Each key is the link text, and each value is the URL
           links: |
             {
               "GitHub": "https://github.com/username/repo",
-              "API Reference": "./api/index.html",
-              "User Guide": "./guide/index.html"
+              "API Reference": "./artifacts/api-docs/index.html",  # Link to the API docs artifact
+              "Test Results": "./artifacts/test-results/html-report/report.html"  # Link to the test results artifact
             }
 ```
 
