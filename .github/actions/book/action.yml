@@ -43,9 +43,9 @@ runs:
       uses: astral-sh/setup-uv@v6  # Official action for setting up uv
       with:
         python-version: 3.12  # Specify Python version to use
-        #cache-dependency-glob: "DO_NOT_CACHE"
         ignore-empty-workdir: true
         enable-cache: false
+        version: '0.7.16'
 
     # Step 2: Download all artifacts from previous jobs
     # This automatically retrieves artifacts uploaded by jobs specified in the 'needs' field
