@@ -37,12 +37,12 @@ inputs:
 runs:
   using: 'composite'  # Composite actions combine multiple steps
   steps:
-    # Step 1: Set up Python environment with uv (faster alternative to pip)
+    # Step 1: Set up the Python environment with uv (faster alternative to pip)
     # This step installs Python 3.12 and the uv package manager
     - name: Set up Python 3.12
       uses: astral-sh/setup-uv@v6  # Official action for setting up uv
       with:
-        python-version: 3.12  # Specify Python version to use
+        python-version: 3.12
         ignore-empty-workdir: true
         enable-cache: false
         version: '0.7.16'
@@ -53,12 +53,6 @@ runs:
       uses: actions/download-artifact@v4  # Official GitHub artifact download action
       with:
         path: artifacts  # Directory where artifacts will be downloaded
-
-    #- name: Install minibook from source
-    #  shell: bash
-    #  run: |
-    #    pip install minibook==0.0.13
-    # now the `minibook` CLI is on your PATH
 
     # Step 3: Generate the minibook using the minibook CLI tool
     # This step runs the minibook command with the input parameters
@@ -82,7 +76,6 @@ runs:
     # Step 5: Package all artifacts for GitHub Pages deployment
     # This prepares the combined outputs for deployment by creating a single artifact
     - name: Upload static files as artifact
-      #id: upload  # ID to reference this step later if needed
       uses: actions/upload-pages-artifact@v3  # Official GitHub Pages artifact upload action
       with:
         path: artifacts/  # Path to the directory containing all artifacts to deploy
@@ -90,5 +83,4 @@ runs:
     # Step 6: Deploy the packaged artifacts to GitHub Pages
     # This step publishes the content to GitHub Pages
     - name: Deploy to GitHub Pages
-      #id: deployment  # ID to reference this step later if needed
       uses: actions/deploy-pages@v4  # Official GitHub Pages deployment action
