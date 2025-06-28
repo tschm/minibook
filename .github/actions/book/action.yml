@@ -44,7 +44,8 @@ runs:
       with:
         python-version: 3.12  # Specify Python version to use
         #cache-dependency-glob: "DO_NOT_CACHE"
-        enable-cache: 'false'
+        ignore-empty-workdir: true
+        enable-cache: false
 
     # Step 2: Download all artifacts from previous jobs
     # This automatically retrieves artifacts uploaded by jobs specified in the 'needs' field
