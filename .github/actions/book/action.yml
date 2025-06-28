@@ -43,7 +43,8 @@ runs:
       uses: astral-sh/setup-uv@v6  # Official action for setting up uv
       with:
         python-version: 3.12  # Specify Python version to use
-
+        cache-dependency-glob: "DO_NOT_CACHE"
+ 
     # Step 2: Download all artifacts from previous jobs
     # This automatically retrieves artifacts uploaded by jobs specified in the 'needs' field
     - name: Download all artifacts
@@ -63,7 +64,7 @@ runs:
       shell: bash  # Use bash shell to run the command
       run: |
         # Run minibook CLI tool with uvx (uv execute)
-        uvx minibook@v0.0.13 \
+        uvx minibook@v0.0.14 \
           --title "${{ inputs.title }}" \
           --subtitle "${{ inputs.subtitle }}" \
           --links '${{ inputs.links }}' \
