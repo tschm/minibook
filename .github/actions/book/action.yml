@@ -82,7 +82,7 @@ runs:
     # Step 5: Package all artifacts for GitHub Pages deployment
     # This prepares the combined outputs for deployment by creating a single artifact
     - name: Upload static files as artifact
-      id: upload  # ID to reference this step later if needed
+      #id: upload  # ID to reference this step later if needed
       uses: actions/upload-pages-artifact@v3  # Official GitHub Pages artifact upload action
       with:
         path: artifacts/  # Path to the directory containing all artifacts to deploy
@@ -90,5 +90,5 @@ runs:
     # Step 6: Deploy the packaged artifacts to GitHub Pages
     # This step publishes the content to GitHub Pages
     - name: Deploy to GitHub Pages
-      id: deployment  # ID to reference this step later if needed
+      #id: deployment  # ID to reference this step later if needed
       uses: actions/deploy-pages@v4  # Official GitHub Pages deployment action
