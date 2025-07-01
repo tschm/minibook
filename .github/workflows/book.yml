@@ -56,7 +56,7 @@ jobs:
     steps:
       # Step 2: Make the minibook
       - name: Upload the book
-        uses: tschm/cradle/actions/book@main
+        uses: tschm/cradle/actions/book@v0.1.73
         with:
           links: |
             {
