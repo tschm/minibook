@@ -20,9 +20,9 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Build the virtual environment"
-        uses: tschm/cradle/actions/environment@v0.1.72  # Custom action to set up Python environment
+        uses: tschm/cradle/actions/environment@v0.1.80  # Custom action to set up Python environment
 
-      - uses: tschm/cradle/actions/pdoc@v0.1.72  # Custom action to generate API documentation
+      - uses: tschm/cradle/actions/pdoc@v0.1.80  # Custom action to generate API documentation
         with:
           source-folder: src/minibook  # Source code folder to document
 
@@ -32,9 +32,9 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Build the virtual environment"
-        uses: tschm/cradle/actions/environment@v0.1.72  # Custom action to set up Python environment
+        uses: tschm/cradle/actions/environment@v0.1.80  # Custom action to set up Python environment
 
-      - uses: tschm/cradle/actions/coverage@v0.1.72  # Custom action to run tests with coverage
+      - uses: tschm/cradle/actions/coverage@v0.1.80  # Custom action to run tests with coverage
         with:
           tests-folder: src/tests  # Folder containing the tests
           source-folder: src/minibook  # Source code folder to test
@@ -56,7 +56,7 @@ jobs:
     steps:
       # Step 2: Make the minibook
       - name: Upload the book
-        uses: tschm/cradle/actions/book@v0.1.73
+        uses: tschm/cradle/actions/book@v0.1.80
         with:
           links: |
             {
