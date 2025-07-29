@@ -22,7 +22,7 @@ jobs:
     steps:
       - name: Generate Tag
         id: tag
-        uses: tschm/cradle/actions/tag@v0.3.04  # Custom action to generate a new tag
+        uses: tschm/cradle/actions/tag@v0.3.06  # Custom action to generate a new tag
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}  # GitHub token for authentication
   # Job to build the package with the new version
@@ -32,7 +32,7 @@ jobs:
     steps:
       # Build the package (sdist and wheel) with the new version tag
       - name: build
-        uses: tschm/cradle/actions/build@v0.3.04
+        uses: tschm/cradle/actions/build@v0.3.06
         with:
           tag: ${{ needs.tagging.outputs.new_tag }}  # Use the tag from the previous job
 
