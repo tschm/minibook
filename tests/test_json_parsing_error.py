@@ -14,14 +14,18 @@ def test_json_parsing_error(tmp_path):
     output_dir = tmp_path
 
     # Test with an invalid JSON format that will cause a parsing error
-    invalid_json = '{invalid json}'
+    invalid_json = "{invalid json}"
 
     # Create the command arguments
     args = [
-        "--title", "JSON Parsing Error Test",
-        "--subtitle", "Testing JSON parsing error handling",
-        "--output", str(output_dir),
-        "--links", invalid_json
+        "--title",
+        "JSON Parsing Error Test",
+        "--subtitle",
+        "Testing JSON parsing error handling",
+        "--output",
+        str(output_dir),
+        "--links",
+        invalid_json,
     ]
 
     # Run the command

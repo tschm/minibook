@@ -1,6 +1,5 @@
 """Tests for the command-line functionality with the --validate-links flag."""
 
-
 from typer.testing import CliRunner
 
 from minibook.main import app
@@ -16,11 +15,15 @@ def test_command_line_with_validate_links(tmp_path, monkeypatch):
 
     # Create the command arguments
     args = [
-        "--title", "Validate Links Test",
-        "--subtitle", "Testing link validation",
-        "--output", str(html_output),
-        "--links", '{"Python": "https://www.python.org", "GitHub": "https://www.github.com"}',
-        "--validate-links"
+        "--title",
+        "Validate Links Test",
+        "--subtitle",
+        "Testing link validation",
+        "--output",
+        str(html_output),
+        "--links",
+        '{"Python": "https://www.python.org", "GitHub": "https://www.github.com"}',
+        "--validate-links",
     ]
 
     # Mock the validate_url function to always return valid
@@ -28,8 +31,8 @@ def test_command_line_with_validate_links(tmp_path, monkeypatch):
         return True, None
 
     # Apply the mocks
-    monkeypatch.setattr('minibook.main.validate_url', mock_validate_url)
-    monkeypatch.setattr('typer.confirm', lambda _: True)
+    monkeypatch.setattr("minibook.main.validate_url", mock_validate_url)
+    monkeypatch.setattr("typer.confirm", lambda _: True)
 
     # Run the command
     result = runner.invoke(app, args)
@@ -59,11 +62,15 @@ def test_command_line_with_invalid_links(tmp_path, monkeypatch):
 
     # Create the command arguments
     args = [
-        "--title", "Invalid Links Test",
-        "--subtitle", "Testing invalid links",
-        "--output", str(html_output),
-        "--links", '{"Python": "https://www.python.org", "GitHub": "https://www.github.com"}',
-        "--validate-links"
+        "--title",
+        "Invalid Links Test",
+        "--subtitle",
+        "Testing invalid links",
+        "--output",
+        str(html_output),
+        "--links",
+        '{"Python": "https://www.python.org", "GitHub": "https://www.github.com"}',
+        "--validate-links",
     ]
 
     # Mock the validate_url function to return invalid for GitHub
@@ -74,8 +81,8 @@ def test_command_line_with_invalid_links(tmp_path, monkeypatch):
         return True, None
 
     # Apply the mocks
-    monkeypatch.setattr('minibook.main.validate_url', mock_validate_url)
-    monkeypatch.setattr('typer.confirm', lambda _: True)
+    monkeypatch.setattr("minibook.main.validate_url", mock_validate_url)
+    monkeypatch.setattr("typer.confirm", lambda _: True)
 
     # Run the command
     result = runner.invoke(app, args)
@@ -105,11 +112,15 @@ def test_command_line_with_invalid_links_abort(tmp_path, monkeypatch):
 
     # Create the command arguments
     args = [
-        "--title", "Abort Links Test",
-        "--subtitle", "Testing aborting with invalid links",
-        "--output", str(html_output),
-        "--links", '{"Python": "https://www.python.org", "GitHub": "https://www.github.com"}',
-        "--validate-links"
+        "--title",
+        "Abort Links Test",
+        "--subtitle",
+        "Testing aborting with invalid links",
+        "--output",
+        str(html_output),
+        "--links",
+        '{"Python": "https://www.python.org", "GitHub": "https://www.github.com"}',
+        "--validate-links",
     ]
 
     # Mock the validate_url function to return invalid for GitHub
@@ -119,8 +130,8 @@ def test_command_line_with_invalid_links_abort(tmp_path, monkeypatch):
         return True, None
 
     # Apply the mocks
-    monkeypatch.setattr('minibook.main.validate_url', mock_validate_url)
-    monkeypatch.setattr('typer.confirm', lambda _: False)
+    monkeypatch.setattr("minibook.main.validate_url", mock_validate_url)
+    monkeypatch.setattr("typer.confirm", lambda _: False)
 
     # Run the command
     result = runner.invoke(app, args, catch_exceptions=False)

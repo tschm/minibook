@@ -1,4 +1,5 @@
 """Test cases for the main module."""
+
 from os import getenv
 
 from minibook.main import get_git_repo_url

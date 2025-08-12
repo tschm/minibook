@@ -18,10 +18,14 @@ def test_json_list_format(tmp_path):
 
     # Create the command arguments
     args = [
-        "--title", "JSON List Format Test",
-        "--subtitle", "Testing JSON list format",
-        "--output", str(output_dir),
-        "--links", json_list_input
+        "--title",
+        "JSON List Format Test",
+        "--subtitle",
+        "Testing JSON list format",
+        "--output",
+        str(output_dir),
+        "--links",
+        json_list_input,
     ]
 
     # Run the command

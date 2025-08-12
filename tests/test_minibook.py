@@ -15,17 +15,12 @@ def test_generate_html(tmp_path):
     links = [
         ("Python", "https://www.python.org"),
         ("GitHub", "https://www.github.com"),
-        ("Wikipedia", "https://www.wikipedia.org")
+        ("Wikipedia", "https://www.wikipedia.org"),
     ]
     output_file = tmp_path / "test_output.html"
 
     # Generate the HTML
-    result = generate_html(
-        title=title,
-        links=links,
-        subtitle=description,
-        output_file=str(output_file)
-    )
+    result = generate_html(title=title, links=links, subtitle=description, output_file=str(output_file))
 
     # Check that the file was created
     assert Path(result).exists()
@@ -49,15 +44,20 @@ def test_command_line_execution(tmp_path):
     # Test HTML generation
     html_output = tmp_path
     html_cmd = [
-        #str(run_script),
-        "uv", "run", "minibook",
-        "--title", "Test Links",
-        "--subtitle", "This is a test page created by MiniBook",
-        "--output", str(html_output),
+        # str(run_script),
+        "uv",
+        "run",
+        "minibook",
+        "--title",
+        "Test Links",
+        "--subtitle",
+        "This is a test page created by MiniBook",
+        "--output",
+        str(html_output),
         "--links",
         '{"python": "https://www.python.org"}',
-        #"--links github;https://www.github.com",
-        #"--links wikipedia;https://www.wikipedia.org"
+        # "--links github;https://www.github.com",
+        # "--links wikipedia;https://www.wikipedia.org"
     ]
 
     html_result = subprocess.run(html_cmd, capture_output=True, text=True)
@@ -77,9 +77,12 @@ def test_compile_command_execution(tmp_path):
     html_output = tmp_path
     html_cmd = [
         "minibook",
-        "--title", "Test Links",
-        "--subtitle", "This is a test page created by MiniBook",
-        "--output", str(html_output),
+        "--title",
+        "Test Links",
+        "--subtitle",
+        "This is a test page created by MiniBook",
+        "--output",
+        str(html_output),
         "--links",
         '{"python": "https://www.python.org"}',
     ]
@@ -98,11 +101,7 @@ def test_no_links_provided():
     import subprocess
 
     # Test with no links parameter
-    cmd = [
-        "minibook",
-        "--title", "Test Links",
-        "--subtitle", "This is a test page created by MiniBook"
-    ]
+    cmd = ["minibook", "--title", "Test Links", "--subtitle", "This is a test page created by MiniBook"]
 
     result = subprocess.run(cmd, capture_output=True, text=True)
 
@@ -119,24 +118,31 @@ def test_multiline_links(tmp_path):
     html_output = tmp_path
 
     # Create JSON arrays for links
-    multiline_links = '[{"name": "Python", "url": "https://www.python.org"}, {"name": "GitHub", "url": "https://www.github.com"}]'
+    multiline_links = (
+        '[{"name": "Python", "url": "https://www.python.org"}, {"name": "GitHub", "url": "https://www.github.com"}]'
+    )
 
     # Create a multi-line JSON object with newlines and indentation (like in book.yml)
 
     # Test with actual newlines
     html_cmd_newlines = [
         "minibook",
-        "--title", "Multi-line Links Test",
-        "--subtitle", "Testing multi-line links",
-        "--output", str(html_output),
-        "--links", multiline_links,
+        "--title",
+        "Multi-line Links Test",
+        "--subtitle",
+        "Testing multi-line links",
+        "--output",
+        str(html_output),
+        "--links",
+        multiline_links,
     ]
 
     html_result_newlines = subprocess.run(html_cmd_newlines, capture_output=True, text=True)
 
     # Check that the command executed successfully
-    assert html_result_newlines.returncode == 0, \
+    assert html_result_newlines.returncode == 0, (
         f"HTML command with newlines failed with error: {html_result_newlines.stderr}"
+    )
 
     # Check that the HTML file was created
     assert html_output.exists()
@@ -156,10 +162,7 @@ def test_generate_html_with_custom_template(tmp_path):
     # Define test data
     title = "Custom Template Test"
     description = "This is a test page with a custom template"
-    links = [
-        ("Python", "https://www.python.org"),
-        ("GitHub", "https://www.github.com")
-    ]
+    links = [("Python", "https://www.python.org"), ("GitHub", "https://www.github.com")]
     output_file = tmp_path / "custom_template_output.html"
 
     # Create a custom template file
@@ -190,11 +193,7 @@ def test_generate_html_with_custom_template(tmp_path):
 
     # Generate the HTML with the custom template
     result = generate_html(
-        title=title,
-        links=links,
-        subtitle=description,
-        output_file=str(output_file),
-        template_path=str(template_file)
+        title=title, links=links, subtitle=description, output_file=str(output_file), template_path=str(template_file)
     )
 
     # Check that the file was created
@@ -223,12 +222,7 @@ def test_generate_html_with_nonexistent_template(tmp_path):
 
     # Generate the HTML with the nonexistent template should raise FileNotFoundError
     with pytest.raises(FileNotFoundError) as excinfo:
-        generate_html(
-            title=title,
-            links=links,
-            output_file=str(output_file),
-            template_path=str(nonexistent_template)
-        )
+        generate_html(title=title, links=links, output_file=str(output_file), template_path=str(nonexistent_template))
 
     # Check that the error message contains the template path
     assert str(nonexistent_template) in str(excinfo.value)
@@ -251,11 +245,16 @@ def test_command_line_with_nonexistent_template(tmp_path):
 
     # Create the command arguments
     args = [
-        "--title", "Nonexistent Template Test",
-        "--subtitle", "Testing nonexistent template",
-        "--output", str(output_dir),
-        "--links", '{"Python": "https://www.python.org"}',
-        "--template", str(nonexistent_template)
+        "--title",
+        "Nonexistent Template Test",
+        "--subtitle",
+        "Testing nonexistent template",
+        "--output",
+        str(output_dir),
+        "--links",
+        '{"Python": "https://www.python.org"}',
+        "--template",
+        str(nonexistent_template),
     ]
 
     # Run the command
