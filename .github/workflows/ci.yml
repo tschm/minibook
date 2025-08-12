@@ -1,30 +1,68 @@
-# Continuous Integration workflow to run tests
-# This workflow runs automatically on every push to the repository
+# This file is part of the tschm/.config-templates repository
+# (https://github.com/tschm/.config-templates).
+#
+# Workflow: Continuous Integration
+# Purpose: This workflow runs tests on multiple Python versions to ensure
+#          compatibility and code quality across different environments.
+#
+# Trigger: This workflow runs on every push
+#
+# Components:
+#   - 🧪 Run tests on multiple Python versions
+#   - 🔄 Matrix strategy for testing on different environments
 
-name: "ci"
+name: "CI"
 
 on:
-- push  # Trigger on push events
+- push
+
+permissions:
+  contents: read
 
 jobs:
-  # Job to run tests across multiple Python versions
   test:
+    # if: github.repository != 'tschm/.config-templates'
     # The type of runner that the job will run on
     runs-on: ${{ matrix.os }}
 
-    # Define matrix strategy for testing across multiple Python versions
     strategy:
       matrix:
-        os: [ ubuntu-latest ]  # Currently only testing on Ubuntu
-        python-version: [ '3.10', '3.11', '3.12', '3.13' ]  # Test on multiple Python versions
+        # mongo container action only supported on Linux
+        os: [ ubuntu-latest ]
+        python-version: [ '3.11', '3.12', '3.13' ]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: "Build the virtual environment"
-        uses: tschm/cradle/actions/environment@v0.3.06  # Custom action to set up Python environment
-        with:
-          python-version: ${{ matrix.python-version }}  # Use Python version from matrix
+      - name: Checkout repository
+        uses: actions/checkout@v5
 
-      - uses: tschm/cradle/actions/test@v0.3.06  # Custom action to run tests
+      # This installs Python and uv for faster dependency management
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: astral-sh/setup-uv@v6  # Official action for setting up uv
         with:
-          tests-folder: src/tests  # Folder containing the tests to run
+          python-version: ${{ matrix.python-version }}  # Use the specified Python version
+
+
+      # task is needed as we test the taskfiles
+      - name: Install Task
+        uses: arduino/setup-task@v2
+        with:
+          version: 3.x
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build the virtual environment
+        run: uv venv
+
+      - name: "Build the virtual environment for ${{ github.repository }}"
+        if: hashFiles('pyproject.toml') != ''
+        run:
+          uv sync --all-extras
+
+        #uses: tschm/cradle/actions/environment@v0.3.06
+        #with:
+        #  python-version: ${{ matrix.python-version }}
+
+      - name: "Run the tests"
+        run: |
+          uv pip install pytest
+          uv run pytest tests
