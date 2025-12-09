@@ -1,6 +1,6 @@
 [project]
 name = 'minibook'
-version = "0.0.0"
+version = "0.3.0"
 description = "Minibook for reporting"
 authors = [{name='Thomas Schmelzer', email= 'thomas.schmelzer@gmail.com'}]
 readme = "README.md"
