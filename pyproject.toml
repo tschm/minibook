@@ -4,7 +4,7 @@ version = "1.0.0"
 description = "Minibook for reporting"
 authors = [{name='Thomas Schmelzer', email= 'thomas.schmelzer@gmail.com'}]
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
     "jinja2>=3.1.6",
     "typer>=0.16.0",
