@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/tschm/minibook/actions/workflows/rhiza_ci.yml/badge.svg)](https://github.com/tschm/minibook/actions/workflows/rhiza_ci.yml)
 [![Downloads](https://static.pepy.tech/personalized-badge/minibook?period=month&units=international_system&left_color=black&right_color=orange&left_text=PyPI%20downloads/month)](https://pepy.tech/project/minibook)
-[![Coverage Status](https://coveralls.io/repos/github/tschm/minibook/badge.svg?branch=main)](https://coveralls.io/github/tschm/minibook?branch=main)
+[![Coverage Status](https://img.shields.io/endpoint?url=https://tschm.github.io/minibook/tests/coverage-badge.json)](https://tschm.github.io/minibook/tests/html-coverage/index.html)
 [![CodeFactor](https://www.codefactor.io/repository/github/tschm/minibook/badge)](https://www.codefactor.io/repository/github/tschm/minibook)
 
 ## 📚 MiniBook
