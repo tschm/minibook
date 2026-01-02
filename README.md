@@ -249,7 +249,7 @@ jobs:
           name: api-docs  # Name of the artifact
           path: pdoc/     # Directory containing API docs to upload
 
-  # Job to build and publish the book documentation
+  # Job to build and to publish the book documentation
   book:
     runs-on: ubuntu-latest  # Use the latest Ubuntu runner
     needs: [test, pdoc]     # This job will only run after test and pdoc jobs complete successfully
