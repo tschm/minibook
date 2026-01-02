@@ -18,12 +18,12 @@ MiniBook is a simple yet powerful tool that transforms a list of links into eleg
 responsive HTML webpages. Perfect for documentation sites, link collections, and project dashboards.
 
 **Key Features:**
-* 🎨 **Beautiful Design** - Modern gradient themes with dark/light mode support
-* 📱 **Fully Responsive** - Works seamlessly on desktop, tablet, and mobile
-* ⚡ **Lightning Fast** - Built with Jinja2 templates and Tailwind CSS
-* 🔧 **Easy to Use** - Simple CLI interface with multiple input formats
-* 🚀 **GitHub Action** - Automated deployment to GitHub Pages
-* ✅ **Link Validation** - Optional link checking before generation
+* 🎨 **Beautiful Design:** Modern gradient themes with dark/light mode support
+* 📱 **Fully Responsive:** Works seamlessly on desktop, tablet, and mobile
+* ⚡ **Lightning Fast:** Built with Jinja2 templates and Tailwind CSS
+* 🔧 **Easy to Use:** Simple CLI interface with multiple input formats
+* 🚀 **GitHub Action:** Automated deployment to GitHub Pages
+* ✅ **Link Validation:** Optional link checking before generation
 
 ## 🚀 Quickstart
 
