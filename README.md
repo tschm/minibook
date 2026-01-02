@@ -1,6 +1,7 @@
 # 📦 [minibook](https://tschm.github.io/minibook/)
 
 [![PyPI version](https://badge.fury.io/py/minibook.svg)](https://badge.fury.io/py/minibook)
+[![Downloads](https://static.pepy.tech/badge/minibook)](https://pepy.tech/project/minibook)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/tschm/minibook/actions/workflows/rhiza_ci.yml/badge.svg)](https://github.com/tschm/minibook/actions/workflows/rhiza_ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/tschm/minibook/badge.svg?branch=main)](https://coveralls.io/github/tschm/minibook?branch=main)
