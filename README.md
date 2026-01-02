@@ -3,8 +3,6 @@
 [![PyPI version](https://badge.fury.io/py/minibook.svg)](https://badge.fury.io/py/minibook)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/tschm/minibook/actions/workflows/rhiza_ci.yml/badge.svg)](https://github.com/tschm/minibook/actions/workflows/rhiza_ci.yml)
-[![Coverage Status](https://coveralls.io/repos/github/tschm/minibook/badge.svg?branch=main)](https://coveralls.io/github/tschm/minibook?branch=main)
-[![Created with qCradle](https://img.shields.io/badge/Created%20with-qCradle-blue?style=flat-square)](https://github.com/tschm/package)
 
 ## 📚 MiniBook
 
