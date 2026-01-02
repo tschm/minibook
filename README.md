@@ -58,7 +58,7 @@ python3 -m http.server 8000
 
 Your minibook will look like this:
 
-![MiniBook Example](screenshots/quickstart-example.png)
+![MiniBook Example](https://raw.githubusercontent.com/tschm/minibook/main/screenshots/quickstart-example.png)
 
 The generated page features:
 - 🎨 Beautiful gradient design with dark theme
