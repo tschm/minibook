@@ -1,11 +1,34 @@
+<div align="center">
+
 # 📦 [minibook](https://tschm.github.io/minibook/)
 
+### *A simple tool for creating beautiful minibooks from a list of links*
+
 [![PyPI version](https://badge.fury.io/py/minibook.svg)](https://badge.fury.io/py/minibook)
+[![Python Version](https://img.shields.io/pypi/pyversions/minibook)](https://pypi.org/project/minibook/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/tschm/minibook/actions/workflows/rhiza_ci.yml/badge.svg)](https://github.com/tschm/minibook/actions/workflows/rhiza_ci.yml)
+
 [![Downloads](https://static.pepy.tech/personalized-badge/minibook?period=month&units=international_system&left_color=black&right_color=orange&left_text=PyPI%20downloads/month)](https://pepy.tech/project/minibook)
 [![Coverage Status](https://img.shields.io/endpoint?url=https://tschm.github.io/minibook/tests/coverage-badge.json)](https://tschm.github.io/minibook/tests/html-coverage/index.html)
 [![CodeFactor](https://www.codefactor.io/repository/github/tschm/minibook/badge)](https://www.codefactor.io/repository/github/tschm/minibook)
+
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/tschm/minibook)
+[![GitHub Issues](https://img.shields.io/github/issues/tschm/minibook)](https://github.com/tschm/minibook/issues)
+[![GitHub Discussions](https://img.shields.io/github/discussions/tschm/minibook)](https://github.com/tschm/minibook/discussions)
+[![GitHub Stars](https://img.shields.io/github/stars/tschm/minibook?style=social)](https://github.com/tschm/minibook)
+
+---
+
+**Quick Links:** 
+[📖 Documentation](https://tschm.github.io/minibook/) • 
+[🐛 Report Bug](https://github.com/tschm/minibook/issues) • 
+[💡 Request Feature](https://github.com/tschm/minibook/issues) • 
+[💬 Discussions](https://github.com/tschm/minibook/discussions)
+
+---
+
+</div>
 
 ## 📚 MiniBook
 
