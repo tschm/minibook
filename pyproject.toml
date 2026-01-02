@@ -1,10 +1,37 @@
 [project]
 name = 'minibook'
 version = "1.0.2"
-description = "Minibook for reporting"
+description = "A simple tool for creating beautiful minibooks from a list of links"
 authors = [{name='Thomas Schmelzer', email= 'thomas.schmelzer@gmail.com'}]
+maintainers = [{name='Thomas Schmelzer', email= 'thomas.schmelzer@gmail.com'}]
+license = {text = "MIT"}
 readme = "README.md"
 requires-python = ">=3.11"
+keywords = [
+    "html",
+    "generator",
+    "minibook",
+    "documentation",
+    "links",
+    "jinja2",
+    "static-site",
+    "reporting",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Documentation",
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+    "Topic :: Software Development :: Documentation",
+    "Topic :: Text Processing :: Markup :: HTML",
+    "Typing :: Typed",
+]
 dependencies = [
     "jinja2>=3.1.6",
     "typer>=0.16.0",
@@ -21,7 +48,13 @@ dev = [
 
 
 [project.urls]
-repository = "https://github.com/tschm/minibook"
+Homepage = "https://tschm.github.io/minibook/"
+Documentation = "https://tschm.github.io/minibook/"
+Repository = "https://github.com/tschm/minibook"
+"Source Code" = "https://github.com/tschm/minibook"
+"Bug Tracker" = "https://github.com/tschm/minibook/issues"
+Discussions = "https://github.com/tschm/minibook/discussions"
+Changelog = "https://github.com/tschm/minibook/releases"
 
 [project.scripts]
 minibook = "minibook.main:app"
