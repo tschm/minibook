@@ -105,7 +105,7 @@ def test_command_line_with_invalid_links(tmp_path, monkeypatch):
 def test_command_line_with_invalid_links_abort(tmp_path, monkeypatch):
     """Test the main function with the --validate-links flag and invalid links, aborting."""
     # Create a runner for testing Typer CLI applications
-    runner = CliRunner(mix_stderr=False)
+    runner = CliRunner()
 
     # Create a temporary output file
     html_output = tmp_path
@@ -136,8 +136,8 @@ def test_command_line_with_invalid_links_abort(tmp_path, monkeypatch):
     # Run the command
     result = runner.invoke(app, args, catch_exceptions=False)
 
-    # Check that the error message is in the stderr output
-    assert "Aborting due to invalid links." in result.stderr
+    # Check that the error message is in the output
+    assert "Aborting due to invalid links." in result.stdout or "Aborting due to invalid links." in result.stderr
 
     # Since we're using the CLI runner, we can't rely on the exit code
     # but we can check that the HTML file was NOT created

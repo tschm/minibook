@@ -253,7 +253,7 @@ def test_command_line_with_nonexistent_template(tmp_path):
     from minibook.main import app
 
     # Create a runner for testing Typer CLI applications
-    runner = CliRunner(mix_stderr=False)
+    runner = CliRunner()
 
     # Create a temporary output directory
     output_dir = tmp_path
@@ -278,8 +278,8 @@ def test_command_line_with_nonexistent_template(tmp_path):
     # Run the command
     result = runner.invoke(app, args, catch_exceptions=False)
 
-    # Check that the error message is in the stderr output
-    assert "Error: Template file not found" in result.stderr
+    # Check that the error message is in the output
+    assert "Error: Template file not found" in result.stdout or "Error: Template file not found" in result.stderr
 
     # Since we're using the CLI runner, we can't rely on the exit code
     # but we can check that the HTML file was NOT created
