@@ -11,7 +11,7 @@ from pathlib import Path
 
 import requests
 import typer
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 
 def get_git_repo_url():
@@ -89,12 +89,18 @@ def generate_html(title, links, subtitle=None, output_file="index.html", templat
             raise FileNotFoundError(f"Template file not found: {template_path}")
 
         template_dir = template_file.parent
-        env = Environment(loader=FileSystemLoader(template_dir))
+        env = Environment(
+            loader=FileSystemLoader(template_dir),
+            autoescape=select_autoescape(enabled_extensions=('html', 'htm', 'xml', 'j2', 'jinja', 'jinja2'), default=True)
+        )
         template = env.get_template(template_file.name)
     else:
         # Use default template
         template_dir = Path(__file__).parent / "templates"
-        env = Environment(loader=FileSystemLoader(template_dir))
+        env = Environment(
+            loader=FileSystemLoader(template_dir),
+            autoescape=select_autoescape(enabled_extensions=('html', 'htm', 'xml', 'j2', 'jinja', 'jinja2'), default=True)
+        )
         template = env.get_template("html.j2")
 
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
