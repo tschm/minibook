@@ -8,8 +8,8 @@
 
 ## 📚 MiniBook
 
-MiniBook is a simple tool that creates a minibook
-from a list of links. It generates a clean, responsive HTML webpage using Jinja2 templates and Tailwind CSS.
+MiniBook is a simple tool that creates a minibook from a list of links. 
+It generates a clean, responsive HTML webpage using Jinja2 templates and Tailwind CSS.
 
 ## 🚀 Quickstart
 
