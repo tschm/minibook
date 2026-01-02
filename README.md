@@ -1,10 +1,11 @@
 # 📦 [minibook](https://tschm.github.io/minibook/)
 
 [![PyPI version](https://badge.fury.io/py/minibook.svg)](https://badge.fury.io/py/minibook)
-[![Downloads](https://static.pepy.tech/badge/minibook)](https://pepy.tech/project/minibook)
+[![Downloads](https://static.pepy.tech/personalized-badge/minibook?period=month&units=international_system&left_color=black&right_color=orange&left_text=PyPI%20downloads%20per%20month)](https://pepy.tech/project/minibook)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/tschm/minibook/actions/workflows/rhiza_ci.yml/badge.svg)](https://github.com/tschm/minibook/actions/workflows/rhiza_ci.yml)
-[![Coverage Status](https://coveralls.io/repos/github/tschm/minibook/badge.svg?branch=main)](https://coveralls.io/github/tschm/minibook?branch=main)
+[![Coverage](https://img.shields.io/endpoint?url=https://tschm.github.io/minibook/tests/coverage-badge.json)](https://tschm.github.io/minibook/tests/html-coverage/index.html)
+[![CodeFactor](https://www.codefactor.io/repository/github/tschm/minibook/badge)](https://www.codefactor.io/repository/github/tschm/minibook)
 [![Created with qCradle](https://img.shields.io/badge/Created%20with-qCradle-blue?style=flat-square)](https://github.com/tschm/package)
 
 ## 📚 MiniBook
