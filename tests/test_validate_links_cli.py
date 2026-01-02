@@ -48,8 +48,8 @@ def test_command_line_with_validate_links(tmp_path, monkeypatch):
         content = f.read()
 
     # Check that all links are in the content
-    assert "https://www.python.org" in content
-    assert "https://www.github.com" in content
+    assert 'href="https://www.python.org"' in content
+    assert 'href="https://www.github.com"' in content
 
 
 def test_command_line_with_invalid_links(tmp_path, monkeypatch):
@@ -98,8 +98,8 @@ def test_command_line_with_invalid_links(tmp_path, monkeypatch):
         content = f.read()
 
     # Check that all links are in the content (even the invalid one)
-    assert "https://www.python.org" in content
-    assert "https://www.github.com" in content
+    assert 'href="https://www.python.org"' in content
+    assert 'href="https://www.github.com"' in content
 
 
 def test_command_line_with_invalid_links_abort(tmp_path, monkeypatch):
