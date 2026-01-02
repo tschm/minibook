@@ -1,3 +1,5 @@
+<div align="center">
+
 # 📦 [minibook](https://tschm.github.io/minibook/)
 
 [![PyPI version](https://badge.fury.io/py/minibook.svg)](https://badge.fury.io/py/minibook)
@@ -6,10 +8,22 @@
 [![Coverage Status](https://coveralls.io/repos/github/tschm/minibook/badge.svg?branch=main)](https://coveralls.io/github/tschm/minibook?branch=main)
 [![Created with qCradle](https://img.shields.io/badge/Created%20with-qCradle-blue?style=flat-square)](https://github.com/tschm/package)
 
-## 📚 MiniBook
+**Create beautiful, responsive HTML documentation pages from a list of links**
 
-MiniBook is a simple tool that creates a minibook from a list of links. 
-It generates a clean, responsive HTML webpage using Jinja2 templates and Tailwind CSS.
+</div>
+
+---
+
+MiniBook is a simple yet powerful tool that transforms a list of links into elegant, 
+responsive HTML webpages. Perfect for documentation sites, link collections, and project dashboards.
+
+**Key Features:**
+* 🎨 **Beautiful Design** - Modern gradient themes with dark/light mode support
+* 📱 **Fully Responsive** - Works seamlessly on desktop, tablet, and mobile
+* ⚡ **Lightning Fast** - Built with Jinja2 templates and Tailwind CSS
+* 🔧 **Easy to Use** - Simple CLI interface with multiple input formats
+* 🚀 **GitHub Action** - Automated deployment to GitHub Pages
+* ✅ **Link Validation** - Optional link checking before generation
 
 ## 🚀 Quickstart
 
