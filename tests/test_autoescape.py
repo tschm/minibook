@@ -2,8 +2,6 @@
 
 from pathlib import Path
 
-import pytest
-
 from minibook.main import generate_html
 
 

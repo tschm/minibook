@@ -91,7 +91,9 @@ def generate_html(title, links, subtitle=None, output_file="index.html", templat
         template_dir = template_file.parent
         env = Environment(
             loader=FileSystemLoader(template_dir),
-            autoescape=select_autoescape(enabled_extensions=('html', 'htm', 'xml', 'j2', 'jinja', 'jinja2'), default=True)
+            autoescape=select_autoescape(
+                enabled_extensions=("html", "htm", "xml", "j2", "jinja", "jinja2"), default=True
+            ),
         )
         template = env.get_template(template_file.name)
     else:
@@ -99,7 +101,9 @@ def generate_html(title, links, subtitle=None, output_file="index.html", templat
         template_dir = Path(__file__).parent / "templates"
         env = Environment(
             loader=FileSystemLoader(template_dir),
-            autoescape=select_autoescape(enabled_extensions=('html', 'htm', 'xml', 'j2', 'jinja', 'jinja2'), default=True)
+            autoescape=select_autoescape(
+                enabled_extensions=("html", "htm", "xml", "j2", "jinja", "jinja2"), default=True
+            ),
         )
         template = env.get_template("html.j2")
 
