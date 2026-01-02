@@ -11,6 +11,62 @@
 MiniBook is a simple tool that creates a minibook
 from a list of links. It generates a clean, responsive HTML webpage using Jinja2 templates and Tailwind CSS.
 
+## 🚀 Quickstart
+
+Get started with MiniBook in just a few steps!
+
+### Installation
+
+Install MiniBook from PyPI:
+
+```bash
+pip install minibook
+```
+
+### Create Your First Minibook
+
+Create a beautiful HTML page with your favorite links:
+
+```bash
+minibook --title "My Favorite Sites" \
+         --output "my-minibook" \
+         --links '{"Python": "https://www.python.org", "GitHub": "https://www.github.com", "Wikipedia": "https://www.wikipedia.org"}'
+```
+
+This command will:
+1. Create a directory called `my-minibook`
+2. Generate an `index.html` file with your links
+3. Create a beautiful, responsive webpage
+
+### View Your Minibook
+
+Open the generated HTML file in your browser:
+
+```bash
+open my-minibook/index.html
+```
+
+Or serve it with a local web server:
+
+```bash
+cd my-minibook
+python3 -m http.server 8000
+# Then open http://localhost:8000 in your browser
+```
+
+### Result
+
+Your minibook will look like this:
+
+![MiniBook Example](screenshots/quickstart-example.png)
+
+The generated page features:
+- 🎨 Beautiful gradient design with dark theme
+- 📱 Fully responsive layout
+- 🔗 Clickable link cards with hover effects
+- 🌓 Theme toggle (dark/light mode)
+- ⚡ Fast loading with Tailwind CSS
+
 ## 📋 Usage
 
 MiniBook can be used to create an HTML page from a list of links.
