@@ -23,10 +23,8 @@ def test_parse_links_from_json_dictionary():
     """Test parsing JSON dictionary."""
     json_str = '{"Python": "https://www.python.org", "GitHub": "https://www.github.com"}'
     result = parse_links_from_json(json_str)
-    # Dictionary order may vary in Python < 3.7, but we just check if both tuples are present
-    assert len(result) == 2
-    assert ("Python", "https://www.python.org") in result
-    assert ("GitHub", "https://www.github.com") in result
+    # Dictionary order is preserved in Python 3.7+
+    assert result == [("Python", "https://www.python.org"), ("GitHub", "https://www.github.com")]
 
 
 def test_parse_links_from_json_with_whitespace():
