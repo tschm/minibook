@@ -105,7 +105,7 @@ def test_command_line_with_invalid_links(tmp_path, monkeypatch):
 def test_command_line_with_invalid_links_abort(tmp_path, monkeypatch):
     """Test the main function with the --validate-links flag and invalid links, aborting."""
     # Create a runner for testing Typer CLI applications
-    runner = CliRunner()
+    runner = CliRunner(mix_stderr=False)
 
     # Create a temporary output file
     html_output = tmp_path
