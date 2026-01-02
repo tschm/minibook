@@ -121,6 +121,73 @@ def generate_html(title, links, subtitle=None, output_file="index.html", templat
     return output_file
 
 
+def parse_links_from_json(links_json: str) -> list[tuple[str, str]]:
+    """Parse links from a JSON string into a list of tuples.
+
+    Supports multiple JSON formats:
+    - List of objects: [{"name": "...", "url": "..."}, ...]
+    - List of arrays: [["name", "url"], ...]
+    - Dictionary: {"name1": "url1", "name2": "url2", ...}
+
+    Args:
+        links_json (str): JSON-formatted string containing links
+
+    Returns:
+        list[tuple[str, str]]: List of (name, url) tuples
+
+    Raises:
+        json.JSONDecodeError: If the JSON string is invalid
+        ValueError: If the JSON format is not supported
+
+    """
+    cleaned_links = links_json.strip()
+    json_data = json.loads(cleaned_links)
+
+    link_tuples = []
+
+    # Handle different JSON formats
+    if isinstance(json_data, list):
+        # If it's a list of lists/arrays: [["name", "url"], ...]
+        if all(isinstance(item, list) for item in json_data):
+            for item in json_data:
+                if len(item) >= 2:
+                    link_tuples.append((item[0], item[1]))
+        # If it's a list of objects: [{"name": "...", "url": "..."}, ...]
+        elif all(isinstance(item, dict) for item in json_data):
+            for item in json_data:
+                if "name" in item and "url" in item:
+                    link_tuples.append((item["name"], item["url"]))
+    # If it's a dictionary: {"name1": "url1", "name2": "url2", ...}
+    elif isinstance(json_data, dict):
+        for name, url in json_data.items():
+            link_tuples.append((name, url))
+
+    return link_tuples
+
+
+def validate_link_list(link_tuples: list[tuple[str, str]]) -> tuple[bool, list[tuple[str, str, str]]]:
+    """Validate a list of links and return invalid ones.
+
+    Args:
+        link_tuples (list[tuple[str, str]]): List of (name, url) tuples to validate
+
+    Returns:
+        tuple[bool, list[tuple[str, str, str]]]: A tuple containing:
+            - bool: True if all links are valid, False otherwise
+            - list: List of (name, url, error_message) tuples for invalid links
+
+    """
+    invalid_links = []
+
+    with typer.progressbar(link_tuples) as progress:
+        for name, url in progress:
+            is_valid, error_message = validate_url(url)
+            if not is_valid:
+                invalid_links.append((name, url, error_message))
+
+    return len(invalid_links) == 0, invalid_links
+
+
 app = typer.Typer(help="Create a minibook from a list of links")
 
 
@@ -147,38 +214,10 @@ def entrypoint(
 
     typer.echo(f"Parsing links: {links}")
 
-    link_tuples = []
-
-    # Try to parse as JSON first
+    # Parse links from JSON
     try:
-        # Clean up the JSON string - remove leading/trailing whitespace and handle multi-line strings
-        cleaned_links = links.strip()
-
-        # Parse the JSON string into a Python object
-        json_data = json.loads(cleaned_links)
-        typer.echo(f"Parsed JSON data: {json_data}")
-        typer.echo(f"Instance of JSON data: {type(json_data)}")
-
-        # Handle different JSON formats
-        if isinstance(json_data, list):
-            # If it's a list of lists/arrays: [["name", "url"], ...]
-            if all(isinstance(item, list) for item in json_data):
-                for item in json_data:
-                    if len(item) >= 2:
-                        link_tuples.append((item[0], item[1]))
-            # If it's a list of objects: [{"name": "...", "url": "..."}, ...]
-            elif all(isinstance(item, dict) for item in json_data):
-                for item in json_data:
-                    if "name" in item and "url" in item:
-                        link_tuples.append((item["name"], item["url"]))
-        # If it's a dictionary: {"name1": "url1", "name2": "url2", ...}
-        elif isinstance(json_data, dict):
-            for name, url in json_data.items():
-                link_tuples.append((name, url))
-
+        link_tuples = parse_links_from_json(links)
         typer.echo(f"Parsed JSON links: {link_tuples}")
-
-    # Fall back to the original parsing logic for backward compatibility
     except (json.JSONDecodeError, TypeError):
         typer.echo("JSON parsing failed, falling back to legacy format")
         return 1
@@ -186,16 +225,10 @@ def entrypoint(
     # Validate links if requested
     if validate_links:
         typer.echo("Validating links...")
-        invalid_links = []
-
-        with typer.progressbar(link_tuples) as progress:
-            for name, url in progress:
-                is_valid, error_message = validate_url(url)
-                if not is_valid:
-                    invalid_links.append((name, url, error_message))
+        all_valid, invalid_links = validate_link_list(link_tuples)
 
         # Report invalid links
-        if invalid_links:
+        if not all_valid:
             typer.echo(f"\nFound {len(invalid_links)} invalid links:", err=True)
             for name, url, error in invalid_links:
                 typer.echo(f"  - {name} ({url}): {error}", err=True)
