@@ -1,7 +1,8 @@
 """Tests for the command-line functionality with the --validate-links flag."""
 
-from typer.testing import CliRunner
 from urllib.parse import urlparse
+
+from typer.testing import CliRunner
 
 from minibook.main import app
 
