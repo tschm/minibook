@@ -7,7 +7,9 @@ from minibook.main import parse_links_from_json
 
 def test_parse_links_from_json_list_of_dicts():
     """Test parsing JSON list of dictionaries."""
-    json_str = '[{"name": "Python", "url": "https://www.python.org"}, {"name": "GitHub", "url": "https://www.github.com"}]'
+    json_str = (
+        '[{"name": "Python", "url": "https://www.python.org"}, {"name": "GitHub", "url": "https://www.github.com"}]'
+    )
     result = parse_links_from_json(json_str)
     assert result == [("Python", "https://www.python.org"), ("GitHub", "https://www.github.com")]
 
@@ -36,21 +38,21 @@ def test_parse_links_from_json_with_whitespace():
 
 def test_parse_links_from_json_invalid_json():
     """Test parsing invalid JSON raises JSONDecodeError."""
-    json_str = 'not valid json'
+    json_str = "not valid json"
     with pytest.raises(Exception):  # json.JSONDecodeError
         parse_links_from_json(json_str)
 
 
 def test_parse_links_from_json_empty_list():
     """Test parsing empty list."""
-    json_str = '[]'
+    json_str = "[]"
     result = parse_links_from_json(json_str)
     assert result == []
 
 
 def test_parse_links_from_json_empty_dict():
     """Test parsing empty dictionary."""
-    json_str = '{}'
+    json_str = "{}"
     result = parse_links_from_json(json_str)
     assert result == []
 
