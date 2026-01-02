@@ -12,7 +12,7 @@ from minibook.main import generate_html
 
 def _setup_pythonpath_env():
     """Set up environment with PYTHONPATH for subprocess tests.
-    
+
     Returns:
         dict: Environment dictionary with PYTHONPATH set to include src directory.
     """
@@ -109,7 +109,15 @@ def test_compile_command_execution(tmp_path):
 def test_no_links_provided():
     """Test command-line execution of MiniBook when no links are provided."""
     # Test with no links parameter
-    cmd = [sys.executable, "-m", "minibook.main", "--title", "Test Links", "--subtitle", "This is a test page created by MiniBook"]
+    cmd = [
+        sys.executable,
+        "-m",
+        "minibook.main",
+        "--title",
+        "Test Links",
+        "--subtitle",
+        "This is a test page created by MiniBook",
+    ]
 
     result = subprocess.run(cmd, capture_output=True, text=True, env=_setup_pythonpath_env())
 
@@ -145,7 +153,9 @@ def test_multiline_links(tmp_path):
         multiline_links,
     ]
 
-    html_result_newlines = subprocess.run(html_cmd_newlines, capture_output=True, text=True, env=_setup_pythonpath_env())
+    html_result_newlines = subprocess.run(
+        html_cmd_newlines, capture_output=True, text=True, env=_setup_pythonpath_env()
+    )
 
     # Check that the command executed successfully
     assert html_result_newlines.returncode == 0, (
