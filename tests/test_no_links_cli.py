@@ -24,5 +24,5 @@ def test_entrypoint_with_no_links():
     # Check that the command failed with exit code 1
     assert result.exit_code == 1, f"Expected exit code 1, got {result.exit_code}"
 
-    # Check that the error message is present
-    assert "No links provided. Exiting." in result.stdout or "No links provided. Exiting." in result.stderr
+    # Check that the error message is present in stderr (as per main.py line 212)
+    assert "No links provided. Exiting." in result.stderr
