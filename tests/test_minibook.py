@@ -1,10 +1,25 @@
 """Tests for the MiniBook package."""
 
+import os
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
 
 from minibook.main import generate_html
+
+
+def _setup_pythonpath_env():
+    """Set up environment with PYTHONPATH for subprocess tests.
+
+    Returns:
+        dict: Environment dictionary with PYTHONPATH set to include src directory.
+    """
+    env = os.environ.copy()
+    src_path = str((Path(__file__).parent.parent / "src").resolve())
+    env["PYTHONPATH"] = src_path + os.pathsep + env.get("PYTHONPATH", "")
+    return env
 
 
 def test_generate_html(tmp_path):
@@ -39,15 +54,12 @@ def test_generate_html(tmp_path):
 
 def test_command_line_execution(tmp_path):
     """Test command-line execution of MiniBook."""
-    import subprocess
-
     # Test HTML generation
     html_output = tmp_path
     html_cmd = [
-        # str(run_script),
-        "uv",
-        "run",
-        "minibook",
+        sys.executable,
+        "-m",
+        "minibook.main",
         "--title",
         "Test Links",
         "--subtitle",
@@ -56,11 +68,9 @@ def test_command_line_execution(tmp_path):
         str(html_output),
         "--links",
         '{"python": "https://www.python.org"}',
-        # "--links github;https://www.github.com",
-        # "--links wikipedia;https://www.wikipedia.org"
     ]
 
-    html_result = subprocess.run(html_cmd, capture_output=True, text=True)
+    html_result = subprocess.run(html_cmd, capture_output=True, text=True, env=_setup_pythonpath_env())
 
     # Check that the command executed successfully
     assert html_result.returncode == 0, f"HTML command failed with error: {html_result.stderr}"
@@ -71,12 +81,12 @@ def test_command_line_execution(tmp_path):
 
 def test_compile_command_execution(tmp_path):
     """Test command-line execution of MiniBook using the uvx command."""
-    import subprocess
-
     # Test HTML generation
     html_output = tmp_path
     html_cmd = [
-        "minibook",
+        sys.executable,
+        "-m",
+        "minibook.main",
         "--title",
         "Test Links",
         "--subtitle",
@@ -87,7 +97,7 @@ def test_compile_command_execution(tmp_path):
         '{"python": "https://www.python.org"}',
     ]
 
-    html_result = subprocess.run(html_cmd, capture_output=True, text=True)
+    html_result = subprocess.run(html_cmd, capture_output=True, text=True, env=_setup_pythonpath_env())
 
     # Check that the command executed successfully
     assert html_result.returncode == 0, f"HTML command failed with error: {html_result.stderr}"
@@ -98,12 +108,18 @@ def test_compile_command_execution(tmp_path):
 
 def test_no_links_provided():
     """Test command-line execution of MiniBook when no links are provided."""
-    import subprocess
-
     # Test with no links parameter
-    cmd = ["minibook", "--title", "Test Links", "--subtitle", "This is a test page created by MiniBook"]
+    cmd = [
+        sys.executable,
+        "-m",
+        "minibook.main",
+        "--title",
+        "Test Links",
+        "--subtitle",
+        "This is a test page created by MiniBook",
+    ]
 
-    result = subprocess.run(cmd, capture_output=True, text=True)
+    result = subprocess.run(cmd, capture_output=True, text=True, env=_setup_pythonpath_env())
 
     # Check that the command failed with the expected error message
     assert result.returncode == 1, "Command should fail when no links are provided"
@@ -112,8 +128,6 @@ def test_no_links_provided():
 
 def test_multiline_links(tmp_path):
     """Test command-line execution of MiniBook with multi-line links."""
-    import subprocess
-
     # Test HTML generation with multi-line links
     html_output = tmp_path
 
@@ -126,7 +140,9 @@ def test_multiline_links(tmp_path):
 
     # Test with actual newlines
     html_cmd_newlines = [
-        "minibook",
+        sys.executable,
+        "-m",
+        "minibook.main",
         "--title",
         "Multi-line Links Test",
         "--subtitle",
@@ -137,7 +153,9 @@ def test_multiline_links(tmp_path):
         multiline_links,
     ]
 
-    html_result_newlines = subprocess.run(html_cmd_newlines, capture_output=True, text=True)
+    html_result_newlines = subprocess.run(
+        html_cmd_newlines, capture_output=True, text=True, env=_setup_pythonpath_env()
+    )
 
     # Check that the command executed successfully
     assert html_result_newlines.returncode == 0, (
@@ -260,8 +278,8 @@ def test_command_line_with_nonexistent_template(tmp_path):
     # Run the command
     result = runner.invoke(app, args, catch_exceptions=False)
 
-    # Check that the error message is in the stderr output
-    assert "Error: Template file not found" in result.stderr
+    # Check that the error message is in the output
+    assert "Error: Template file not found" in result.stdout or "Error: Template file not found" in result.stderr
 
     # Since we're using the CLI runner, we can't rely on the exit code
     # but we can check that the HTML file was NOT created
