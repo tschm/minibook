@@ -1,6 +1,7 @@
 """Tests for the command-line functionality with the --validate-links flag."""
 
 from typer.testing import CliRunner
+from urllib.parse import urlparse
 
 from minibook.main import app
 
@@ -76,7 +77,8 @@ def test_command_line_with_invalid_links(tmp_path, monkeypatch):
     # Mock the validate_url function to return invalid for GitHub
 
     def mock_validate_url(url, timeout=5):
-        if "github.com" in url:
+        host = urlparse(url).hostname
+        if host == "www.github.com":
             return False, "Connection error"
         return True, None
 
@@ -125,7 +127,8 @@ def test_command_line_with_invalid_links_abort(tmp_path, monkeypatch):
 
     # Mock the validate_url function to return invalid for GitHub
     def mock_validate_url(url, timeout=5):
-        if "github.com" in url:
+        host = urlparse(url).hostname
+        if host == "www.github.com":
             return False, "Connection error"
         return True, None
 
