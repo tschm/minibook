@@ -46,5 +46,5 @@ def test_json_list_format(tmp_path):
         content = f.read()
 
     # Check that all links are in the content
-    assert "https://www.python.org" in content
-    assert "https://www.github.com" in content
+    assert 'href="https://www.python.org"' in content
+    assert 'href="https://www.github.com"' in content

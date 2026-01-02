@@ -172,8 +172,8 @@ def test_multiline_links(tmp_path):
         content = f.read()
 
     # Check that all links are in the content
-    assert "https://www.python.org" in content
-    assert "https://www.github.com" in content
+    assert 'href="https://www.python.org"' in content
+    assert 'href="https://www.github.com"' in content
 
 
 def test_generate_html_with_custom_template(tmp_path):
@@ -225,8 +225,8 @@ def test_generate_html_with_custom_template(tmp_path):
     # Check that the title, description, and links are in the content
     assert title in content
     assert description in content
-    assert "https://www.python.org" in content
-    assert "https://www.github.com" in content
+    assert 'href="https://www.python.org"' in content
+    assert 'href="https://www.github.com"' in content
 
 
 def test_generate_html_with_nonexistent_template(tmp_path):

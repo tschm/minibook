@@ -46,5 +46,5 @@ def test_json_like_parsing(tmp_path):
         content = f.read()
 
     # Check that all links are in the content
-    assert "https://github.com" in content
-    assert "https://python.org" in content
+    assert 'href="https://github.com"' in content
+    assert 'href="https://python.org"' in content
