@@ -92,13 +92,47 @@ def validate_url_format(url: str) -> tuple[bool, str | None]:
 
 
 def validate_link_name(name: str) -> tuple[bool, str | None]:
-    """Validate link name.
+    r"""Validate link name.
+
+    Ensures the link name is a non-empty string. Names are used as display
+    text for links in the generated HTML.
 
     Args:
         name: The link name string to validate.
 
     Returns:
         A tuple of (is_valid, error_message). error_message is None if valid.
+
+    Examples:
+        Valid non-empty strings return (True, None):
+
+        >>> validate_link_name("My Link")
+        (True, None)
+        >>> validate_link_name("GitHub")
+        (True, None)
+        >>> validate_link_name("A")
+        (True, None)
+
+        Empty strings are rejected:
+
+        >>> validate_link_name("")
+        (False, 'Name must be a non-empty string')
+
+        Whitespace-only strings are rejected:
+
+        >>> validate_link_name("   ")
+        (False, 'Name must be a non-empty string')
+        >>> validate_link_name("\\t\\n")
+        (False, 'Name must be a non-empty string')
+
+        Non-string values are rejected:
+
+        >>> validate_link_name(None)
+        (False, 'Name must be a non-empty string')
+        >>> validate_link_name(123)
+        (False, 'Name must be a non-empty string')
+        >>> validate_link_name(["list"])
+        (False, 'Name must be a non-empty string')
 
     """
     if not isinstance(name, str) or not name.strip():
