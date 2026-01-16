@@ -126,3 +126,21 @@ def test_bare_template_has_csp():
         content = output_file.read_text()
         assert 'http-equiv="Content-Security-Policy"' in content
         assert "'nonce-" in content
+
+
+def test_tailwind_cdn_has_sri():
+    """Test that Tailwind CDN script has Subresource Integrity."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        output_file = Path(tmpdir) / "index.html"
+        generate_html("Test Title", [("Link", "https://example.com")], output_file=output_file)
+
+        content = output_file.read_text()
+
+        # Check for integrity attribute
+        assert 'integrity="sha384-' in content
+
+        # Check for crossorigin attribute
+        assert 'crossorigin="anonymous"' in content
+
+        # Check for versioned Tailwind URL
+        assert "cdn.tailwindcss.com/3." in content

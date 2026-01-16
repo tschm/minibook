@@ -8,8 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Content Security Policy headers in generated HTML
+- Content Security Policy headers in generated HTML with nonce-based inline protection
+- Subresource Integrity (SRI) for Tailwind CDN scripts
 - Rate limiting for URL validation (`--request-delay` option)
+- Property-based testing with Hypothesis for edge case discovery
+- Plugin architecture for output formats (HTML, Markdown, JSON)
+- Architecture diagrams in documentation
 - This changelog
 
 ## [1.1.0] - 2026-01-02

@@ -23,9 +23,9 @@ MiniBook is a well-engineered Python CLI tool for generating responsive HTML pag
 | CI/CD Pipeline | 9/10 | Excellent |
 | Dependencies | 9/10 | Excellent |
 | Developer Experience | 8/10 | Very Good |
-| Architecture | 8/10 | Very Good |
+| Architecture | 9/10 | Excellent |
 | Maintainability | 9/10 | Excellent |
-| **Overall** | **8.9/10** | **Excellent** |
+| **Overall** | **9.0/10** | **Excellent** |
 
 ---
 
@@ -76,8 +76,9 @@ def parse_links_from_json(links_json: str) -> tuple[list[tuple[str, str]], list[
 
 ### Strengths
 
-- **148 tests** across 15 test files
-- **Test-to-code ratio**: ~2.9:1 (excellent)
+- **177 tests** across 18 test files
+- **Property-based testing** with Hypothesis for edge case discovery
+- **Test-to-code ratio**: ~3.2:1 (excellent)
 - **21 doctests** integrated into pytest pipeline
 - **Coverage reports**: HTML and JSON output in `_tests/`
 
@@ -86,10 +87,12 @@ def parse_links_from_json(links_json: str) -> tuple[list[tuple[str, str]], list[
 | Category | Tests | Files |
 |----------|-------|-------|
 | Input Validation | 41 | test_input_validation.py |
-| Security (XSS/CSP) | 11 | test_autoescape.py, test_csp.py |
+| Security (XSS/CSP/SRI) | 12 | test_autoescape.py, test_csp.py |
 | JSON Parsing | 27 | 4 files |
 | CLI Integration | 8 | test_minibook.py |
 | URL Validation | 10 | test_validate_url.py |
+| Property-based | 11 | test_property_based.py |
+| Output Plugins | 17 | test_plugins.py |
 | Framework | ~50 | test_rhiza/ |
 
 ### Test Quality Features
@@ -112,7 +115,6 @@ def test_autoescape_enabled_with_malicious_content(tmp_path):
 ### Minor Improvements
 
 - Could add performance benchmarks for large link lists
-- Property-based testing (hypothesis) could catch edge cases
 
 ---
 
@@ -167,6 +169,7 @@ def validate_url_format(url: str) -> tuple[bool, str | None]:
 ### Strengths
 
 - **Content Security Policy**: Nonce-based CSP headers in generated HTML
+- **Subresource Integrity**: SRI hashes for CDN scripts
 - **URL Scheme Whitelist**: Only `http` and `https` allowed
 - **XSS Prevention**: Jinja2 autoescape enabled by default
 - **Input Validation**: Comprehensive type and format checking
@@ -211,14 +214,10 @@ env = Environment(
 
 ### Security Testing
 
-- 8 dedicated CSP tests
+- 9 dedicated CSP/SRI tests
 - 3 XSS prevention tests
 - 16 input validation tests
 - Malicious content escaping verified
-
-### Minor Improvements
-
-- Could add Subresource Integrity (SRI) for CDN scripts
 
 ---
 
@@ -333,7 +332,7 @@ make test
 
 ---
 
-## 8. Architecture (8/10)
+## 8. Architecture (9/10)
 
 ### Strengths
 
@@ -341,6 +340,7 @@ make test
 - **Modular validation**: Independent validation functions
 - **Flexible input**: 3 JSON format support
 - **Template system**: Custom templates supported
+- **Plugin architecture**: Extensible output format system (HTML, Markdown, JSON)
 
 ### Component Flow
 
@@ -473,7 +473,7 @@ classDiagram
 ### Minor Improvements
 
 - Could separate validation into its own module as project grows
-- Plugin system for output formats (PDF, Markdown)
+- PDF output plugin could be added to the plugin system
 
 ---
 
@@ -481,8 +481,8 @@ classDiagram
 
 ### Strengths
 
-- **Small codebase**: ~550 lines of source code
-- **High test coverage**: 148 tests
+- **Small codebase**: ~700 lines of source code
+- **High test coverage**: 177 tests
 - **Clear patterns**: Consistent validation approach
 - **Good documentation**: Docstrings + README + Changelog
 
@@ -490,9 +490,9 @@ classDiagram
 
 | Metric | Value |
 |--------|-------|
-| Source lines | ~550 |
-| Test lines | ~1,350 |
-| Test count | 148 |
+| Source lines | ~700 |
+| Test lines | ~1,650 |
+| Test count | 177 |
 | Dependencies | 3 (core) |
 | Python versions | 4 |
 
@@ -507,13 +507,14 @@ classDiagram
 
 ## Key Strengths
 
-1. **Security-first design**: CSP headers, URL scheme validation, XSS prevention
-2. **Exceptional test coverage**: 148 tests, 2.9:1 test-to-code ratio
-3. **Modern Python tooling**: uv, ruff, type hints
-4. **Minimal dependencies**: Only 3 core packages
-5. **Flexible input formats**: 3 JSON formats supported
-6. **Comprehensive CI/CD**: Multi-version testing, security scanning
-7. **Rate limiting**: Built-in protection against overwhelming servers
+1. **Security-first design**: CSP headers, SRI, URL scheme validation, XSS prevention
+2. **Exceptional test coverage**: 177 tests, 3.2:1 test-to-code ratio
+3. **Property-based testing**: Hypothesis for edge case discovery
+4. **Modern Python tooling**: uv, ruff, type hints
+5. **Minimal dependencies**: Only 3 core packages
+6. **Flexible input/output**: 3 JSON input formats, plugin system for output formats
+7. **Comprehensive CI/CD**: Multi-version testing, security scanning
+8. **Rate limiting**: Built-in protection against overwhelming servers
 
 ---
 
@@ -526,19 +527,18 @@ classDiagram
 
 ### Medium Priority
 
-3. Property-based testing with hypothesis
-4. Plugin system for additional output formats
-5. Subresource Integrity (SRI) for CDN scripts
+3. PDF output plugin
+4. CLI option for output format selection
 
 ### Low Priority
 
-6. GitLab CI configuration
-7. Performance benchmarks in CI
+5. GitLab CI configuration
+6. Performance benchmarks in CI
 
 ---
 
 ## Conclusion
 
-MiniBook is a well-crafted, security-conscious CLI tool that exemplifies modern Python development practices. The project maintains an excellent balance between simplicity and robustness, with comprehensive testing and security measures including Content Security Policy headers and rate limiting. It's production-ready and actively maintained.
+MiniBook is a well-crafted, security-conscious CLI tool that exemplifies modern Python development practices. The project maintains an excellent balance between simplicity and robustness, with comprehensive testing (including property-based testing), security measures (CSP, SRI), and an extensible plugin architecture. It's production-ready and actively maintained.
 
-**Overall Score: 8.9/10 - Excellent**
+**Overall Score: 9.0/10 - Excellent**
