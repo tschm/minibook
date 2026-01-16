@@ -7,6 +7,8 @@ include:
 - .editorconfig
 - .gitignore
 - .pre-commit-config.yaml
+- .gitlab-ci.yml
+- .gitlab
 - CODE_OF_CONDUCT.md
 - CONTRIBUTING.md
 - Makefile
