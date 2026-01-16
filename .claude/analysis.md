@@ -47,7 +47,7 @@ MiniBook is a well-engineered Python CLI tool for generating responsive HTML pag
 src/minibook/
 ├── __init__.py          # Package exports (8 lines)
 ├── main.py              # Core CLI and business logic (~465 lines)
-├── plugins.py           # Output format plugins (~365 lines)
+├── plugins.py           # Output format plugins (~535 lines)
 └── templates/
     ├── html.j2          # Full HTML template with CSP (~205 lines)
     └── bare.j2          # Minimal template with CSP (~90 lines)
@@ -77,9 +77,9 @@ def parse_links_from_json(links_json: str) -> tuple[list[tuple[str, str]], list[
 
 ### Strengths
 
-- **182 tests** across 18 test files
+- **194 tests** across 18 test files
 - **Property-based testing** with Hypothesis for edge case discovery
-- **Test-to-code ratio**: ~3.2:1 (excellent)
+- **Test-to-code ratio**: ~2:1 (excellent)
 - **21 doctests** integrated into pytest pipeline
 - **Coverage reports**: HTML and JSON output in `_tests/`
 
@@ -93,7 +93,7 @@ def parse_links_from_json(links_json: str) -> tuple[list[tuple[str, str]], list[
 | CLI Integration | 8 | test_minibook.py |
 | URL Validation | 10 | test_validate_url.py |
 | Property-based | 11 | test_property_based.py |
-| Output Plugins | 17 | test_plugins.py |
+| Output Plugins | 29 | test_plugins.py |
 | Framework | ~50 | test_rhiza/ |
 
 ### Test Quality Features
@@ -286,17 +286,20 @@ env = Environment(
 | Extra | Package | Purpose |
 |-------|---------|---------|
 | pdf | fpdf2 >=2.8.5 | PDF output generation |
+| epub | ebooklib >=0.18 | EPUB ebook output |
+| all | fpdf2, ebooklib | All optional formats |
 
-Install with: `pip install minibook[pdf]`
+Install with: `pip install minibook[pdf]`, `pip install minibook[epub]`, or `pip install minibook[all]`
 
 ### Development Dependencies
 
-- pytest, pytest-cov, pytest-html, pytest-mock
+- pytest, pytest-cov, pytest-html, pytest-mock, pytest-watch
 - ruff (linting/formatting)
 - pre-commit
 - uv (package management)
 - hypothesis (property-based testing)
 - fpdf2 (PDF plugin testing)
+- ebooklib (EPUB plugin testing)
 
 ### Dependency Health
 
@@ -326,6 +329,7 @@ Install with: `pip install minibook[pdf]`
 ```bash
 make install    # Create venv + install all dependencies
 make test       # Run pytest with coverage reports
+make watch      # Run tests in watch mode (auto-rerun on changes)
 make fmt        # Run pre-commit hooks (ruff + markdown lint)
 make deptry     # Check dependency usage
 make clean      # Clean artifacts and prune branches
@@ -350,10 +354,6 @@ The project includes a complete VS Code devcontainer configuration:
 - GitHub CLI and common tools included
 - Bootstrap script for automated setup
 
-### Minor Improvements
-
-- Could add `make watch` for test auto-rerun
-
 ---
 
 ## 8. Architecture (9/10)
@@ -364,7 +364,7 @@ The project includes a complete VS Code devcontainer configuration:
 - **Modular validation**: Independent validation functions
 - **Flexible input**: 3 JSON format support
 - **Template system**: Custom templates supported
-- **Plugin architecture**: Extensible output format system (HTML, Markdown, JSON, PDF)
+- **Plugin architecture**: Extensible output format system (HTML, Markdown, JSON, PDF, RST, EPUB)
 
 ### Component Flow
 
@@ -524,6 +524,18 @@ classDiagram
         +generate()
     }
 
+    class RSTPlugin {
+        +name = "rst"
+        +extension = ".rst"
+        +generate()
+    }
+
+    class EPUBPlugin {
+        +name = "epub"
+        +extension = ".epub"
+        +generate()
+    }
+
     class PluginRegistry {
         -_plugins: dict
         +register(plugin_class)
@@ -535,14 +547,16 @@ classDiagram
     OutputPlugin <|-- MarkdownPlugin
     OutputPlugin <|-- JSONPlugin
     OutputPlugin <|-- PDFPlugin
+    OutputPlugin <|-- RSTPlugin
+    OutputPlugin <|-- EPUBPlugin
     PluginRegistry --> OutputPlugin : manages
 ```
 
 **Plugin Features:**
 - **Base class**: `OutputPlugin` defines interface with `name`, `extension`, `description`
 - **Registry pattern**: `PluginRegistry` for dynamic plugin discovery
-- **Lazy imports**: PDFPlugin imports fpdf2 only when generating PDF (optional dependency)
-- **CLI integration**: `--format` option selects output format (html, markdown, json, pdf)
+- **Lazy imports**: PDFPlugin and EPUBPlugin import dependencies only when generating (optional)
+- **CLI integration**: `--format` option selects output format (html, markdown, json, pdf, rst, epub)
 
 ### Design Decisions
 
@@ -554,7 +568,7 @@ classDiagram
 ### Minor Improvements
 
 - Could separate validation into its own module as project grows
-- Additional output plugins could be added (EPUB, RST)
+- Additional output plugins could be added (e.g., AsciiDoc)
 
 ---
 
@@ -562,8 +576,8 @@ classDiagram
 
 ### Strengths
 
-- **Small codebase**: ~700 lines of source code
-- **High test coverage**: 182 tests
+- **Small codebase**: ~1,000 lines of source code
+- **High test coverage**: 194 tests
 - **Clear patterns**: Consistent validation approach
 - **Good documentation**: Docstrings + README + Changelog
 
@@ -571,10 +585,10 @@ classDiagram
 
 | Metric | Value |
 |--------|-------|
-| Source lines | ~840 |
-| Test lines | ~1,800 |
-| Test count | 182 |
-| Dependencies | 3 (core) + 1 (optional) |
+| Source lines | ~1,000 |
+| Test lines | ~2,000 |
+| Test count | 194 |
+| Dependencies | 3 (core) + 2 (optional) |
 | Python versions | 4 |
 
 ### Contribution-Ready
@@ -589,11 +603,11 @@ classDiagram
 ## Key Strengths
 
 1. **Security-first design**: CSP headers, SRI, URL scheme validation, XSS prevention
-2. **Exceptional test coverage**: 182 tests, 3.2:1 test-to-code ratio
+2. **Exceptional test coverage**: 194 tests, ~2:1 test-to-code ratio
 3. **Property-based testing**: Hypothesis for edge case discovery
 4. **Modern Python tooling**: uv, ruff, type hints
 5. **Minimal dependencies**: Only 3 core packages
-6. **Flexible input/output**: 3 JSON input formats, 4 output formats (HTML, MD, JSON, PDF)
+6. **Flexible input/output**: 3 JSON input formats, 6 output formats (HTML, MD, JSON, PDF, RST, EPUB)
 7. **Comprehensive CI/CD**: Multi-version testing, security scanning
 8. **Rate limiting**: Built-in protection against overwhelming servers
 
@@ -607,13 +621,12 @@ classDiagram
 
 ### Medium Priority
 
-2. Add more output format plugins (e.g., EPUB, RST)
-3. Add `make watch` for test auto-rerun during development
+2. Add AsciiDoc output format plugin
 
 ### Low Priority
 
-4. GitLab CI configuration
-5. Performance benchmarks in CI
+3. GitLab CI configuration
+4. Performance benchmarks in CI
 
 ---
 
