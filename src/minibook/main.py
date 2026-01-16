@@ -122,7 +122,7 @@ def validate_link_name(name: str) -> tuple[bool, str | None]:
 
         >>> validate_link_name("   ")
         (False, 'Name must be a non-empty string')
-        >>> validate_link_name("\\t\\n")
+        >>> validate_link_name("\t\n")
         (False, 'Name must be a non-empty string')
 
         Non-string values are rejected:
