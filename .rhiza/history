@@ -4,6 +4,9 @@
 # Template branch: main
 #
 # Files under template control:
+.devcontainer/README.md
+.devcontainer/bootstrap.sh
+.devcontainer/devcontainer.json
 .editorconfig
 .github/agents/agentic.mk
 .github/agents/analyser.md
@@ -14,6 +17,7 @@
 .github/workflows/rhiza_ci.yml
 .github/workflows/rhiza_codeql.yml
 .github/workflows/rhiza_deptry.yml
+.github/workflows/rhiza_devcontainer.yml
 .github/workflows/rhiza_marimo.yml
 .github/workflows/rhiza_pre-commit.yml
 .github/workflows/rhiza_release.yml
