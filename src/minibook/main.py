@@ -27,6 +27,55 @@ def validate_url_format(url: str) -> tuple[bool, str | None]:
     Returns:
         A tuple of (is_valid, error_message). error_message is None if valid.
 
+    Examples:
+        Valid HTTP and HTTPS URLs return (True, None):
+
+        >>> validate_url_format("https://example.com")
+        (True, None)
+        >>> validate_url_format("http://example.com/path/to/page")
+        (True, None)
+        >>> validate_url_format("https://example.com?query=value&foo=bar")
+        (True, None)
+
+        JavaScript URLs are rejected to prevent XSS attacks:
+
+        >>> validate_url_format("javascript:alert(1)")
+        (False, "Invalid URL scheme 'javascript', must be http or https")
+
+        Data URLs are rejected to prevent code injection:
+
+        >>> validate_url_format("data:text/html,<script>alert(1)</script>")
+        (False, "Invalid URL scheme 'data', must be http or https")
+
+        File URLs are rejected to prevent local file access:
+
+        >>> validate_url_format("file:///etc/passwd")
+        (False, "Invalid URL scheme 'file', must be http or https")
+
+        Empty strings and whitespace-only strings are rejected:
+
+        >>> validate_url_format("")
+        (False, 'URL must be a non-empty string')
+        >>> validate_url_format("   ")
+        (False, 'URL must be a non-empty string')
+
+        Non-string values are rejected:
+
+        >>> validate_url_format(None)
+        (False, 'URL must be a non-empty string')
+        >>> validate_url_format(123)
+        (False, 'URL must be a non-empty string')
+
+        URLs without a valid host are rejected:
+
+        >>> validate_url_format("https://")
+        (False, 'URL must have a valid host')
+
+        URLs without a scheme are rejected:
+
+        >>> validate_url_format("example.com")
+        (False, "Invalid URL scheme '', must be http or https")
+
     """
     if not isinstance(url, str) or not url.strip():
         return False, "URL must be a non-empty string"

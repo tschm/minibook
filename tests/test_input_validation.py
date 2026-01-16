@@ -1,7 +1,5 @@
 """Tests for input validation functions."""
 
-import pytest
-
 from minibook.main import parse_links_from_json, validate_link_name, validate_url_format
 
 
