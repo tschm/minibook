@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.tailwindcss.com 'nonce-{{ nonce }}'; style-src 'self' https://fonts.googleapis.com 'nonce-{{ nonce }}'; font-src https://fonts.gstatic.com; img-src 'self' data:; base-uri 'self'; form-action 'self'">
     <title>{{ title }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
+    <script nonce="{{ nonce }}">
         tailwind.config = {
             darkMode: 'class',
             theme: {
@@ -23,7 +24,7 @@
             }
         }
     </script>
-    <style>
+    <style nonce="{{ nonce }}">
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
         body {
@@ -82,7 +83,7 @@
             color: #6b7280;
         }
     </style>
-    <script>
+    <script nonce="{{ nonce }}">
         // Check for saved theme preference or use default (dark)
         document.addEventListener('DOMContentLoaded', () => {
             const theme = localStorage.getItem('theme') || 'dark';
@@ -90,6 +91,12 @@
 
             // Update toggle button appearance
             updateToggleButton();
+
+            // Add click handler for theme toggle button
+            const themeToggleBtn = document.getElementById('theme-toggle-btn');
+            if (themeToggleBtn) {
+                themeToggleBtn.addEventListener('click', toggleTheme);
+            }
         });
 
         // Toggle between dark and light themes
@@ -131,7 +138,7 @@
                     {% endif %}
                 </div>
                 <div class="flex items-center space-x-4">
-                    <button onclick="toggleTheme()" class="flex items-center px-3 py-2 rounded-lg dark:bg-gray-800 bg-gray-200 border dark:border-gray-700 border-gray-300 hover:border-indigo-500 dark:hover:bg-gray-700 hover:bg-gray-300 transition-all duration-300 shadow-md">
+                    <button id="theme-toggle-btn" class="flex items-center px-3 py-2 rounded-lg dark:bg-gray-800 bg-gray-200 border dark:border-gray-700 border-gray-300 hover:border-indigo-500 dark:hover:bg-gray-700 hover:bg-gray-300 transition-all duration-300 shadow-md">
                         <!-- Sun icon for dark mode (shows when in dark mode) -->
                         <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />

@@ -29,7 +29,7 @@ def test_command_line_with_validate_links(tmp_path, monkeypatch):
     ]
 
     # Mock the validate_url function to always return valid
-    def mock_validate_url(url, timeout=5):
+    def mock_validate_url(url, timeout=5, delay=0):
         return True, None
 
     # Apply the mocks
@@ -77,7 +77,7 @@ def test_command_line_with_invalid_links(tmp_path, monkeypatch):
 
     # Mock the validate_url function to return invalid for GitHub
 
-    def mock_validate_url(url, timeout=5):
+    def mock_validate_url(url, timeout=5, delay=0):
         host = urlparse(url).hostname
         if host == "www.github.com":
             return False, "Connection error"
@@ -127,7 +127,7 @@ def test_command_line_with_invalid_links_abort(tmp_path, monkeypatch):
     ]
 
     # Mock the validate_url function to return invalid for GitHub
-    def mock_validate_url(url, timeout=5):
+    def mock_validate_url(url, timeout=5, delay=0):
         host = urlparse(url).hostname
         if host == "www.github.com":
             return False, "Connection error"

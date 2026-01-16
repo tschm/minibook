@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'nonce-{{ nonce }}'; img-src 'self' data:; base-uri 'self'; form-action 'self'">
     <title>{{ title }}</title>
-    <style>
+    <style nonce="{{ nonce }}">
         body {
             font-family: Arial, sans-serif;
             margin: 0;

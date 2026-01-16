@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 
 import requests
 
-from minibook.main import validate_url
+from minibook.main import validate_link_list, validate_url
 
 
 def test_validate_url_valid():
@@ -139,3 +139,64 @@ def test_validate_url_general_exception():
         # Check that the function returned the expected result
         assert is_valid is False
         assert error_message == "Unexpected error: Something went wrong"
+
+
+def test_validate_url_with_delay():
+    """Test that the delay parameter causes a sleep before the request."""
+    mock_response = MagicMock()
+    mock_response.status_code = 200
+
+    with (
+        patch("requests.head", return_value=mock_response) as mock_head,
+        patch("minibook.main.time.sleep") as mock_sleep,
+    ):
+        # Test with a delay
+        is_valid, error_message = validate_url("https://example.com", delay=0.5)
+
+        # Check that sleep was called with the delay
+        mock_sleep.assert_called_once_with(0.5)
+
+        # Check that the request was made
+        mock_head.assert_called_once()
+
+        # Check the result
+        assert is_valid is True
+        assert error_message is None
+
+
+def test_validate_url_zero_delay_no_sleep():
+    """Test that zero delay does not call sleep."""
+    mock_response = MagicMock()
+    mock_response.status_code = 200
+
+    with (
+        patch("requests.head", return_value=mock_response),
+        patch("minibook.main.time.sleep") as mock_sleep,
+    ):
+        # Test with zero delay (default)
+        validate_url("https://example.com", delay=0)
+
+        # Sleep should not be called
+        mock_sleep.assert_not_called()
+
+
+def test_validate_link_list_with_delay():
+    """Test that validate_link_list passes delay to validate_url."""
+    mock_response = MagicMock()
+    mock_response.status_code = 200
+
+    link_tuples = [("Link1", "https://example1.com"), ("Link2", "https://example2.com")]
+
+    with (
+        patch("requests.head", return_value=mock_response),
+        patch("minibook.main.time.sleep") as mock_sleep,
+    ):
+        all_valid, invalid_links = validate_link_list(link_tuples, delay=0.1)
+
+        # Sleep should be called twice (once for each link)
+        assert mock_sleep.call_count == 2
+        mock_sleep.assert_called_with(0.1)
+
+        # All links should be valid
+        assert all_valid is True
+        assert len(invalid_links) == 0
