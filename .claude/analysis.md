@@ -22,10 +22,10 @@ MiniBook is a well-engineered Python CLI tool for generating responsive HTML pag
 | Security | 10/10 | Excellent |
 | CI/CD Pipeline | 9/10 | Excellent |
 | Dependencies | 9/10 | Excellent |
-| Developer Experience | 8/10 | Very Good |
+| Developer Experience | 9/10 | Excellent |
 | Architecture | 9/10 | Excellent |
 | Maintainability | 9/10 | Excellent |
-| **Overall** | **9.0/10** | **Excellent** |
+| **Overall** | **9.1/10** | **Excellent** |
 
 ---
 
@@ -46,8 +46,8 @@ MiniBook is a well-engineered Python CLI tool for generating responsive HTML pag
 ```
 src/minibook/
 ├── __init__.py          # Package exports (8 lines)
-├── main.py              # Core CLI and business logic (~450 lines)
-├── plugins.py           # Output format plugins (~300 lines)
+├── main.py              # Core CLI and business logic (~465 lines)
+├── plugins.py           # Output format plugins (~365 lines)
 └── templates/
     ├── html.j2          # Full HTML template with CSP (~205 lines)
     └── bare.j2          # Minimal template with CSP (~90 lines)
@@ -226,11 +226,12 @@ env = Environment(
 
 ### Strengths
 
-- **6 GitHub Actions workflows** covering all aspects
+- **10 GitHub Actions workflows** covering all aspects
 - **Multi-version testing**: Python 3.11, 3.12, 3.13, 3.14
 - **Security scanning**: CodeQL weekly
 - **Dependency analysis**: deptry checks
 - **Pre-commit hooks**: Automated code quality
+- **Devcontainer validation**: Automated container builds
 
 ### Workflow Summary
 
@@ -242,6 +243,10 @@ env = Environment(
 | rhiza_pre-commit.yml | Push/PR | Code quality |
 | rhiza_release.yml | Manual | PyPI release |
 | rhiza_book.yml | Push | Documentation |
+| rhiza_devcontainer.yml | Push/PR | Devcontainer validation |
+| rhiza_marimo.yml | Push/PR | Notebook execution |
+| rhiza_sync.yml | Push | Template sync |
+| rhiza_validate.yml | Push/PR | YAML/config validation |
 
 ### Pre-commit Hooks
 
@@ -306,7 +311,7 @@ Install with: `pip install minibook[pdf]`
 
 ---
 
-## 7. Developer Experience (8/10)
+## 7. Developer Experience (9/10)
 
 ### Strengths
 
@@ -314,6 +319,7 @@ Install with: `pip install minibook[pdf]`
 - **Clear Makefile targets**: install, test, fmt, deptry, clean
 - **Pre-commit hooks**: Automatic code quality
 - **Good error messages**: Context about what went wrong
+- **VS Code devcontainer**: Full development environment in container
 
 ### Available Commands
 
@@ -336,11 +342,17 @@ make test
 .venv/bin/python -m pytest tests/test_minibook.py::test_function_name -v
 ```
 
+### Devcontainer
+
+The project includes a complete VS Code devcontainer configuration:
+- Pre-configured Python environment with uv
+- All development dependencies installed
+- GitHub CLI and common tools included
+- Bootstrap script for automated setup
+
 ### Minor Improvements
 
 - Could add `make watch` for test auto-rerun
-- Docker development environment option
-- VS Code devcontainer configuration
 
 ---
 
@@ -559,10 +571,10 @@ classDiagram
 
 | Metric | Value |
 |--------|-------|
-| Source lines | ~800 |
+| Source lines | ~840 |
 | Test lines | ~1,800 |
 | Test count | 182 |
-| Dependencies | 3 (core) |
+| Dependencies | 3 (core) + 1 (optional) |
 | Python versions | 4 |
 
 ### Contribution-Ready
@@ -592,11 +604,11 @@ classDiagram
 ### High Priority
 
 1. Generate API documentation (pdoc/sphinx)
-2. Consider Docker development environment
 
 ### Medium Priority
 
-3. Add more output format plugins (e.g., EPUB, RST)
+2. Add more output format plugins (e.g., EPUB, RST)
+3. Add `make watch` for test auto-rerun during development
 
 ### Low Priority
 
@@ -609,4 +621,4 @@ classDiagram
 
 MiniBook is a well-crafted, security-conscious CLI tool that exemplifies modern Python development practices. The project maintains an excellent balance between simplicity and robustness, with comprehensive testing (including property-based testing), security measures (CSP, SRI), and an extensible plugin architecture. It's production-ready and actively maintained.
 
-**Overall Score: 9.0/10 - Excellent**
+**Overall Score: 9.1/10 - Excellent**
