@@ -4,7 +4,9 @@ Generates a clean, responsive HTML webpage using Jinja2 templates.
 """
 
 import json
+import secrets
 import sys
+import time
 from datetime import datetime
 from os import getenv
 from pathlib import Path
@@ -156,18 +158,22 @@ def get_git_repo_url():
     return f"https://github.com/{github_repo}"
 
 
-def validate_url(url, timeout=5):
+def validate_url(url, timeout=5, delay=0):
     """Validate if a URL is accessible.
 
     Args:
         url (str): The URL to validate
         timeout (int, optional): Timeout in seconds for the request
+        delay (float, optional): Delay in seconds before making the request (rate limiting)
 
     Returns:
         tuple: (is_valid, error_message) where is_valid is a boolean and error_message is a string
                error_message is None if the URL is valid
 
     """
+    if delay > 0:
+        time.sleep(delay)
+
     try:
         # Make a HEAD request to check if the URL is accessible
         # HEAD is more efficient than GET as it doesn't download the full content
@@ -235,9 +241,17 @@ def generate_html(title, links, subtitle=None, output_file="index.html", templat
 
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+    # Generate a unique nonce for CSP
+    nonce = secrets.token_urlsafe(16)
+
     # Render the template with our data
     html = template.render(
-        title=title, links=links, description=subtitle, timestamp=timestamp, repository_url=get_git_repo_url()
+        title=title,
+        links=links,
+        description=subtitle,
+        timestamp=timestamp,
+        repository_url=get_git_repo_url(),
+        nonce=nonce,
     )
 
     # Save the HTML to a file
@@ -316,11 +330,12 @@ def parse_links_from_json(links_json: str) -> tuple[list[tuple[str, str]], list[
     return link_tuples, warnings
 
 
-def validate_link_list(link_tuples: list[tuple[str, str]]) -> tuple[bool, list[tuple[str, str, str]]]:
+def validate_link_list(link_tuples: list[tuple[str, str]], delay: float = 0) -> tuple[bool, list[tuple[str, str, str]]]:
     """Validate a list of links and return invalid ones.
 
     Args:
         link_tuples (list[tuple[str, str]]): List of (name, url) tuples to validate
+        delay (float, optional): Delay in seconds between requests (rate limiting)
 
     Returns:
         tuple[bool, list[tuple[str, str, str]]]: A tuple containing:
@@ -332,7 +347,7 @@ def validate_link_list(link_tuples: list[tuple[str, str]]) -> tuple[bool, list[t
 
     with typer.progressbar(link_tuples) as progress:
         for name, url in progress:
-            is_valid, error_message = validate_url(url)
+            is_valid, error_message = validate_url(url, delay=delay)
             if not is_valid:
                 invalid_links.append((name, url, error_message))
 
@@ -354,6 +369,9 @@ def entrypoint(
         help="JSON formatted links: can be a list of objects with name/url keys, a list of arrays, or a dictionary",
     ),
     validate_links: bool = typer.Option(False, "--validate-links", help="Validate that all links are accessible"),
+    request_delay: float = typer.Option(
+        0.0, "--request-delay", help="Delay in seconds between URL validation requests (rate limiting)"
+    ),
     template: str | None = typer.Option(
         None, "--template", help="Path to a custom Jinja2 template file for HTML output"
     ),
@@ -388,7 +406,7 @@ def entrypoint(
     # Validate links if requested
     if validate_links:
         typer.echo("Validating links...")
-        all_valid, invalid_links = validate_link_list(link_tuples)
+        all_valid, invalid_links = validate_link_list(link_tuples, delay=request_delay)
 
         # Report invalid links
         if not all_valid:
