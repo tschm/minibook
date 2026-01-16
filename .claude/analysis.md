@@ -47,6 +47,7 @@ MiniBook is a well-engineered Python CLI tool for generating responsive HTML pag
 src/minibook/
 ├── __init__.py          # Package exports (8 lines)
 ├── main.py              # Core CLI and business logic (~450 lines)
+├── plugins.py           # Output format plugins (~300 lines)
 └── templates/
     ├── html.j2          # Full HTML template with CSP (~205 lines)
     └── bare.j2          # Minimal template with CSP (~90 lines)
@@ -275,18 +276,29 @@ env = Environment(
 | typer | >=0.16.0 | CLI framework |
 | requests | >=2.31.0 | HTTP client |
 
+### Optional Dependencies
+
+| Extra | Package | Purpose |
+|-------|---------|---------|
+| pdf | fpdf2 >=2.8.5 | PDF output generation |
+
+Install with: `pip install minibook[pdf]`
+
 ### Development Dependencies
 
 - pytest, pytest-cov, pytest-html, pytest-mock
 - ruff (linting/formatting)
 - pre-commit
 - uv (package management)
+- hypothesis (property-based testing)
+- fpdf2 (PDF plugin testing)
 
 ### Dependency Health
 
 - **Python versions**: 3.11, 3.12, 3.13, 3.14 supported
 - **No known vulnerabilities** (CodeQL scanning)
 - **deptry analysis** catches missing/obsolete deps
+- **Package-module mapping**: Configured for fpdf2→fpdf mapping
 
 ### Minor Improvements
 
@@ -463,6 +475,62 @@ classDiagram
     main --> Templates : renders
     CLI --> main : invokes
 ```
+
+### Plugin Architecture
+
+```mermaid
+classDiagram
+    class OutputPlugin {
+        <<abstract>>
+        +name: str
+        +extension: str
+        +description: str
+        +generate(title, links, subtitle, output_file, **kwargs)*
+    }
+
+    class HTMLPlugin {
+        +name = "html"
+        +extension = ".html"
+        +generate()
+    }
+
+    class MarkdownPlugin {
+        +name = "markdown"
+        +extension = ".md"
+        +generate()
+    }
+
+    class JSONPlugin {
+        +name = "json"
+        +extension = ".json"
+        +generate()
+    }
+
+    class PDFPlugin {
+        +name = "pdf"
+        +extension = ".pdf"
+        +generate()
+    }
+
+    class PluginRegistry {
+        -_plugins: dict
+        +register(plugin_class)
+        +get(name) OutputPlugin
+        +list_plugins() list
+    }
+
+    OutputPlugin <|-- HTMLPlugin
+    OutputPlugin <|-- MarkdownPlugin
+    OutputPlugin <|-- JSONPlugin
+    OutputPlugin <|-- PDFPlugin
+    PluginRegistry --> OutputPlugin : manages
+```
+
+**Plugin Features:**
+- **Base class**: `OutputPlugin` defines interface with `name`, `extension`, `description`
+- **Registry pattern**: `PluginRegistry` for dynamic plugin discovery
+- **Lazy imports**: PDFPlugin imports fpdf2 only when generating PDF (optional dependency)
+- **CLI integration**: `--format` option selects output format (html, markdown, json, pdf)
 
 ### Design Decisions
 
