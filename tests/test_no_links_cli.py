@@ -25,5 +25,5 @@ def test_entrypoint_with_no_links():
     assert result.exit_code == 1, f"Expected exit code 1, got {result.exit_code}"
 
     # Check that the error message is present in output
-    # Note: CliRunner mixes stderr into stdout by default
-    assert "No links provided. Exiting." in result.stdout
+    # Note: result.output contains combined stdout/stderr
+    assert "No links provided. Exiting." in result.output
