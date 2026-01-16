@@ -10,6 +10,7 @@ from minibook.plugins import (
     HTMLPlugin,
     JSONPlugin,
     MarkdownPlugin,
+    PDFPlugin,
     get_plugin,
     list_plugins,
 )
@@ -170,6 +171,66 @@ class TestJSONPlugin:
         assert plugin.extension == ".json"
 
 
+class TestPDFPlugin:
+    """Tests for the PDF output plugin."""
+
+    def test_generate_creates_pdf_file(self):
+        """Test that PDF plugin creates a PDF file."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_file = Path(tmpdir) / "links.pdf"
+            plugin = PDFPlugin()
+
+            result = plugin.generate(
+                title="Test Title",
+                links=[("Link 1", "https://example.com"), ("Link 2", "https://example.org")],
+                output_file=output_file,
+            )
+
+            assert Path(result).exists()
+            # Check it's a valid PDF (starts with %PDF)
+            with open(result, "rb") as f:
+                header = f.read(4)
+            assert header == b"%PDF"
+
+    def test_generate_with_subtitle(self):
+        """Test PDF generation with subtitle."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_file = Path(tmpdir) / "links.pdf"
+            plugin = PDFPlugin()
+
+            result = plugin.generate(
+                title="Test",
+                links=[("Link", "https://example.com")],
+                subtitle="A test subtitle",
+                output_file=output_file,
+            )
+
+            assert Path(result).exists()
+
+    def test_plugin_attributes(self):
+        """Test PDF plugin has correct attributes."""
+        plugin = PDFPlugin()
+        assert plugin.name == "pdf"
+        assert plugin.extension == ".pdf"
+
+    def test_pdf_with_many_links(self):
+        """Test PDF generation with many links (multi-page)."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_file = Path(tmpdir) / "links.pdf"
+            plugin = PDFPlugin()
+
+            # Generate many links to test pagination
+            links = [(f"Link {i}", f"https://example{i}.com") for i in range(50)]
+
+            result = plugin.generate(
+                title="Many Links",
+                links=links,
+                output_file=output_file,
+            )
+
+            assert Path(result).exists()
+
+
 class TestPluginRegistry:
     """Tests for the plugin registry functions."""
 
@@ -193,11 +254,17 @@ class TestPluginRegistry:
         plugin_cls = get_plugin("json")
         assert plugin_cls == JSONPlugin
 
+    def test_get_plugin_pdf(self):
+        """Test getting PDF plugin by name."""
+        plugin_cls = get_plugin("pdf")
+        assert plugin_cls == PDFPlugin
+
     def test_get_plugin_case_insensitive(self):
         """Test that plugin lookup is case insensitive."""
         assert get_plugin("HTML") == HTMLPlugin
         assert get_plugin("Markdown") == MarkdownPlugin
         assert get_plugin("JSON") == JSONPlugin
+        assert get_plugin("PDF") == PDFPlugin
 
     def test_get_plugin_unknown_raises(self):
         """Test that unknown plugin name raises ValueError."""
@@ -208,8 +275,8 @@ class TestPluginRegistry:
         """Test listing available plugins."""
         plugins = list_plugins()
 
-        # Should have at least 3 unique plugins
-        assert len(plugins) >= 3
+        # Should have at least 4 unique plugins
+        assert len(plugins) >= 4
 
         # Check structure
         for plugin_info in plugins:
@@ -222,3 +289,4 @@ class TestPluginRegistry:
         assert "html" in names
         assert "markdown" in names
         assert "json" in names
+        assert "pdf" in names

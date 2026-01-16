@@ -47,6 +47,7 @@ MiniBook is a well-engineered Python CLI tool for generating responsive HTML pag
 src/minibook/
 ├── __init__.py          # Package exports (8 lines)
 ├── main.py              # Core CLI and business logic (~450 lines)
+├── plugins.py           # Output format plugins (~300 lines)
 └── templates/
     ├── html.j2          # Full HTML template with CSP (~205 lines)
     └── bare.j2          # Minimal template with CSP (~90 lines)
@@ -76,7 +77,7 @@ def parse_links_from_json(links_json: str) -> tuple[list[tuple[str, str]], list[
 
 ### Strengths
 
-- **177 tests** across 18 test files
+- **182 tests** across 18 test files
 - **Property-based testing** with Hypothesis for edge case discovery
 - **Test-to-code ratio**: ~3.2:1 (excellent)
 - **21 doctests** integrated into pytest pipeline
@@ -275,18 +276,29 @@ env = Environment(
 | typer | >=0.16.0 | CLI framework |
 | requests | >=2.31.0 | HTTP client |
 
+### Optional Dependencies
+
+| Extra | Package | Purpose |
+|-------|---------|---------|
+| pdf | fpdf2 >=2.8.5 | PDF output generation |
+
+Install with: `pip install minibook[pdf]`
+
 ### Development Dependencies
 
 - pytest, pytest-cov, pytest-html, pytest-mock
 - ruff (linting/formatting)
 - pre-commit
 - uv (package management)
+- hypothesis (property-based testing)
+- fpdf2 (PDF plugin testing)
 
 ### Dependency Health
 
 - **Python versions**: 3.11, 3.12, 3.13, 3.14 supported
 - **No known vulnerabilities** (CodeQL scanning)
 - **deptry analysis** catches missing/obsolete deps
+- **Package-module mapping**: Configured for fpdf2→fpdf mapping
 
 ### Minor Improvements
 
@@ -340,7 +352,7 @@ make test
 - **Modular validation**: Independent validation functions
 - **Flexible input**: 3 JSON format support
 - **Template system**: Custom templates supported
-- **Plugin architecture**: Extensible output format system (HTML, Markdown, JSON)
+- **Plugin architecture**: Extensible output format system (HTML, Markdown, JSON, PDF)
 
 ### Component Flow
 
@@ -456,12 +468,69 @@ classDiagram
         +--links
         +--validate-links
         +--request-delay
+        +--format
         +--template
     }
 
     main --> Templates : renders
     CLI --> main : invokes
 ```
+
+### Plugin Architecture
+
+```mermaid
+classDiagram
+    class OutputPlugin {
+        <<abstract>>
+        +name: str
+        +extension: str
+        +description: str
+        +generate(title, links, subtitle, output_file, **kwargs)*
+    }
+
+    class HTMLPlugin {
+        +name = "html"
+        +extension = ".html"
+        +generate()
+    }
+
+    class MarkdownPlugin {
+        +name = "markdown"
+        +extension = ".md"
+        +generate()
+    }
+
+    class JSONPlugin {
+        +name = "json"
+        +extension = ".json"
+        +generate()
+    }
+
+    class PDFPlugin {
+        +name = "pdf"
+        +extension = ".pdf"
+        +generate()
+    }
+
+    class PluginRegistry {
+        -_plugins: dict
+        +register(plugin_class)
+        +get(name) OutputPlugin
+        +list_plugins() list
+    }
+
+    OutputPlugin <|-- HTMLPlugin
+    OutputPlugin <|-- MarkdownPlugin
+    OutputPlugin <|-- JSONPlugin
+    OutputPlugin <|-- PDFPlugin
+    PluginRegistry --> OutputPlugin : manages
+```
+
+**Plugin Features:**
+- **Base class**: `OutputPlugin` defines interface with `name`, `extension`, `description`
+- **Registry pattern**: `PluginRegistry` for dynamic plugin discovery
+- **Lazy imports**: PDFPlugin imports fpdf2 only when generating PDF (optional dependency)
+- **CLI integration**: `--format` option selects output format (html, markdown, json, pdf)
 
 ### Design Decisions
 
@@ -473,7 +542,7 @@ classDiagram
 ### Minor Improvements
 
 - Could separate validation into its own module as project grows
-- PDF output plugin could be added to the plugin system
+- Additional output plugins could be added (EPUB, RST)
 
 ---
 
@@ -482,7 +551,7 @@ classDiagram
 ### Strengths
 
 - **Small codebase**: ~700 lines of source code
-- **High test coverage**: 177 tests
+- **High test coverage**: 182 tests
 - **Clear patterns**: Consistent validation approach
 - **Good documentation**: Docstrings + README + Changelog
 
@@ -490,9 +559,9 @@ classDiagram
 
 | Metric | Value |
 |--------|-------|
-| Source lines | ~700 |
-| Test lines | ~1,650 |
-| Test count | 177 |
+| Source lines | ~800 |
+| Test lines | ~1,800 |
+| Test count | 182 |
 | Dependencies | 3 (core) |
 | Python versions | 4 |
 
@@ -508,11 +577,11 @@ classDiagram
 ## Key Strengths
 
 1. **Security-first design**: CSP headers, SRI, URL scheme validation, XSS prevention
-2. **Exceptional test coverage**: 177 tests, 3.2:1 test-to-code ratio
+2. **Exceptional test coverage**: 182 tests, 3.2:1 test-to-code ratio
 3. **Property-based testing**: Hypothesis for edge case discovery
 4. **Modern Python tooling**: uv, ruff, type hints
 5. **Minimal dependencies**: Only 3 core packages
-6. **Flexible input/output**: 3 JSON input formats, plugin system for output formats
+6. **Flexible input/output**: 3 JSON input formats, 4 output formats (HTML, MD, JSON, PDF)
 7. **Comprehensive CI/CD**: Multi-version testing, security scanning
 8. **Rate limiting**: Built-in protection against overwhelming servers
 
@@ -527,13 +596,12 @@ classDiagram
 
 ### Medium Priority
 
-3. PDF output plugin
-4. CLI option for output format selection
+3. Add more output format plugins (e.g., EPUB, RST)
 
 ### Low Priority
 
-5. GitLab CI configuration
-6. Performance benchmarks in CI
+4. GitLab CI configuration
+5. Performance benchmarks in CI
 
 ---
 

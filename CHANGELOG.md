@@ -12,7 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Subresource Integrity (SRI) for Tailwind CDN scripts
 - Rate limiting for URL validation (`--request-delay` option)
 - Property-based testing with Hypothesis for edge case discovery
-- Plugin architecture for output formats (HTML, Markdown, JSON)
+- Plugin architecture for output formats (HTML, Markdown, JSON, PDF)
+- PDF output format (`--format pdf`)
+- CLI option for output format selection (`--format` / `-f`)
 - Architecture diagrams in documentation
 - This changelog
 
