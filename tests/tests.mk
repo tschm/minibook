@@ -4,7 +4,7 @@
 # executing performance benchmarks.
 
 # Declare phony targets (they don't produce files)
-.PHONY: test benchmark watch
+.PHONY: test benchmark
 
 # Default directory for tests
 TESTS_FOLDER := tests
@@ -27,30 +27,20 @@ test: install ## run all tests
 	fi
 
 # The 'benchmark' target runs performance benchmarks using pytest-benchmark.
-# 1. Installs pytest-benchmark dependency.
+# 1. Installs benchmarking dependencies (pytest-benchmark, pygal).
 # 2. Executes benchmarks found in the benchmarks/ subfolder.
-# 3. Generates JSON results in _benchmarks/ directory.
+# 3. Generates histograms and JSON results.
+# 4. Runs a post-analysis script to process the results.
 benchmark: install ## run performance benchmarks
 	@if [ -d "${TESTS_FOLDER}/benchmarks" ]; then \
 	  printf "${BLUE}[INFO] Running performance benchmarks...${RESET}\n"; \
-	  ${UV_BIN} pip install "pytest-benchmark>=5.1.0"; \
-	  mkdir -p _benchmarks; \
+	  ${UV_BIN} pip install pytest-benchmark==5.2.3 pygal==3.1.0; \
 	  ${VENV}/bin/python -m pytest "${TESTS_FOLDER}/benchmarks/" \
 	  		--benchmark-only \
-			--benchmark-json=_benchmarks/results.json \
-			--benchmark-columns=min,max,mean,stddev,rounds; \
+			--benchmark-histogram=tests/test_rhiza/benchmarks/benchmarks \
+			--benchmark-json=tests/test_rhiza/benchmarks/benchmarks.json; \
+	  ${VENV}/bin/python tests/test_rhiza/benchmarks/analyze_benchmarks.py ; \
 	else \
 	  printf "${YELLOW}[WARN] Benchmarks folder not found, skipping benchmarks${RESET}\n"; \
-	fi
-
-# The 'watch' target runs tests in watch mode for continuous feedback during development.
-# Uses pytest-watch to automatically re-run tests when source files change.
-watch: install ## run tests in watch mode (auto-rerun on file changes)
-	@if [ -d ${TESTS_FOLDER} ]; then \
-	  printf "${BLUE}[INFO] Starting test watch mode...${RESET}\n"; \
-	  printf "${YELLOW}[INFO] Tests will auto-rerun when files change. Press Ctrl+C to stop.${RESET}\n"; \
-	  ${VENV}/bin/python -m pytest_watch ${TESTS_FOLDER} --ignore=${TESTS_FOLDER}/benchmarks -- --tb=short; \
-	else \
-	  printf "${YELLOW}[WARN] Test folder ${TESTS_FOLDER} not found${RESET}\n"; \
 	fi
 
