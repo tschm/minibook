@@ -37,6 +37,7 @@ jobs:
 
       - name: Run benchmarks
         run: |
+          make -f .rhiza/rhiza.mk install
           make -f tests/tests.mk benchmark
 
       - name: Upload benchmark results
