@@ -7,10 +7,12 @@ from pathlib import Path
 import pytest
 
 from minibook.plugins import (
+    EPUBPlugin,
     HTMLPlugin,
     JSONPlugin,
     MarkdownPlugin,
     PDFPlugin,
+    RSTPlugin,
     get_plugin,
     list_plugins,
 )
@@ -231,6 +233,151 @@ class TestPDFPlugin:
             assert Path(result).exists()
 
 
+class TestRSTPlugin:
+    """Tests for the RST output plugin."""
+
+    def test_generate_creates_rst_file(self):
+        """Test that RST plugin creates an RST file."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_file = Path(tmpdir) / "links.rst"
+            plugin = RSTPlugin()
+
+            result = plugin.generate(
+                title="Test Title",
+                links=[("Link 1", "https://example.com"), ("Link 2", "https://example.org")],
+                output_file=output_file,
+            )
+
+            assert Path(result).exists()
+            content = Path(result).read_text()
+            # RST title format with underline
+            assert "Test Title" in content
+            assert "==========" in content
+            # RST link format
+            assert "`Link 1 <https://example.com>`_" in content
+            assert "`Link 2 <https://example.org>`_" in content
+
+    def test_generate_with_subtitle(self):
+        """Test RST generation with subtitle."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_file = Path(tmpdir) / "links.rst"
+            plugin = RSTPlugin()
+
+            plugin.generate(
+                title="Test",
+                links=[("Link", "https://example.com")],
+                subtitle="A test subtitle",
+                output_file=output_file,
+            )
+
+            content = output_file.read_text()
+            assert "*A test subtitle*" in content
+
+    def test_plugin_attributes(self):
+        """Test RST plugin has correct attributes."""
+        plugin = RSTPlugin()
+        assert plugin.name == "rst"
+        assert plugin.extension == ".rst"
+
+    def test_rst_title_underline_length(self):
+        """Test that RST title underline matches title length."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_file = Path(tmpdir) / "links.rst"
+            plugin = RSTPlugin()
+
+            title = "A Very Long Title For Testing"
+            plugin.generate(
+                title=title,
+                links=[("Link", "https://example.com")],
+                output_file=output_file,
+            )
+
+            content = output_file.read_text()
+            lines = content.split("\n")
+            # Find the title line and check underline
+            for i, line in enumerate(lines):
+                if line == title:
+                    # Line before and after should be underlines of same length
+                    assert len(lines[i - 1]) == len(title)
+                    assert len(lines[i + 1]) == len(title)
+                    break
+
+
+class TestEPUBPlugin:
+    """Tests for the EPUB output plugin."""
+
+    def test_generate_creates_epub_file(self):
+        """Test that EPUB plugin creates an EPUB file."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_file = Path(tmpdir) / "links.epub"
+            plugin = EPUBPlugin()
+
+            result = plugin.generate(
+                title="Test Title",
+                links=[("Link 1", "https://example.com"), ("Link 2", "https://example.org")],
+                output_file=output_file,
+            )
+
+            assert Path(result).exists()
+            # EPUB is a ZIP file, check for ZIP signature
+            with open(result, "rb") as f:
+                header = f.read(4)
+            assert header == b"PK\x03\x04"  # ZIP file signature
+
+    def test_generate_with_subtitle(self):
+        """Test EPUB generation with subtitle."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_file = Path(tmpdir) / "links.epub"
+            plugin = EPUBPlugin()
+
+            result = plugin.generate(
+                title="Test",
+                links=[("Link", "https://example.com")],
+                subtitle="A test subtitle",
+                output_file=output_file,
+            )
+
+            assert Path(result).exists()
+
+    def test_plugin_attributes(self):
+        """Test EPUB plugin has correct attributes."""
+        plugin = EPUBPlugin()
+        assert plugin.name == "epub"
+        assert plugin.extension == ".epub"
+
+    def test_epub_with_custom_author(self):
+        """Test EPUB generation with custom author."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_file = Path(tmpdir) / "links.epub"
+            plugin = EPUBPlugin()
+
+            result = plugin.generate(
+                title="Test",
+                links=[("Link", "https://example.com")],
+                output_file=output_file,
+                author="Custom Author",
+            )
+
+            assert Path(result).exists()
+
+    def test_epub_with_many_links(self):
+        """Test EPUB generation with many links."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_file = Path(tmpdir) / "links.epub"
+            plugin = EPUBPlugin()
+
+            # Generate many links
+            links = [(f"Link {i}", f"https://example{i}.com") for i in range(50)]
+
+            result = plugin.generate(
+                title="Many Links",
+                links=links,
+                output_file=output_file,
+            )
+
+            assert Path(result).exists()
+
+
 class TestPluginRegistry:
     """Tests for the plugin registry functions."""
 
@@ -259,12 +406,29 @@ class TestPluginRegistry:
         plugin_cls = get_plugin("pdf")
         assert plugin_cls == PDFPlugin
 
+    def test_get_plugin_rst(self):
+        """Test getting RST plugin by name."""
+        plugin_cls = get_plugin("rst")
+        assert plugin_cls == RSTPlugin
+
+    def test_get_plugin_restructuredtext_alias(self):
+        """Test getting RST plugin by alias."""
+        plugin_cls = get_plugin("restructuredtext")
+        assert plugin_cls == RSTPlugin
+
+    def test_get_plugin_epub(self):
+        """Test getting EPUB plugin by name."""
+        plugin_cls = get_plugin("epub")
+        assert plugin_cls == EPUBPlugin
+
     def test_get_plugin_case_insensitive(self):
         """Test that plugin lookup is case insensitive."""
         assert get_plugin("HTML") == HTMLPlugin
         assert get_plugin("Markdown") == MarkdownPlugin
         assert get_plugin("JSON") == JSONPlugin
         assert get_plugin("PDF") == PDFPlugin
+        assert get_plugin("RST") == RSTPlugin
+        assert get_plugin("EPUB") == EPUBPlugin
 
     def test_get_plugin_unknown_raises(self):
         """Test that unknown plugin name raises ValueError."""
@@ -275,8 +439,8 @@ class TestPluginRegistry:
         """Test listing available plugins."""
         plugins = list_plugins()
 
-        # Should have at least 4 unique plugins
-        assert len(plugins) >= 4
+        # Should have at least 6 unique plugins
+        assert len(plugins) >= 6
 
         # Check structure
         for plugin_info in plugins:
@@ -290,3 +454,5 @@ class TestPluginRegistry:
         assert "markdown" in names
         assert "json" in names
         assert "pdf" in names
+        assert "rst" in names
+        assert "epub" in names

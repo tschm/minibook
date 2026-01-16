@@ -40,6 +40,8 @@ dependencies = [
 
 [project.optional-dependencies]
 pdf = ["fpdf2>=2.8.5"]
+epub = ["ebooklib>=0.18"]
+all = ["fpdf2>=2.8.5", "ebooklib>=0.18"]
 
 [dependency-groups]
 dev = [
@@ -49,10 +51,13 @@ dev = [
     "pandas>=2.3",
     "hypothesis>=6.150.2",
     "fpdf2>=2.8.5",
+    "ebooklib>=0.18",
+    "pytest-watch>=4.2.0",
 ]
 
 [tool.deptry.package_module_name_map]
 fpdf2 = "fpdf"
+ebooklib = "ebooklib"
 
 
 [project.urls]

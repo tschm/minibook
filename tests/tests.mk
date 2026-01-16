@@ -4,7 +4,7 @@
 # executing performance benchmarks.
 
 # Declare phony targets (they don't produce files)
-.PHONY: test benchmark
+.PHONY: test benchmark watch
 
 # Default directory for tests
 TESTS_FOLDER := tests
@@ -42,5 +42,16 @@ benchmark: install ## run performance benchmarks
 	  ${VENV}/bin/python tests/test_rhiza/benchmarks/analyze_benchmarks.py ; \
 	else \
 	  printf "${YELLOW}[WARN] Benchmarks folder not found, skipping benchmarks${RESET}\n"; \
+	fi
+
+# The 'watch' target runs tests in watch mode for continuous feedback during development.
+# Uses pytest-watch to automatically re-run tests when source files change.
+watch: install ## run tests in watch mode (auto-rerun on file changes)
+	@if [ -d ${TESTS_FOLDER} ]; then \
+	  printf "${BLUE}[INFO] Starting test watch mode...${RESET}\n"; \
+	  printf "${YELLOW}[INFO] Tests will auto-rerun when files change. Press Ctrl+C to stop.${RESET}\n"; \
+	  ${VENV}/bin/python -m pytest_watch ${TESTS_FOLDER} --ignore=${TESTS_FOLDER}/benchmarks -- --tb=short; \
+	else \
+	  printf "${YELLOW}[WARN] Test folder ${TESTS_FOLDER} not found${RESET}\n"; \
 	fi
 
