@@ -95,8 +95,8 @@ def test_csp_allows_tailwind_cdn():
 
         content = output_file.read_text()
 
-        # CSP should allow Tailwind CDN
-        assert "https://cdn.tailwindcss.com" in content
+        # CSP should allow Tailwind CDN - check it appears in script src attribute
+        assert 'src="https://cdn.tailwindcss.com' in content
 
 
 def test_csp_allows_google_fonts():
@@ -107,10 +107,10 @@ def test_csp_allows_google_fonts():
 
         content = output_file.read_text()
 
-        # CSP should allow Google Fonts for styles
-        assert "https://fonts.googleapis.com" in content
-        # CSP should allow gstatic for font files
-        assert "https://fonts.gstatic.com" in content
+        # CSP should allow Google Fonts for styles - check in style-src directive
+        assert "style-src 'self' https://fonts.googleapis.com" in content
+        # CSP should allow gstatic for font files - check in font-src directive
+        assert "font-src https://fonts.gstatic.com" in content
 
 
 def test_bare_template_has_csp():

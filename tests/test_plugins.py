@@ -33,7 +33,8 @@ class TestHTMLPlugin:
             assert Path(result).exists()
             content = Path(result).read_text()
             assert "Test Title" in content
-            assert "https://example.com" in content
+            # Check URL appears in href attribute context
+            assert 'href="https://example.com"' in content
 
     def test_generate_with_subtitle(self):
         """Test HTML generation with subtitle."""
