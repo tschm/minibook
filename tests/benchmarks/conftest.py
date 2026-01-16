@@ -1,16 +1,5 @@
 """Fixtures for benchmark tests."""
-
-import tempfile
-from pathlib import Path
-
 import pytest
-
-
-@pytest.fixture
-def temp_output_dir():
-    """Create a temporary directory for benchmark output files."""
-    with tempfile.TemporaryDirectory() as tmpdir:
-        yield Path(tmpdir)
 
 
 @pytest.fixture
