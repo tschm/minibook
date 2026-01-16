@@ -33,7 +33,7 @@ test: install ## run all tests
 benchmark: install ## run performance benchmarks
 	@if [ -d "${TESTS_FOLDER}/benchmarks" ]; then \
 	  printf "${BLUE}[INFO] Running performance benchmarks...${RESET}\n"; \
-	  ${UV_BIN} pip install pytest-benchmark>=5.1.0; \
+	  ${UV_BIN} pip install "pytest-benchmark>=5.1.0"; \
 	  mkdir -p _benchmarks; \
 	  ${VENV}/bin/python -m pytest "${TESTS_FOLDER}/benchmarks/" \
 	  		--benchmark-only \
