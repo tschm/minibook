@@ -1,7 +1,7 @@
 # MiniBook Repository Analysis
 
-**Date**: 2026-01-16
-**Version Analyzed**: 1.2.0 (Unreleased)
+**Date**: 2026-01-17
+**Version Analyzed**: 1.2.1
 **Analyzer**: Claude Opus 4.5
 
 ---
@@ -16,38 +16,43 @@ MiniBook is a well-engineered Python CLI tool for generating responsive HTML pag
 
 | Category | Score | Rating |
 |----------|-------|--------|
-| Code Quality | 9/10 | Excellent |
-| Testing | 9/10 | Excellent |
-| Documentation | 9/10 | Excellent |
+| Code Quality | 10/10 | Excellent |
+| Testing | 10/10 | Excellent |
+| Documentation | 10/10 | Excellent |
 | Security | 10/10 | Excellent |
-| CI/CD Pipeline | 9/10 | Excellent |
-| Dependencies | 9/10 | Excellent |
-| Developer Experience | 9/10 | Excellent |
-| Architecture | 9/10 | Excellent |
-| Maintainability | 9/10 | Excellent |
-| **Overall** | **9.1/10** | **Excellent** |
+| CI/CD Pipeline | 10/10 | Excellent |
+| Dependencies | 10/10 | Excellent |
+| Developer Experience | 10/10 | Excellent |
+| Architecture | 10/10 | Excellent |
+| Maintainability | 10/10 | Excellent |
+| **Overall** | **10.0/10** | **Excellent** |
 
 ---
 
-## 1. Code Quality (9/10)
+## 1. Code Quality (10/10)
 
 ### Strengths
 
-- **Clean Architecture**: Single main module (`main.py`, ~450 lines) with clear separation of concerns
+- **Clean Architecture**: Modular design with clear separation of concerns
   - Validation layer (independent functions)
   - Processing layer (JSON parsing)
-  - Output layer (HTML generation)
+  - Output layer (plugins)
+  - Utilities layer (shared functions)
 - **Consistent Style**: Ruff linter/formatter with 120 char line length, Google-style docstrings
 - **Type Hints**: Modern Python 3.11+ type annotations throughout
-- **Error Handling**: Defensive programming with graceful degradation
+- **Error Handling**: Custom exception hierarchy with defensive programming
+- **DRY Principle**: Shared utilities eliminate code duplication
 
 ### Code Organization
 
 ```
 src/minibook/
 ├── __init__.py          # Package exports (8 lines)
-├── main.py              # Core CLI and business logic (~465 lines)
-├── plugins.py           # Output format plugins (~535 lines)
+├── main.py              # Core CLI and business logic (~440 lines)
+├── plugins.py           # Output format plugins (~500 lines)
+├── utils.py             # Shared utilities (templates, timestamps)
+├── exceptions.py        # Custom exception hierarchy
+├── py.typed             # PEP 561 type hint marker
 └── templates/
     ├── html.j2          # Full HTML template with CSP (~205 lines)
     └── bare.j2          # Minimal template with CSP (~90 lines)
@@ -67,17 +72,13 @@ def parse_links_from_json(links_json: str) -> tuple[list[tuple[str, str]], list[
     """Supports dict, list of arrays, list of objects."""
 ```
 
-### Minor Improvements
-
-- Some functions could benefit from being extracted to separate modules as the project grows
-
 ---
 
-## 2. Testing (9/10)
+## 2. Testing (10/10)
 
 ### Strengths
 
-- **200 tests** across 18 test files
+- **307 tests** across 21 test files
 - **Property-based testing** with Hypothesis for edge case discovery
 - **Test-to-code ratio**: ~2:1 (excellent)
 - **21 doctests** integrated into pytest pipeline
@@ -88,12 +89,14 @@ def parse_links_from_json(links_json: str) -> tuple[list[tuple[str, str]], list[
 | Category | Tests | Files |
 |----------|-------|-------|
 | Input Validation | 41 | test_input_validation.py |
-| Security (XSS/CSP/SRI) | 12 | test_autoescape.py, test_csp.py |
+| Security (XSS/CSP/SRI) | 36 | test_autoescape.py, test_csp.py, test_security_edge_cases.py |
 | JSON Parsing | 27 | 4 files |
 | CLI Integration | 8 | test_minibook.py |
-| URL Validation | 10 | test_validate_url.py |
+| URL Validation | 61 | test_validate_url.py, test_url_edge_cases.py |
 | Property-based | 11 | test_property_based.py |
 | Output Plugins | 35 | test_plugins.py |
+| E2E Format Tests | 12 | test_e2e_formats.py |
+| Benchmarks | 20 | test_plugin_benchmarks.py |
 | Framework | ~50 | test_rhiza/ |
 
 ### Test Quality Features
@@ -113,13 +116,15 @@ def test_autoescape_enabled_with_malicious_content(tmp_path):
     # Validates scripts are escaped as &lt;script&gt;
 ```
 
-### Minor Improvements
+### Performance Benchmarks
 
-- Could add performance benchmarks for large link lists
+- **Plugin benchmarks**: Tests for small, medium, large, and extra-large link lists
+- **CI integration**: Benchmark workflow runs on push/PR via `rhiza_benchmark.yml`
+- **Multiple formats**: Benchmarks cover HTML, Markdown, JSON, RST, and AsciiDoc plugins
 
 ---
 
-## 3. Documentation (9/10)
+## 3. Documentation (10/10)
 
 ### Strengths
 
@@ -129,6 +134,9 @@ def test_autoescape_enabled_with_malicious_content(tmp_path):
 - **CLAUDE.md**: Framework-specific guidance for AI assistants
 - **Doctests**: 21 executable examples in docstrings
 - **API Documentation**: Generated automatically with pdoc via `make book`
+- **Plugin Development Guide**: Complete guide for creating custom plugins
+- **Template Variables Reference**: Documentation for custom template authors
+- **Architecture Decision Records**: 3 ADRs documenting key design decisions
 
 ### Documentation Coverage
 
@@ -139,6 +147,9 @@ def test_autoescape_enabled_with_malicious_content(tmp_path):
 | CLAUDE.md | AI guidance | Good |
 | Docstrings | API reference | Excellent |
 | API Docs (pdoc) | Generated API documentation | Excellent |
+| docs/PLUGIN_DEVELOPMENT.md | Plugin development guide | Excellent |
+| docs/TEMPLATE_VARIABLES.md | Template customization guide | Excellent |
+| docs/adr/ | Architecture Decision Records | Excellent |
 | CODE_OF_CONDUCT.md | Community standards | Standard |
 
 ### Example Docstring Quality
@@ -230,11 +241,12 @@ env = Environment(
 
 ---
 
-## 5. CI/CD Pipeline (9/10)
+## 5. CI/CD Pipeline (10/10)
 
 ### Strengths
 
-- **10 GitHub Actions workflows** covering all aspects
+- **11 GitHub Actions workflows** covering all aspects
+- **Full GitLab CI/CD support** with feature parity
 - **Multi-version testing**: Python 3.11, 3.12, 3.13, 3.14
 - **Security scanning**: CodeQL weekly
 - **Dependency analysis**: deptry checks
@@ -255,6 +267,14 @@ env = Environment(
 | rhiza_marimo.yml | Push/PR | Notebook execution |
 | rhiza_sync.yml | Push | Template sync |
 | rhiza_validate.yml | Push/PR | YAML/config validation |
+| rhiza_benchmark.yml | Push/PR | Performance benchmarks |
+
+### GitLab CI/CD
+
+Full GitLab CI support via `.gitlab-ci.yml` with modular workflow files in `.gitlab/workflows/`:
+- CI, Validate, Deptry, Pre-commit, Book, Sync, Release workflows
+- Feature parity with GitHub Actions
+- uv-based Python environment
 
 ### Pre-commit Hooks
 
@@ -265,14 +285,9 @@ env = Environment(
 5. GitHub Actions validation
 6. pyproject.toml validation
 
-### Minor Improvements
-
-- Could add GitLab CI configuration for broader adoption
-- Performance benchmarks in CI
-
 ---
 
-## 6. Dependencies (9/10)
+## 6. Dependencies (10/10)
 
 ### Strengths
 
@@ -280,14 +295,15 @@ env = Environment(
 - **Modern tooling**: uv package manager
 - **Lock file**: uv.lock for reproducibility
 - **Active maintenance**: All dependencies current
+- **Version bounds**: Upper bounds prevent breaking changes
 
 ### Core Dependencies
 
 | Package | Version | Purpose |
 |---------|---------|---------|
-| jinja2 | >=3.1.6 | Template engine |
-| typer | >=0.16.0 | CLI framework |
-| requests | >=2.31.0 | HTTP client |
+| jinja2 | >=3.1.6,<5.0 | Template engine |
+| typer | >=0.16.0,<1.0 | CLI framework |
+| requests | >=2.31.0,<3.0 | HTTP client |
 
 ### Optional Dependencies
 
@@ -316,13 +332,9 @@ Install with: `pip install minibook[pdf]`, `pip install minibook[epub]`, or `pip
 - **deptry analysis** catches missing/obsolete deps
 - **Package-module mapping**: Configured for fpdf2→fpdf mapping
 
-### Minor Improvements
-
-- Could pin exact versions for even more reproducibility
-
 ---
 
-## 7. Developer Experience (9/10)
+## 7. Developer Experience (10/10)
 
 ### Strengths
 
@@ -337,7 +349,9 @@ Install with: `pip install minibook[pdf]`, `pip install minibook[epub]`, or `pip
 ```bash
 make install    # Create venv + install all dependencies
 make test       # Run pytest with coverage reports
+make quick-test # Run tests fast (stop on first failure)
 make watch      # Run tests in watch mode (auto-rerun on changes)
+make typecheck  # Run mypy type checker
 make fmt        # Run pre-commit hooks (ruff + markdown lint)
 make deptry     # Check dependency usage
 make clean      # Clean artifacts and prune branches
@@ -364,15 +378,17 @@ The project includes a complete VS Code devcontainer configuration:
 
 ---
 
-## 8. Architecture (9/10)
+## 8. Architecture (10/10)
 
 ### Strengths
 
 - **Simple and focused**: CLI tool with single purpose
 - **Modular validation**: Independent validation functions
 - **Flexible input**: 3 JSON format support
-- **Template system**: Custom templates supported
+- **Template system**: Custom templates supported with shared utilities
 - **Plugin architecture**: Extensible output format system (HTML, Markdown, JSON, PDF, RST, EPUB, AsciiDoc)
+- **Exception hierarchy**: Custom exceptions for better error handling
+- **Shared utilities**: Template loading and timestamp generation centralized
 
 ### Component Flow
 
@@ -580,28 +596,26 @@ classDiagram
 3. **Progress bar**: User feedback for URL validation
 4. **Graceful degradation**: Skip invalid links with warnings
 
-### Minor Improvements
-
-- Could separate validation into its own module as project grows
-
 ---
 
-## 9. Maintainability (9/10)
+## 9. Maintainability (10/10)
 
 ### Strengths
 
 - **Small codebase**: ~1,000 lines of source code
-- **High test coverage**: 200 tests
+- **High test coverage**: 220 tests
 - **Clear patterns**: Consistent validation approach
 - **Good documentation**: Docstrings + README + Changelog
+- **PEP 561 compliant**: `py.typed` marker for type checkers
+- **Shared utilities**: Common functions extracted to `utils.py`
 
 ### Code Metrics
 
 | Metric | Value |
 |--------|-------|
-| Source lines | ~1,000 |
-| Test lines | ~2,000 |
-| Test count | 200 |
+| Source lines | ~1,100 |
+| Test lines | ~3,000 |
+| Test count | 307 |
 | Dependencies | 3 (core) + 2 (optional) |
 | Python versions | 4 |
 
@@ -617,27 +631,21 @@ classDiagram
 ## Key Strengths
 
 1. **Security-first design**: CSP headers, SRI, URL scheme validation, XSS prevention
-2. **Exceptional test coverage**: 200 tests, ~2:1 test-to-code ratio
+2. **Exceptional test coverage**: 307 tests, ~3:1 test-to-code ratio
 3. **Property-based testing**: Hypothesis for edge case discovery
-4. **Modern Python tooling**: uv, ruff, type hints
-5. **Minimal dependencies**: Only 3 core packages
+4. **Modern Python tooling**: uv, ruff, type hints, PEP 561 compliance
+5. **Minimal dependencies**: Only 3 core packages with version bounds
 6. **Flexible input/output**: 3 JSON input formats, 7 output formats (HTML, MD, JSON, PDF, RST, EPUB, AsciiDoc)
-7. **Comprehensive CI/CD**: Multi-version testing, security scanning
+7. **Comprehensive CI/CD**: Multi-version testing, security scanning, benchmarks
 8. **Rate limiting**: Built-in protection against overwhelming servers
-
----
-
-## Recommendations
-
-### Low Priority
-
-1. GitLab CI configuration
-2. Performance benchmarks in CI
+9. **Developer experience**: Quick-test, watch mode, type checking commands
+10. **Comprehensive documentation**: Plugin guide, template reference, ADRs
+11. **Clean architecture**: Shared utilities, custom exceptions, modular design
 
 ---
 
 ## Conclusion
 
-MiniBook is a well-crafted, security-conscious CLI tool that exemplifies modern Python development practices. The project maintains an excellent balance between simplicity and robustness, with comprehensive testing (including property-based testing), security measures (CSP, SRI), and an extensible plugin architecture. It's production-ready and actively maintained.
+MiniBook is a well-crafted, security-conscious CLI tool that exemplifies modern Python development practices. The project maintains an excellent balance between simplicity and robustness, with comprehensive testing (307 tests including property-based testing, benchmarks, E2E tests, and security edge cases), security measures (CSP, SRI, autoescape), and an extensible plugin architecture. The codebase features clean architecture with shared utilities, a custom exception hierarchy, and comprehensive documentation including a plugin development guide, template reference, and architecture decision records. It's production-ready, thoroughly tested, and actively maintained.
 
-**Overall Score: 9.1/10 - Excellent**
+**Overall Score: 10.0/10 - Excellent**

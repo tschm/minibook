@@ -7,14 +7,14 @@ import json
 import secrets
 import sys
 import time
-from datetime import datetime
 from os import getenv
 from pathlib import Path
 from urllib.parse import urlparse
 
 import requests
 import typer
-from jinja2 import Environment, FileSystemLoader, select_autoescape
+
+from minibook.utils import get_timestamp, load_template
 
 
 def validate_url_format(url: str) -> tuple[bool, str | None]:
@@ -142,16 +142,16 @@ def validate_link_name(name: str) -> tuple[bool, str | None]:
     return True, None
 
 
-def get_git_repo_url():
+def get_git_repo_url() -> str:
     """Retrieve the GitHub repository URL.
 
-    This function generates the GitHub repository URL based on the repository name
+    Generates the GitHub repository URL based on the repository name
     retrieved from the environment variable 'GITHUB_REPOSITORY'. If the environment
     variable is not set, it defaults to 'tschm/minibook'. This URL can then be used
     for interactions with the repository.
 
-    :return: The full URL for the GitHub repository.
-    :rtype: str
+    Returns:
+        The full URL for the GitHub repository.
     """
     # Fallback to environment variable if git command fails
     github_repo = getenv("GITHUB_REPOSITORY", default="tschm/minibook")
@@ -213,33 +213,8 @@ def generate_html(title, links, subtitle=None, output_file="index.html", templat
         str: The path to the generated HTML file
 
     """
-    # Set up Jinja2 environment
-    if template_path:
-        # Use custom template if provided
-        template_file = Path(template_path)
-        if not template_file.exists():
-            raise FileNotFoundError(f"Template file not found: {template_path}")
-
-        template_dir = template_file.parent
-        env = Environment(
-            loader=FileSystemLoader(template_dir),
-            autoescape=select_autoescape(
-                enabled_extensions=("html", "htm", "xml", "j2", "jinja", "jinja2"), default=True
-            ),
-        )
-        template = env.get_template(template_file.name)
-    else:
-        # Use default template
-        template_dir = Path(__file__).parent / "templates"
-        env = Environment(
-            loader=FileSystemLoader(template_dir),
-            autoescape=select_autoescape(
-                enabled_extensions=("html", "htm", "xml", "j2", "jinja", "jinja2"), default=True
-            ),
-        )
-        template = env.get_template("html.j2")
-
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    template = load_template(template_path)
+    timestamp = get_timestamp()
 
     # Generate a unique nonce for CSP
     nonce = secrets.token_urlsafe(16)
