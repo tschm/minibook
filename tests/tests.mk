@@ -27,19 +27,18 @@ test: install ## run all tests
 	fi
 
 # The 'benchmark' target runs performance benchmarks using pytest-benchmark.
-# 1. Installs benchmarking dependencies (pytest-benchmark, pygal).
+# 1. Installs pytest-benchmark dependency.
 # 2. Executes benchmarks found in the benchmarks/ subfolder.
-# 3. Generates histograms and JSON results.
-# 4. Runs a post-analysis script to process the results.
+# 3. Generates JSON results in _benchmarks/ directory.
 benchmark: install ## run performance benchmarks
 	@if [ -d "${TESTS_FOLDER}/benchmarks" ]; then \
 	  printf "${BLUE}[INFO] Running performance benchmarks...${RESET}\n"; \
-	  ${UV_BIN} pip install pytest-benchmark==5.2.3 pygal==3.1.0; \
+	  ${UV_BIN} pip install pytest-benchmark>=5.1.0; \
+	  mkdir -p _benchmarks; \
 	  ${VENV}/bin/python -m pytest "${TESTS_FOLDER}/benchmarks/" \
 	  		--benchmark-only \
-			--benchmark-histogram=tests/test_rhiza/benchmarks/benchmarks \
-			--benchmark-json=tests/test_rhiza/benchmarks/benchmarks.json; \
-	  ${VENV}/bin/python tests/test_rhiza/benchmarks/analyze_benchmarks.py ; \
+			--benchmark-json=_benchmarks/results.json \
+			--benchmark-columns=min,max,mean,stddev,rounds; \
 	else \
 	  printf "${YELLOW}[WARN] Benchmarks folder not found, skipping benchmarks${RESET}\n"; \
 	fi
