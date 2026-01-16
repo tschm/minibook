@@ -8,10 +8,136 @@ import sys
 from datetime import datetime
 from os import getenv
 from pathlib import Path
+from urllib.parse import urlparse
 
 import requests
 import typer
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+
+
+def validate_url_format(url: str) -> tuple[bool, str | None]:
+    """Validate URL format and scheme.
+
+    Checks that the URL is a non-empty string with http or https scheme.
+    Blocks potentially dangerous schemes like javascript:, data:, and file:.
+
+    Args:
+        url: The URL string to validate.
+
+    Returns:
+        A tuple of (is_valid, error_message). error_message is None if valid.
+
+    Examples:
+        Valid HTTP and HTTPS URLs return (True, None):
+
+        >>> validate_url_format("https://example.com")
+        (True, None)
+        >>> validate_url_format("http://example.com/path/to/page")
+        (True, None)
+        >>> validate_url_format("https://example.com?query=value&foo=bar")
+        (True, None)
+
+        JavaScript URLs are rejected to prevent XSS attacks:
+
+        >>> validate_url_format("javascript:alert(1)")
+        (False, "Invalid URL scheme 'javascript', must be http or https")
+
+        Data URLs are rejected to prevent code injection:
+
+        >>> validate_url_format("data:text/html,<script>alert(1)</script>")
+        (False, "Invalid URL scheme 'data', must be http or https")
+
+        File URLs are rejected to prevent local file access:
+
+        >>> validate_url_format("file:///etc/passwd")
+        (False, "Invalid URL scheme 'file', must be http or https")
+
+        Empty strings and whitespace-only strings are rejected:
+
+        >>> validate_url_format("")
+        (False, 'URL must be a non-empty string')
+        >>> validate_url_format("   ")
+        (False, 'URL must be a non-empty string')
+
+        Non-string values are rejected:
+
+        >>> validate_url_format(None)
+        (False, 'URL must be a non-empty string')
+        >>> validate_url_format(123)
+        (False, 'URL must be a non-empty string')
+
+        URLs without a valid host are rejected:
+
+        >>> validate_url_format("https://")
+        (False, 'URL must have a valid host')
+
+        URLs without a scheme are rejected:
+
+        >>> validate_url_format("example.com")
+        (False, "Invalid URL scheme '', must be http or https")
+
+    """
+    if not isinstance(url, str) or not url.strip():
+        return False, "URL must be a non-empty string"
+
+    try:
+        parsed = urlparse(url)
+        if parsed.scheme not in ("http", "https"):
+            return False, f"Invalid URL scheme '{parsed.scheme}', must be http or https"
+        if not parsed.netloc:
+            return False, "URL must have a valid host"
+        return True, None
+    except Exception as e:
+        return False, f"Invalid URL: {e}"
+
+
+def validate_link_name(name: str) -> tuple[bool, str | None]:
+    r"""Validate link name.
+
+    Ensures the link name is a non-empty string. Names are used as display
+    text for links in the generated HTML.
+
+    Args:
+        name: The link name string to validate.
+
+    Returns:
+        A tuple of (is_valid, error_message). error_message is None if valid.
+
+    Examples:
+        Valid non-empty strings return (True, None):
+
+        >>> validate_link_name("My Link")
+        (True, None)
+        >>> validate_link_name("GitHub")
+        (True, None)
+        >>> validate_link_name("A")
+        (True, None)
+
+        Empty strings are rejected:
+
+        >>> validate_link_name("")
+        (False, 'Name must be a non-empty string')
+
+        Whitespace-only strings are rejected:
+
+        >>> validate_link_name("   ")
+        (False, 'Name must be a non-empty string')
+        >>> validate_link_name("\t\n")
+        (False, 'Name must be a non-empty string')
+
+        Non-string values are rejected:
+
+        >>> validate_link_name(None)
+        (False, 'Name must be a non-empty string')
+        >>> validate_link_name(123)
+        (False, 'Name must be a non-empty string')
+        >>> validate_link_name(["list"])
+        (False, 'Name must be a non-empty string')
+
+    """
+    if not isinstance(name, str) or not name.strip():
+        return False, "Name must be a non-empty string"
+    return True, None
 
 
 def get_git_repo_url():
@@ -121,7 +247,7 @@ def generate_html(title, links, subtitle=None, output_file="index.html", templat
     return output_file
 
 
-def parse_links_from_json(links_json: str) -> list[tuple[str, str]]:
+def parse_links_from_json(links_json: str) -> tuple[list[tuple[str, str]], list[str]]:
     """Parse links from a JSON string into a list of tuples.
 
     Supports multiple JSON formats:
@@ -129,40 +255,65 @@ def parse_links_from_json(links_json: str) -> list[tuple[str, str]]:
     - List of arrays: [["name", "url"], ...]
     - Dictionary: {"name1": "url1", "name2": "url2", ...}
 
+    Validates that names and URLs are non-empty strings and that URLs use
+    http or https schemes. Invalid items are skipped with warnings.
+
     Args:
         links_json (str): JSON-formatted string containing links
 
     Returns:
-        list[tuple[str, str]]: List of (name, url) tuples
+        tuple[list[tuple[str, str]], list[str]]: A tuple containing:
+            - List of valid (name, url) tuples
+            - List of warning messages for skipped items
 
     Raises:
         json.JSONDecodeError: If the JSON string is invalid
-        ValueError: If the JSON format is not supported
 
     """
     cleaned_links = links_json.strip()
     json_data = json.loads(cleaned_links)
 
     link_tuples = []
+    warnings = []
+
+    def validate_and_append(name, url, context: str = ""):
+        """Validate a name/url pair and append if valid, otherwise add warning."""
+        # Validate name
+        name_valid, name_error = validate_link_name(name)
+        if not name_valid:
+            warnings.append(f"Skipping item{context}: {name_error}")
+            return
+
+        # Validate URL
+        url_valid, url_error = validate_url_format(url)
+        if not url_valid:
+            warnings.append(f"Skipping '{name}'{context}: {url_error}")
+            return
+
+        link_tuples.append((name, url))
 
     # Handle different JSON formats
     if isinstance(json_data, list):
         # If it's a list of lists/arrays: [["name", "url"], ...]
         if all(isinstance(item, list) for item in json_data):
-            for item in json_data:
+            for i, item in enumerate(json_data):
                 if len(item) >= 2:
-                    link_tuples.append((item[0], item[1]))
+                    validate_and_append(item[0], item[1], f" at index {i}")
+                else:
+                    warnings.append(f"Skipping item at index {i}: array must have at least 2 elements")
         # If it's a list of objects: [{"name": "...", "url": "..."}, ...]
         elif all(isinstance(item, dict) for item in json_data):
-            for item in json_data:
+            for i, item in enumerate(json_data):
                 if "name" in item and "url" in item:
-                    link_tuples.append((item["name"], item["url"]))
+                    validate_and_append(item["name"], item["url"], f" at index {i}")
+                else:
+                    warnings.append(f"Skipping item at index {i}: missing 'name' or 'url' key")
     # If it's a dictionary: {"name1": "url1", "name2": "url2", ...}
     elif isinstance(json_data, dict):
         for name, url in json_data.items():
-            link_tuples.append((name, url))
+            validate_and_append(name, url)
 
-    return link_tuples
+    return link_tuples, warnings
 
 
 def validate_link_list(link_tuples: list[tuple[str, str]]) -> tuple[bool, list[tuple[str, str, str]]]:
@@ -216,8 +367,20 @@ def entrypoint(
 
     # Parse links from JSON
     try:
-        link_tuples = parse_links_from_json(links)
+        link_tuples, parse_warnings = parse_links_from_json(links)
         typer.echo(f"Parsed JSON links: {link_tuples}")
+
+        # Display warnings for skipped items
+        if parse_warnings:
+            typer.echo(f"\nWarning: {len(parse_warnings)} item(s) skipped due to validation errors:", err=True)
+            for warning in parse_warnings:
+                typer.echo(f"  - {warning}", err=True)
+
+        # Exit if no valid links remain
+        if not link_tuples:
+            typer.echo("Error: No valid links to process.", err=True)
+            return 1
+
     except (json.JSONDecodeError, TypeError):
         typer.echo("JSON parsing failed, falling back to legacy format")
         return 1
