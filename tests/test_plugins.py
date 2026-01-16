@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 
 from minibook.plugins import (
+    AsciiDocPlugin,
     EPUBPlugin,
     HTMLPlugin,
     JSONPlugin,
@@ -378,6 +379,69 @@ class TestEPUBPlugin:
             assert Path(result).exists()
 
 
+class TestAsciiDocPlugin:
+    """Tests for the AsciiDoc output plugin."""
+
+    def test_generate_creates_asciidoc_file(self):
+        """Test that AsciiDoc plugin creates an AsciiDoc file."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_file = Path(tmpdir) / "links.adoc"
+            plugin = AsciiDocPlugin()
+
+            result = plugin.generate(
+                title="Test Title",
+                links=[("Link 1", "https://example.com"), ("Link 2", "https://example.org")],
+                output_file=output_file,
+            )
+
+            assert Path(result).exists()
+            content = Path(result).read_text()
+            # AsciiDoc title format
+            assert "= Test Title" in content
+            # AsciiDoc link format
+            assert "link:https://example.com[Link 1]" in content
+            assert "link:https://example.org[Link 2]" in content
+
+    def test_generate_with_subtitle(self):
+        """Test AsciiDoc generation with subtitle."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_file = Path(tmpdir) / "links.adoc"
+            plugin = AsciiDocPlugin()
+
+            plugin.generate(
+                title="Test",
+                links=[("Link", "https://example.com")],
+                subtitle="A test subtitle",
+                output_file=output_file,
+            )
+
+            content = output_file.read_text()
+            assert "_A test subtitle_" in content
+
+    def test_plugin_attributes(self):
+        """Test AsciiDoc plugin has correct attributes."""
+        plugin = AsciiDocPlugin()
+        assert plugin.name == "asciidoc"
+        assert plugin.extension == ".adoc"
+
+    def test_asciidoc_has_document_attributes(self):
+        """Test that AsciiDoc output includes document attributes."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_file = Path(tmpdir) / "links.adoc"
+            plugin = AsciiDocPlugin()
+
+            plugin.generate(
+                title="Test",
+                links=[("Link", "https://example.com")],
+                output_file=output_file,
+            )
+
+            content = output_file.read_text()
+            # Check for AsciiDoc document attributes
+            assert ":toc:" in content
+            assert ":icons: font" in content
+
+
 class TestPluginRegistry:
     """Tests for the plugin registry functions."""
 
@@ -421,6 +485,16 @@ class TestPluginRegistry:
         plugin_cls = get_plugin("epub")
         assert plugin_cls == EPUBPlugin
 
+    def test_get_plugin_asciidoc(self):
+        """Test getting AsciiDoc plugin by name."""
+        plugin_cls = get_plugin("asciidoc")
+        assert plugin_cls == AsciiDocPlugin
+
+    def test_get_plugin_adoc_alias(self):
+        """Test getting AsciiDoc plugin by alias."""
+        plugin_cls = get_plugin("adoc")
+        assert plugin_cls == AsciiDocPlugin
+
     def test_get_plugin_case_insensitive(self):
         """Test that plugin lookup is case insensitive."""
         assert get_plugin("HTML") == HTMLPlugin
@@ -429,6 +503,7 @@ class TestPluginRegistry:
         assert get_plugin("PDF") == PDFPlugin
         assert get_plugin("RST") == RSTPlugin
         assert get_plugin("EPUB") == EPUBPlugin
+        assert get_plugin("ASCIIDOC") == AsciiDocPlugin
 
     def test_get_plugin_unknown_raises(self):
         """Test that unknown plugin name raises ValueError."""
@@ -439,8 +514,8 @@ class TestPluginRegistry:
         """Test listing available plugins."""
         plugins = list_plugins()
 
-        # Should have at least 6 unique plugins
-        assert len(plugins) >= 6
+        # Should have at least 7 unique plugins
+        assert len(plugins) >= 7
 
         # Check structure
         for plugin_info in plugins:
@@ -456,3 +531,4 @@ class TestPluginRegistry:
         assert "pdf" in names
         assert "rst" in names
         assert "epub" in names
+        assert "asciidoc" in names
