@@ -12,15 +12,12 @@ from minibook.main import (
     validate_url_format,
 )
 
-
 # Strategy for generating valid HTTP/HTTPS URLs
 valid_url_strategy = st.builds(
     lambda scheme, domain, path: f"{scheme}://{domain}.com{path}",
     scheme=st.sampled_from(["http", "https"]),
     domain=st.text(alphabet=string.ascii_lowercase, min_size=1, max_size=20),
-    path=st.text(alphabet=string.ascii_lowercase + "/", min_size=0, max_size=30).map(
-        lambda s: "/" + s if s else ""
-    ),
+    path=st.text(alphabet=string.ascii_lowercase + "/", min_size=0, max_size=30).map(lambda s: "/" + s if s else ""),
 )
 
 # Strategy for generating invalid URL schemes
