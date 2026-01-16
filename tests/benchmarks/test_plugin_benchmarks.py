@@ -4,8 +4,6 @@ These benchmarks measure the generation speed of each plugin
 with various link list sizes to track performance regressions.
 """
 
-import pytest
-
 from minibook.plugins import (
     AsciiDocPlugin,
     HTMLPlugin,
