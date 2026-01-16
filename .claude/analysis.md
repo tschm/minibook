@@ -158,7 +158,6 @@ def validate_url_format(url: str) -> tuple[bool, str | None]:
 
 ### Minor Improvements
 
-- Could add architecture diagrams
 - API documentation could be generated with pdoc/sphinx
 
 ---
@@ -345,12 +344,123 @@ make test
 
 ### Component Flow
 
+```mermaid
+flowchart LR
+    subgraph Input
+        A[JSON String] --> B[Typer CLI]
+    end
+
+    subgraph Validation
+        B --> C{parse_links_from_json}
+        C --> D[validate_url_format]
+        C --> E[validate_link_name]
+    end
+
+    subgraph Processing
+        D --> F[Link Tuples]
+        E --> F
+        F --> G{validate_links?}
+        G -->|Yes| H[validate_url]
+        G -->|No| I[Skip]
+        H --> I
+    end
+
+    subgraph Output
+        I --> J[generate_html]
+        J --> K[Jinja2 Template]
+        K --> L[index.html]
+    end
 ```
-Input (JSON) → Validation → Parsing → HTML Generation → Output
-     ↓              ↓           ↓            ↓
-  Typer CLI    url_format   parse_json   Jinja2 render
-               link_name    warnings     autoescape
-               url_access
+
+### Data Flow
+
+```mermaid
+flowchart TD
+    subgraph "Input Formats"
+        A1["Dict: {name: url}"]
+        A2["List of Objects: [{name, url}]"]
+        A3["List of Arrays: [[name, url]]"]
+    end
+
+    A1 --> B[parse_links_from_json]
+    A2 --> B
+    A3 --> B
+
+    B --> C["list[tuple[str, str]]"]
+    B --> D["list[str] warnings"]
+
+    C --> E{URL Validation}
+    E -->|Optional| F[validate_url with rate limiting]
+    F --> G[Progress Bar]
+
+    C --> H[generate_html]
+    H --> I[Nonce Generation]
+    I --> J[Template Render]
+    J --> K[HTML with CSP]
+```
+
+### Security Architecture
+
+```mermaid
+flowchart TD
+    subgraph "Input Validation Layer"
+        A[User Input] --> B{URL Scheme Check}
+        B -->|http/https| C[Valid]
+        B -->|javascript:| D[Blocked]
+        B -->|data:| D
+        B -->|file:| D
+    end
+
+    subgraph "Template Security Layer"
+        C --> E[Jinja2 Autoescape]
+        E --> F[HTML Entity Encoding]
+    end
+
+    subgraph "Output Security Layer"
+        F --> G[CSP Nonce Generation]
+        G --> H[CSP Meta Tag]
+        H --> I["script-src 'nonce-...'"]
+        H --> J["style-src 'nonce-...'"]
+    end
+
+    subgraph "Runtime Protection"
+        K[Rate Limiting] --> L[time.sleep delay]
+        L --> M[Prevent Server Overload]
+    end
+```
+
+### Module Structure
+
+```mermaid
+classDiagram
+    class main {
+        +validate_url_format(url) tuple
+        +validate_link_name(name) tuple
+        +validate_url(url, timeout, delay) tuple
+        +validate_link_list(links, delay) tuple
+        +parse_links_from_json(json) tuple
+        +generate_html(title, links, ...) str
+        +get_git_repo_url() str
+        +entrypoint() int
+    }
+
+    class Templates {
+        +html.j2
+        +bare.j2
+    }
+
+    class CLI {
+        +--title
+        +--subtitle
+        +--output
+        +--links
+        +--validate-links
+        +--request-delay
+        +--template
+    }
+
+    main --> Templates : renders
+    CLI --> main : invokes
 ```
 
 ### Design Decisions
@@ -412,19 +522,18 @@ Input (JSON) → Validation → Parsing → HTML Generation → Output
 ### High Priority
 
 1. Generate API documentation (pdoc/sphinx)
-2. Add architecture diagrams to documentation
-3. Consider Docker development environment
+2. Consider Docker development environment
 
 ### Medium Priority
 
-4. Property-based testing with hypothesis
-5. Plugin system for additional output formats
-6. Subresource Integrity (SRI) for CDN scripts
+3. Property-based testing with hypothesis
+4. Plugin system for additional output formats
+5. Subresource Integrity (SRI) for CDN scripts
 
 ### Low Priority
 
-7. GitLab CI configuration
-8. Performance benchmarks in CI
+6. GitLab CI configuration
+7. Performance benchmarks in CI
 
 ---
 
