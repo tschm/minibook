@@ -128,6 +128,7 @@ def test_autoescape_enabled_with_malicious_content(tmp_path):
 - **Docstrings**: Google-style with examples on all public functions
 - **CLAUDE.md**: Framework-specific guidance for AI assistants
 - **Doctests**: 21 executable examples in docstrings
+- **API Documentation**: Generated automatically with pdoc via `make book`
 
 ### Documentation Coverage
 
@@ -137,6 +138,7 @@ def test_autoescape_enabled_with_malicious_content(tmp_path):
 | CHANGELOG.md | Version history | Excellent |
 | CLAUDE.md | AI guidance | Good |
 | Docstrings | API reference | Excellent |
+| API Docs (pdoc) | Generated API documentation | Excellent |
 | CODE_OF_CONDUCT.md | Community standards | Standard |
 
 ### Example Docstring Quality
@@ -159,9 +161,15 @@ def validate_url_format(url: str) -> tuple[bool, str | None]:
     """
 ```
 
-### Minor Improvements
+### Documentation Build Process
 
-- API documentation could be generated with pdoc/sphinx
+The project uses `make book` to compile comprehensive documentation that includes:
+- **API Documentation**: Generated with pdoc in `_pdoc/` directory
+- **Test Coverage Reports**: HTML coverage reports in `_tests/html-coverage/`
+- **Test Results**: HTML test reports in `_tests/html-report/`
+- **Notebooks**: Marimo notebooks exported to HTML in `_marimushka/`
+
+All documentation is automatically deployed to GitHub Pages via the `rhiza_book.yml` workflow.
 
 ---
 
@@ -601,19 +609,15 @@ classDiagram
 
 ## Recommendations
 
-### High Priority
-
-1. Generate API documentation (pdoc/sphinx)
-
 ### Medium Priority
 
-2. Add more output format plugins (e.g., EPUB, RST)
-3. Add `make watch` for test auto-rerun during development
+1. Add more output format plugins (e.g., EPUB, RST)
+2. Add `make watch` for test auto-rerun during development
 
 ### Low Priority
 
-4. GitLab CI configuration
-5. Performance benchmarks in CI
+3. GitLab CI configuration
+4. Performance benchmarks in CI
 
 ---
 
