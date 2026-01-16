@@ -372,6 +372,7 @@ def entrypoint(
     request_delay: float = typer.Option(
         0.0, "--request-delay", help="Delay in seconds between URL validation requests (rate limiting)"
     ),
+    output_format: str = typer.Option("html", "--format", "-f", help="Output format: html, markdown, json, or pdf"),
     template: str | None = typer.Option(
         None, "--template", help="Path to a custom Jinja2 template file for HTML output"
     ),
@@ -421,12 +422,39 @@ def entrypoint(
         else:
             typer.echo("All links are valid!")
 
-    # Generate HTML using Jinja2
-    output_file = Path(output) / "index.html"
+    # Generate output using plugin system
+    from minibook.plugins import get_plugin
+
     try:
-        output_path = generate_html(title, link_tuples, subtitle, output_file, template)
-        typer.echo(f"HTML minibook created successfully: {Path(output_path).absolute()}")
+        plugin_cls = get_plugin(output_format)
+    except ValueError as e:
+        typer.echo(f"Error: {e}", err=True)
+        return 1
+
+    # Determine output filename based on format
+    output_filenames = {
+        "html": "index.html",
+        "markdown": "links.md",
+        "md": "links.md",
+        "json": "links.json",
+        "pdf": "links.pdf",
+    }
+    filename = output_filenames.get(output_format.lower(), f"output{plugin_cls.extension}")
+    output_file = Path(output) / filename
+
+    try:
+        # Create plugin instance (with template for HTML)
+        if output_format.lower() == "html" and template:
+            plugin = plugin_cls(template_path=template)
+        else:
+            plugin = plugin_cls()
+
+        output_path = plugin.generate(title, link_tuples, subtitle, output_file)
+        typer.echo(f"{output_format.upper()} minibook created successfully: {Path(output_path).absolute()}")
     except FileNotFoundError as e:
+        typer.echo(f"Error: {e}", err=True)
+        return 1
+    except ImportError as e:
         typer.echo(f"Error: {e}", err=True)
         return 1
 

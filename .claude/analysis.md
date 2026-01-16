@@ -76,7 +76,7 @@ def parse_links_from_json(links_json: str) -> tuple[list[tuple[str, str]], list[
 
 ### Strengths
 
-- **177 tests** across 18 test files
+- **182 tests** across 18 test files
 - **Property-based testing** with Hypothesis for edge case discovery
 - **Test-to-code ratio**: ~3.2:1 (excellent)
 - **21 doctests** integrated into pytest pipeline
@@ -340,7 +340,7 @@ make test
 - **Modular validation**: Independent validation functions
 - **Flexible input**: 3 JSON format support
 - **Template system**: Custom templates supported
-- **Plugin architecture**: Extensible output format system (HTML, Markdown, JSON)
+- **Plugin architecture**: Extensible output format system (HTML, Markdown, JSON, PDF)
 
 ### Component Flow
 
@@ -456,6 +456,7 @@ classDiagram
         +--links
         +--validate-links
         +--request-delay
+        +--format
         +--template
     }
 
@@ -473,7 +474,7 @@ classDiagram
 ### Minor Improvements
 
 - Could separate validation into its own module as project grows
-- PDF output plugin could be added to the plugin system
+- Additional output plugins could be added (EPUB, RST)
 
 ---
 
@@ -482,7 +483,7 @@ classDiagram
 ### Strengths
 
 - **Small codebase**: ~700 lines of source code
-- **High test coverage**: 177 tests
+- **High test coverage**: 182 tests
 - **Clear patterns**: Consistent validation approach
 - **Good documentation**: Docstrings + README + Changelog
 
@@ -490,9 +491,9 @@ classDiagram
 
 | Metric | Value |
 |--------|-------|
-| Source lines | ~700 |
-| Test lines | ~1,650 |
-| Test count | 177 |
+| Source lines | ~800 |
+| Test lines | ~1,800 |
+| Test count | 182 |
 | Dependencies | 3 (core) |
 | Python versions | 4 |
 
@@ -508,11 +509,11 @@ classDiagram
 ## Key Strengths
 
 1. **Security-first design**: CSP headers, SRI, URL scheme validation, XSS prevention
-2. **Exceptional test coverage**: 177 tests, 3.2:1 test-to-code ratio
+2. **Exceptional test coverage**: 182 tests, 3.2:1 test-to-code ratio
 3. **Property-based testing**: Hypothesis for edge case discovery
 4. **Modern Python tooling**: uv, ruff, type hints
 5. **Minimal dependencies**: Only 3 core packages
-6. **Flexible input/output**: 3 JSON input formats, plugin system for output formats
+6. **Flexible input/output**: 3 JSON input formats, 4 output formats (HTML, MD, JSON, PDF)
 7. **Comprehensive CI/CD**: Multi-version testing, security scanning
 8. **Rate limiting**: Built-in protection against overwhelming servers
 
@@ -527,13 +528,12 @@ classDiagram
 
 ### Medium Priority
 
-3. PDF output plugin
-4. CLI option for output format selection
+3. Add more output format plugins (e.g., EPUB, RST)
 
 ### Low Priority
 
-5. GitLab CI configuration
-6. Performance benchmarks in CI
+4. GitLab CI configuration
+5. Performance benchmarks in CI
 
 ---
 

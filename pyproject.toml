@@ -45,6 +45,7 @@ dev = [
     "plotly>=6.5",
     "pandas>=2.3",
     "hypothesis>=6.150.2",
+    "fpdf2>=2.8.5",
 ]
 
 
