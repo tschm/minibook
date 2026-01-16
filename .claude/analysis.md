@@ -77,7 +77,7 @@ def parse_links_from_json(links_json: str) -> tuple[list[tuple[str, str]], list[
 
 ### Strengths
 
-- **194 tests** across 18 test files
+- **200 tests** across 18 test files
 - **Property-based testing** with Hypothesis for edge case discovery
 - **Test-to-code ratio**: ~2:1 (excellent)
 - **21 doctests** integrated into pytest pipeline
@@ -93,7 +93,7 @@ def parse_links_from_json(links_json: str) -> tuple[list[tuple[str, str]], list[
 | CLI Integration | 8 | test_minibook.py |
 | URL Validation | 10 | test_validate_url.py |
 | Property-based | 11 | test_property_based.py |
-| Output Plugins | 29 | test_plugins.py |
+| Output Plugins | 35 | test_plugins.py |
 | Framework | ~50 | test_rhiza/ |
 
 ### Test Quality Features
@@ -372,7 +372,7 @@ The project includes a complete VS Code devcontainer configuration:
 - **Modular validation**: Independent validation functions
 - **Flexible input**: 3 JSON format support
 - **Template system**: Custom templates supported
-- **Plugin architecture**: Extensible output format system (HTML, Markdown, JSON, PDF, RST, EPUB)
+- **Plugin architecture**: Extensible output format system (HTML, Markdown, JSON, PDF, RST, EPUB, AsciiDoc)
 
 ### Component Flow
 
@@ -544,6 +544,12 @@ classDiagram
         +generate()
     }
 
+    class AsciiDocPlugin {
+        +name = "asciidoc"
+        +extension = ".adoc"
+        +generate()
+    }
+
     class PluginRegistry {
         -_plugins: dict
         +register(plugin_class)
@@ -557,6 +563,7 @@ classDiagram
     OutputPlugin <|-- PDFPlugin
     OutputPlugin <|-- RSTPlugin
     OutputPlugin <|-- EPUBPlugin
+    OutputPlugin <|-- AsciiDocPlugin
     PluginRegistry --> OutputPlugin : manages
 ```
 
@@ -564,7 +571,7 @@ classDiagram
 - **Base class**: `OutputPlugin` defines interface with `name`, `extension`, `description`
 - **Registry pattern**: `PluginRegistry` for dynamic plugin discovery
 - **Lazy imports**: PDFPlugin and EPUBPlugin import dependencies only when generating (optional)
-- **CLI integration**: `--format` option selects output format (html, markdown, json, pdf, rst, epub)
+- **CLI integration**: `--format` option selects output format (html, markdown, json, pdf, rst, epub, asciidoc)
 
 ### Design Decisions
 
@@ -576,7 +583,6 @@ classDiagram
 ### Minor Improvements
 
 - Could separate validation into its own module as project grows
-- Additional output plugins could be added (e.g., AsciiDoc)
 
 ---
 
@@ -585,7 +591,7 @@ classDiagram
 ### Strengths
 
 - **Small codebase**: ~1,000 lines of source code
-- **High test coverage**: 194 tests
+- **High test coverage**: 200 tests
 - **Clear patterns**: Consistent validation approach
 - **Good documentation**: Docstrings + README + Changelog
 
@@ -595,7 +601,7 @@ classDiagram
 |--------|-------|
 | Source lines | ~1,000 |
 | Test lines | ~2,000 |
-| Test count | 194 |
+| Test count | 200 |
 | Dependencies | 3 (core) + 2 (optional) |
 | Python versions | 4 |
 
@@ -611,11 +617,11 @@ classDiagram
 ## Key Strengths
 
 1. **Security-first design**: CSP headers, SRI, URL scheme validation, XSS prevention
-2. **Exceptional test coverage**: 194 tests, ~2:1 test-to-code ratio
+2. **Exceptional test coverage**: 200 tests, ~2:1 test-to-code ratio
 3. **Property-based testing**: Hypothesis for edge case discovery
 4. **Modern Python tooling**: uv, ruff, type hints
 5. **Minimal dependencies**: Only 3 core packages
-6. **Flexible input/output**: 3 JSON input formats, 6 output formats (HTML, MD, JSON, PDF, RST, EPUB)
+6. **Flexible input/output**: 3 JSON input formats, 7 output formats (HTML, MD, JSON, PDF, RST, EPUB, AsciiDoc)
 7. **Comprehensive CI/CD**: Multi-version testing, security scanning
 8. **Rate limiting**: Built-in protection against overwhelming servers
 
@@ -623,14 +629,10 @@ classDiagram
 
 ## Recommendations
 
-### Medium Priority
-
-1. Add AsciiDoc output format plugin
-
 ### Low Priority
 
-2. GitLab CI configuration
-3. Performance benchmarks in CI
+1. GitLab CI configuration
+2. Performance benchmarks in CI
 
 ---
 
