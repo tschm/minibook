@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rate limiting for URL validation (`--request-delay` option)
 - Property-based testing with Hypothesis for edge case discovery
 - Plugin architecture for output formats (HTML, Markdown, JSON, PDF, RST, EPUB, AsciiDoc)
+- Performance benchmarks for plugin generation (`make benchmark`)
+- CI workflow for automated performance regression detection
 - PDF output format (`--format pdf`) - requires `pip install minibook[pdf]`
 - EPUB output format (`--format epub`) - requires `pip install minibook[epub]`
 - RST (reStructuredText) output format (`--format rst`)
