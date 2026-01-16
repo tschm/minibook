@@ -1,4 +1,5 @@
 """Fixtures for benchmark tests."""
+
 import pytest
 
 

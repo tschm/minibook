@@ -5,6 +5,7 @@ with various link list sizes to track performance regressions.
 """
 
 import pytest
+
 from minibook.plugins import (
     AsciiDocPlugin,
     HTMLPlugin,
@@ -31,9 +32,7 @@ class TestPluginBenchmarks:
         "link_fixture",
         ["small_link_list", "medium_link_list", "large_link_list", "extra_large_link_list"],
     )
-    def test_generation(
-        self, benchmark, tmp_path, plugin_class, extension, link_fixture, request
-    ):
+    def test_generation(self, benchmark, tmp_path, plugin_class, extension, link_fixture, request):
         """Benchmark plugin generation with varying link list sizes."""
         plugin = plugin_class()
         output_file = tmp_path / f"output.{extension}"
