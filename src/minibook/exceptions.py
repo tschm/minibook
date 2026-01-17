@@ -41,6 +41,13 @@ class ValidationError(MinibookError):
     """
 
     def __init__(self, field: str, value: str | None = None, message: str = "Validation failed"):
+        """Initialize validation error.
+
+        Args:
+            field: The name of the field that failed validation.
+            value: The invalid value that was provided.
+            message: Description of what went wrong.
+        """
         self.field = field
         self.value = value
         self.message = message
@@ -64,6 +71,12 @@ class URLValidationError(ValidationError):
     """
 
     def __init__(self, url: str, message: str = "Invalid URL"):
+        """Initialize URL validation error.
+
+        Args:
+            url: The invalid URL.
+            message: Description of what went wrong.
+        """
         super().__init__(field="url", value=url, message=message)
         self.url = url
 
@@ -79,6 +92,12 @@ class LinkNameValidationError(ValidationError):
     """
 
     def __init__(self, name: str, message: str = "Invalid link name"):
+        """Initialize link name validation error.
+
+        Args:
+            name: The invalid link name.
+            message: Description of what went wrong.
+        """
         super().__init__(field="name", value=name, message=message)
         self.name = name
 
@@ -100,6 +119,12 @@ class TemplateError(MinibookError):
     """
 
     def __init__(self, template_path: str | None = None, message: str = "Template error"):
+        """Initialize template error.
+
+        Args:
+            template_path: Path to the template that caused the error.
+            message: Description of what went wrong.
+        """
         self.template_path = template_path
 
         if template_path:
@@ -119,6 +144,11 @@ class TemplateNotFoundError(TemplateError):
     """
 
     def __init__(self, template_path: str):
+        """Initialize template not found error.
+
+        Args:
+            template_path: Path to the template that was not found.
+        """
         super().__init__(template_path, "Template file not found")
 
 
@@ -139,6 +169,12 @@ class PluginError(MinibookError):
     """
 
     def __init__(self, plugin_name: str | None = None, message: str = "Plugin error"):
+        """Initialize plugin error.
+
+        Args:
+            plugin_name: Name of the plugin that caused the error.
+            message: Description of what went wrong.
+        """
         self.plugin_name = plugin_name
 
         if plugin_name:
@@ -158,6 +194,11 @@ class PluginNotFoundError(PluginError):
     """
 
     def __init__(self, plugin_name: str):
+        """Initialize plugin not found error.
+
+        Args:
+            plugin_name: Name of the plugin that was not found.
+        """
         super().__init__(plugin_name, "Output format not found")
 
 
@@ -172,10 +213,18 @@ class PluginDependencyError(PluginError):
         >>> raise PluginDependencyError("pdf", "fpdf2", "pip install minibook[pdf]")
         Traceback (most recent call last):
         ...
-        minibook.exceptions.PluginDependencyError: Plugin 'pdf' error: Missing dependency 'fpdf2'. Install with: pip install minibook[pdf]
+        minibook.exceptions.PluginDependencyError: Plugin 'pdf' error: Missing dependency 'fpdf2'.
+        ... Install with: pip install minibook[pdf]
     """
 
     def __init__(self, plugin_name: str, dependency: str, install_command: str | None = None):
+        """Initialize plugin dependency error.
+
+        Args:
+            plugin_name: Name of the plugin that caused the error.
+            dependency: The missing dependency name.
+            install_command: Command to install the dependency.
+        """
         self.dependency = dependency
         self.install_command = install_command
 
@@ -203,6 +252,12 @@ class ParseError(MinibookError):
     """
 
     def __init__(self, input_type: str = "input", message: str = "Parse error"):
+        """Initialize parse error.
+
+        Args:
+            input_type: The type of input being parsed (e.g., "JSON", "YAML").
+            message: Description of what went wrong.
+        """
         self.input_type = input_type
         super().__init__(f"Failed to parse {input_type}: {message}")
 
@@ -218,6 +273,11 @@ class JSONParseError(ParseError):
     """
 
     def __init__(self, message: str = "Invalid JSON"):
+        """Initialize JSON parse error.
+
+        Args:
+            message: Description of what went wrong.
+        """
         super().__init__("JSON", message)
 
 
@@ -236,6 +296,12 @@ class OutputError(MinibookError):
     """
 
     def __init__(self, output_path: str | None = None, message: str = "Output error"):
+        """Initialize output error.
+
+        Args:
+            output_path: Path where output was being written.
+            message: Description of what went wrong.
+        """
         self.output_path = output_path
 
         if output_path:

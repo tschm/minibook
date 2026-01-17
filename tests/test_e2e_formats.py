@@ -9,8 +9,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-import pytest
-
 # Test data used across all format tests
 TEST_LINKS = [
     ("Python", "https://www.python.org"),

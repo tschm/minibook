@@ -15,7 +15,7 @@ AUTOESCAPE_EXTENSIONS = ("html", "htm", "xml", "j2", "jinja", "jinja2")
 
 
 def get_timestamp() -> str:
-    """Generate a formatted timestamp string.
+    r"""Generate a formatted timestamp string.
 
     Returns:
         A timestamp string in the format 'YYYY-MM-DD HH:MM:SS'.

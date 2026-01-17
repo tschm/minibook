@@ -9,7 +9,7 @@ This module tests various security edge cases including:
 
 import pytest
 
-from minibook.main import generate_html, parse_links_from_json, validate_link_name, validate_url_format
+from minibook.main import generate_html, parse_links_from_json, validate_url_format
 
 
 class TestMaliciousLinkNames:
