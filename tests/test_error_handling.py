@@ -64,8 +64,8 @@ class TestMainCLIErrorHandling:
             ],
         )
 
-        # Should display warning in output
-        assert "Warning" in result.stdout or "warning" in result.stdout.lower()
+        # Should display warning in output (warnings go to stderr, use .output for combined)
+        assert "Warning" in result.output or "warning" in result.output.lower()
 
     def test_cli_with_all_invalid_links(self):
         """Test that CLI handles all invalid links gracefully."""
