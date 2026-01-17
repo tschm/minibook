@@ -28,18 +28,19 @@ class TestOutputPluginAbstract:
 
     def test_output_plugin_base_class_generate(self):
         """Test calling generate on the base class directly (coverage for pass statement)."""
+
         # This test ensures the abstract method's pass statement is covered
         # Create a concrete subclass that properly implements the abstract method
         class MinimalPlugin(OutputPlugin):
             name = "minimal"
             extension = ".txt"
             description = "Minimal plugin for testing"
-            
+
             def generate(self, title, links, subtitle=None, output_file="output", **kwargs):
                 # Call the parent's generate method to cover its pass statement
                 # This will return None as the base implementation just has 'pass'
                 return super().generate(title, links, subtitle, output_file, **kwargs)
-        
+
         # Instantiate and test
         plugin = MinimalPlugin()
         result = plugin.generate("Title", [("Link", "https://example.com")])
