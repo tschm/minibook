@@ -20,7 +20,7 @@ from minibook.utils import get_timestamp, load_template
 def validate_url_format(url: str) -> tuple[bool, str | None]:
     """Validate URL format and scheme.
 
-    Checks that the URL is a non-empty string with http or https scheme.
+    Checks that the URL is a non-empty string with http or https scheme, or a relative path.
     Blocks potentially dangerous schemes like javascript:, data:, and file:.
 
     Args:
@@ -39,20 +39,29 @@ def validate_url_format(url: str) -> tuple[bool, str | None]:
         >>> validate_url_format("https://example.com?query=value&foo=bar")
         (True, None)
 
+        Relative paths are allowed for local file references:
+
+        >>> validate_url_format("./tests/html-report/report.html")
+        (True, None)
+        >>> validate_url_format("../docs/index.html")
+        (True, None)
+        >>> validate_url_format("path/to/file.html")
+        (True, None)
+
         JavaScript URLs are rejected to prevent XSS attacks:
 
         >>> validate_url_format("javascript:alert(1)")
-        (False, "Invalid URL scheme 'javascript', must be http or https")
+        (False, "Invalid URL scheme 'javascript': blocked for security")
 
         Data URLs are rejected to prevent code injection:
 
         >>> validate_url_format("data:text/html,<script>alert(1)</script>")
-        (False, "Invalid URL scheme 'data', must be http or https")
+        (False, "Invalid URL scheme 'data': blocked for security")
 
         File URLs are rejected to prevent local file access:
 
         >>> validate_url_format("file:///etc/passwd")
-        (False, "Invalid URL scheme 'file', must be http or https")
+        (False, "Invalid URL scheme 'file': blocked for security")
 
         Empty strings and whitespace-only strings are rejected:
 
@@ -68,15 +77,10 @@ def validate_url_format(url: str) -> tuple[bool, str | None]:
         >>> validate_url_format(123)
         (False, 'URL must be a non-empty string')
 
-        URLs without a valid host are rejected:
+        Absolute URLs without a valid host are rejected:
 
         >>> validate_url_format("https://")
         (False, 'URL must have a valid host')
-
-        URLs without a scheme are rejected:
-
-        >>> validate_url_format("example.com")
-        (False, "Invalid URL scheme '', must be http or https")
 
     """
     if not isinstance(url, str) or not url.strip():
@@ -84,11 +88,24 @@ def validate_url_format(url: str) -> tuple[bool, str | None]:
 
     try:
         parsed = urlparse(url)
-        if parsed.scheme not in ("http", "https"):
-            return False, f"Invalid URL scheme '{parsed.scheme}', must be http or https"
-        if not parsed.netloc:
-            return False, "URL must have a valid host"
-        return True, None
+        
+        # Block dangerous schemes
+        dangerous_schemes = ("javascript", "data", "file", "vbscript", "about")
+        if parsed.scheme in dangerous_schemes:
+            return False, f"Invalid URL scheme '{parsed.scheme}': blocked for security"
+        
+        # Allow relative paths (empty scheme)
+        if not parsed.scheme:
+            return True, None
+        
+        # For absolute URLs, require http or https with a valid host
+        if parsed.scheme in ("http", "https"):
+            if not parsed.netloc:
+                return False, "URL must have a valid host"
+            return True, None
+        
+        # Any other scheme is not allowed
+        return False, f"Invalid URL scheme '{parsed.scheme}': only http, https, or relative paths allowed"
     except Exception as e:
         return False, f"Invalid URL: {e}"
 
