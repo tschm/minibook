@@ -78,11 +78,23 @@ class TestValidateUrlFormat:
         assert is_valid is False
         assert "valid host" in error
 
-    def test_no_scheme_rejected(self):
-        """Test that URLs without a scheme are rejected."""
-        is_valid, error = validate_url_format("example.com")
-        assert is_valid is False
-        assert "Invalid URL scheme" in error
+    def test_relative_path_allowed(self):
+        """Test that relative paths (no scheme) are allowed."""
+        is_valid, error = validate_url_format("./tests/report.html")
+        assert is_valid is True
+        assert error is None
+
+    def test_relative_path_parent_allowed(self):
+        """Test that relative paths with parent directory are allowed."""
+        is_valid, error = validate_url_format("../docs/index.html")
+        assert is_valid is True
+        assert error is None
+
+    def test_simple_path_allowed(self):
+        """Test that simple paths without ./ are allowed."""
+        is_valid, error = validate_url_format("path/to/file.html")
+        assert is_valid is True
+        assert error is None
 
 
 class TestValidateLinkName:
@@ -181,3 +193,13 @@ class TestParseLinksValidation:
         result, warnings = parse_links_from_json(json_str)
         assert result == [("Good", "https://example.com")]
         assert len(warnings) == 1
+
+    def test_relative_paths_accepted(self):
+        """Test that relative paths are accepted as valid URLs."""
+        json_str = '{"Test Report": "./tests/html-report/report.html", "Docs": "../docs/index.html", "External": "https://example.com"}'
+        result, warnings = parse_links_from_json(json_str)
+        assert len(result) == 3
+        assert ("Test Report", "./tests/html-report/report.html") in result
+        assert ("Docs", "../docs/index.html") in result
+        assert ("External", "https://example.com") in result
+        assert len(warnings) == 0

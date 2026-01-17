@@ -19,8 +19,6 @@ class MinibookError(Exception):
         MiniBook error: Something went wrong
     """
 
-    pass
-
 
 class ValidationError(MinibookError):
     """Exception raised when input validation fails.

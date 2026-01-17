@@ -159,7 +159,7 @@ class TestMalformedURLs:
     """Tests for malformed URLs that should be rejected."""
 
     @pytest.mark.parametrize(
-        "url,expected_error_part",
+        ("url", "expected_error_part"),
         [
             ("https://", "valid host"),  # No host
             ("http://", "valid host"),  # No host

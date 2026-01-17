@@ -44,7 +44,6 @@ class OutputPlugin(ABC):
         Returns:
             str: Path to the generated output file
         """
-        pass
 
 
 class HTMLPlugin(OutputPlugin):
@@ -565,7 +564,7 @@ def list_plugins() -> list[dict[str, str]]:
     """
     seen = set()
     result = []
-    for name, plugin_cls in PLUGINS.items():
+    for _name, plugin_cls in PLUGINS.items():
         if plugin_cls.name not in seen:
             seen.add(plugin_cls.name)
             result.append(
