@@ -19,7 +19,7 @@ class TestPluginBenchmarks:
     """Performance benchmarks for all output format plugins."""
 
     @pytest.mark.parametrize(
-        "plugin_class, extension",
+        ("plugin_class", "extension"),
         [
             (HTMLPlugin, "html"),
             (MarkdownPlugin, "md"),

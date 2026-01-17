@@ -16,7 +16,7 @@ TEST_LINKS = [
     ("Wikipedia", "https://www.wikipedia.org"),
 ]
 
-TEST_LINKS_JSON = json.dumps({name: url for name, url in TEST_LINKS})
+TEST_LINKS_JSON = json.dumps(dict(TEST_LINKS))
 TEST_TITLE = "E2E Format Test"
 TEST_SUBTITLE = "Testing all output formats"
 

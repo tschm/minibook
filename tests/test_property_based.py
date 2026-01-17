@@ -61,7 +61,7 @@ class TestValidateUrlFormatProperty:
     @settings(max_examples=50)
     def test_non_string_types_fail(self, value):
         """Non-string types should fail validation."""
-        is_valid, error = validate_url_format(value)
+        is_valid, _error = validate_url_format(value)
         assert is_valid is False
 
 
@@ -80,14 +80,14 @@ class TestValidateLinkNameProperty:
     @settings(max_examples=50)
     def test_whitespace_only_fails(self, text):
         """Whitespace-only strings should fail validation."""
-        is_valid, error = validate_link_name(text)
+        is_valid, _error = validate_link_name(text)
         assert is_valid is False
 
     @given(value=st.one_of(st.none(), st.integers(), st.floats()))
     @settings(max_examples=50)
     def test_non_string_types_fail(self, value):
         """Non-string types should fail validation."""
-        is_valid, error = validate_link_name(value)
+        is_valid, _error = validate_link_name(value)
         assert is_valid is False
 
 

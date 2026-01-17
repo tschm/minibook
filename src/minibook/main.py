@@ -469,10 +469,7 @@ def entrypoint(
 
     try:
         # Create plugin instance (with template for HTML)
-        if output_format.lower() == "html" and template:
-            plugin = plugin_cls(template_path=template)
-        else:
-            plugin = plugin_cls()
+        plugin = plugin_cls(template_path=template) if output_format.lower() == "html" and template else plugin_cls()
 
         output_path = plugin.generate(title, link_tuples, subtitle, output_file)
         typer.echo(f"{output_format.upper()} minibook created successfully: {Path(output_path).absolute()}")
