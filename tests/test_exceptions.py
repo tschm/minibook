@@ -1,11 +1,8 @@
 """Tests for exception classes and error handling."""
 
-import pytest
-
 from minibook.exceptions import (
     JSONParseError,
     LinkNameValidationError,
-    MinibookError,
     OutputError,
     ParseError,
     PluginDependencyError,

@@ -1,11 +1,7 @@
 """Tests for error handling in main module."""
 
-import json
-import tempfile
-from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
-import pytest
 from typer.testing import CliRunner
 
 from minibook.main import app, parse_links_from_json, validate_url_format
@@ -33,7 +29,7 @@ class TestParseLinksWarnings:
         """Test that warnings are collected for invalid items."""
         json_str = '{"Bad": "javascript:alert(1)", "Empty": "", "Good": "https://example.com"}'
         links, warnings = parse_links_from_json(json_str)
-        
+
         # Should have two warnings (one for javascript URL, one for empty URL)
         assert len(warnings) >= 2
         assert any("Bad" in w for w in warnings)
@@ -47,7 +43,7 @@ class TestEmptyLinkList:
         """Test that all invalid links result in empty list."""
         json_str = '{"JS": "javascript:void(0)", "File": "file:///etc/passwd"}'
         links, warnings = parse_links_from_json(json_str)
-        
+
         assert len(links) == 0  # No valid links
         assert len(warnings) == 2  # Two warnings
 
@@ -67,7 +63,7 @@ class TestMainCLIErrorHandling:
                 "Test",
             ],
         )
-        
+
         # Should display warning in output
         assert "Warning" in result.stdout or "warning" in result.stdout.lower()
 
@@ -86,7 +82,7 @@ class TestMainCLIErrorHandling:
                     "output",
                 ],
             )
-            
+
             # Should display error message for no valid links
             assert "No valid links" in result.output or "Error" in result.output
             # Check warnings were displayed
@@ -109,18 +105,18 @@ class TestMainCLIErrorHandling:
                     "output",
                 ],
             )
-            
+
             # Should display error for invalid format
             assert "Error" in result.output or "Unknown output format" in result.output
 
     def test_cli_with_pdf_missing_dependency(self):
         """Test that CLI handles missing PDF dependency gracefully."""
         runner = CliRunner()
-        
+
         # Mock the plugin to raise ImportError
         with patch("minibook.plugins.PDFPlugin.generate") as mock_generate:
             mock_generate.side_effect = ImportError("PDF generation requires fpdf2")
-            
+
             with runner.isolated_filesystem():
                 result = runner.invoke(
                     app,
@@ -135,18 +131,18 @@ class TestMainCLIErrorHandling:
                         "output",
                     ],
                 )
-                
+
                 # Should display error message
                 assert "Error" in result.output or "fpdf2" in result.output
 
     def test_cli_with_file_not_found(self):
         """Test that CLI handles FileNotFoundError gracefully."""
         runner = CliRunner()
-        
+
         # Mock the plugin to raise FileNotFoundError
         with patch("minibook.plugins.HTMLPlugin.generate") as mock_generate:
             mock_generate.side_effect = FileNotFoundError("Custom template not found")
-            
+
             with runner.isolated_filesystem():
                 result = runner.invoke(
                     app,
@@ -159,6 +155,6 @@ class TestMainCLIErrorHandling:
                         "output",
                     ],
                 )
-                
+
                 # Should display error message
                 assert "Error" in result.output or "not found" in result.output

@@ -2,7 +2,7 @@
 
 import tempfile
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -14,24 +14,25 @@ class TestOutputPluginAbstract:
 
     def test_output_plugin_requires_implementation(self):
         """Test that OutputPlugin.generate requires implementation in subclasses."""
+
         # Create a minimal concrete implementation that doesn't override generate
         class IncompletePlugin(OutputPlugin):
             name = "incomplete"
             extension = ".txt"
             description = "Incomplete plugin"
             # Note: deliberately not implementing generate()
-        
+
         # Attempting to instantiate should raise TypeError because generate() is abstract
         with pytest.raises(TypeError, match="abstract"):
-            plugin = IncompletePlugin()
-    
+            IncompletePlugin()
+
     def test_output_plugin_base_class_generate(self):
         """Test calling generate on the base class directly (coverage for pass statement)."""
         # This test ensures the abstract method's pass statement is covered
         # We bypass the abstract method check to call the base implementation
         original_abstractmethods = OutputPlugin.__abstractmethods__
         OutputPlugin.__abstractmethods__ = frozenset()
-        
+
         try:
             # Now we can instantiate the base class
             plugin = OutputPlugin()
@@ -51,7 +52,7 @@ class TestPDFPluginImportError:
         with tempfile.TemporaryDirectory() as tmpdir:
             output_file = Path(tmpdir) / "test.pdf"
             plugin = PDFPlugin()
-            
+
             # Mock the import to simulate missing fpdf2
             with patch.dict("sys.modules", {"fpdf": None}):
                 with patch("builtins.__import__", side_effect=ImportError("No module named 'fpdf'")):
@@ -61,7 +62,7 @@ class TestPDFPluginImportError:
                             links=[("Link", "https://example.com")],
                             output_file=output_file,
                         )
-                    
+
                     assert "fpdf2" in str(exc_info.value)
 
 
@@ -73,7 +74,7 @@ class TestEPUBPluginImportError:
         with tempfile.TemporaryDirectory() as tmpdir:
             output_file = Path(tmpdir) / "test.epub"
             plugin = EPUBPlugin()
-            
+
             # Mock the import to simulate missing ebooklib
             with patch.dict("sys.modules", {"ebooklib": None}):
                 with patch("builtins.__import__", side_effect=ImportError("No module named 'ebooklib'")):
@@ -83,5 +84,5 @@ class TestEPUBPluginImportError:
                             links=[("Link", "https://example.com")],
                             output_file=output_file,
                         )
-                    
+
                     assert "ebooklib" in str(exc_info.value)
