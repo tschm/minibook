@@ -57,10 +57,9 @@ class TestPDFPluginImportError:
             output_file = Path(tmpdir) / "test.pdf"
             plugin = PDFPlugin()
 
-            # Mock the import to simulate missing fpdf2
+            # Mock the FPDF variable in the plugins module to simulate missing fpdf2
             with (
-                patch.dict("sys.modules", {"fpdf": None}),
-                patch("builtins.__import__", side_effect=ImportError("No module named 'fpdf'")),
+                patch("minibook.plugins.FPDF", None),
                 pytest.raises(ImportError) as exc_info,
             ):
                 plugin.generate(
@@ -81,10 +80,9 @@ class TestEPUBPluginImportError:
             output_file = Path(tmpdir) / "test.epub"
             plugin = EPUBPlugin()
 
-            # Mock the import to simulate missing ebooklib
+            # Mock the epub variable in the plugins module to simulate missing ebooklib
             with (
-                patch.dict("sys.modules", {"ebooklib": None}),
-                patch("builtins.__import__", side_effect=ImportError("No module named 'ebooklib'")),
+                patch("minibook.plugins.epub", None),
                 pytest.raises(ImportError) as exc_info,
             ):
                 plugin.generate(

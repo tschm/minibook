@@ -9,6 +9,7 @@ import sys
 import time
 from os import getenv
 from pathlib import Path
+from typing import NamedTuple
 from urllib.parse import urlparse
 
 import requests
@@ -24,6 +25,17 @@ MIN_LINK_ELEMENTS = 2
 
 # Minimum parts in a domain name
 MIN_DOMAIN_PARTS = 2
+
+
+class GenerationParams(NamedTuple):
+    """Parameters for minibook generation."""
+
+    output_format: str
+    title: str
+    link_tuples: list[tuple[str, str]]
+    subtitle: str | None
+    output: str
+    template: str | None
 
 
 def validate_url_format(url: str) -> tuple[bool, str | None]:
@@ -394,18 +406,19 @@ def _handle_parsing(links: str) -> list[tuple[str, str]]:
     """Helper to parse links and handle errors."""
     try:
         link_tuples, parse_warnings = parse_links_from_json(links)
-        typer.echo(f"Parsed JSON links: {link_tuples}")
-
-        # Display warnings for skipped items
-        if parse_warnings:
-            typer.echo(f"\nWarning: {len(parse_warnings)} item(s) skipped due to validation errors:", err=True)
-            for warning in parse_warnings:
-                typer.echo(f"  - {warning}", err=True)
-
-        return link_tuples
     except (json.JSONDecodeError, TypeError):
         typer.echo("JSON parsing failed, falling back to legacy format")
         return []
+
+    typer.echo(f"Parsed JSON links: {link_tuples}")
+
+    # Display warnings for skipped items
+    if parse_warnings:
+        typer.echo(f"\nWarning: {len(parse_warnings)} item(s) skipped due to validation errors:", err=True)
+        for warning in parse_warnings:
+            typer.echo(f"  - {warning}", err=True)
+
+    return link_tuples
 
 
 def _handle_validation(link_tuples: list[tuple[str, str]], request_delay: float) -> bool:
@@ -426,19 +439,12 @@ def _handle_validation(link_tuples: list[tuple[str, str]], request_delay: float)
         return True
 
 
-def _generate_output(
-    output_format: str,
-    title: str,
-    link_tuples: list[tuple[str, str]],
-    subtitle: str | None,
-    output: str,
-    template: str | None,
-) -> int:
+def _generate_output(params: GenerationParams) -> int:
     """Helper to generate output using the appropriate plugin."""
     from minibook.plugins import get_plugin
 
     try:
-        plugin_cls = get_plugin(output_format)
+        plugin_cls = get_plugin(params.output_format)
     except ValueError as e:
         typer.echo(f"Error: {e}", err=True)
         return 1
@@ -451,19 +457,20 @@ def _generate_output(
         "json": "links.json",
         "pdf": "links.pdf",
     }
-    filename = output_filenames.get(output_format.lower(), f"output{plugin_cls.extension}")
-    output_file = Path(output) / filename
+    filename = output_filenames.get(params.output_format.lower(), f"output{plugin_cls.extension}")
+    output_file = Path(params.output) / filename
 
     try:
         # Create plugin instance (with template for HTML)
-        plugin = plugin_cls(template_path=template) if output_format.lower() == "html" and template else plugin_cls()
+        is_html = params.output_format.lower() == "html"
+        plugin = plugin_cls(template_path=params.template) if is_html and params.template else plugin_cls()
 
-        output_path = plugin.generate(title, link_tuples, subtitle, output_file)
-        typer.echo(f"{output_format.upper()} minibook created successfully: {Path(output_path).absolute()}")
+        output_path = plugin.generate(params.title, params.link_tuples, params.subtitle, output_file)
     except (FileNotFoundError, ImportError) as e:
         typer.echo(f"Error: {e}", err=True)
         return 1
 
+    typer.echo(f"{params.output_format.upper()} minibook created successfully: {Path(output_path).absolute()}")
     return 0
 
 
@@ -510,7 +517,15 @@ def entrypoint(
         return 1
 
     # Generate output
-    return _generate_output(output_format, title, link_tuples, subtitle, output, template)
+    params = GenerationParams(
+        output_format=output_format,
+        title=title,
+        link_tuples=link_tuples,
+        subtitle=subtitle,
+        output=output,
+        template=template,
+    )
+    return _generate_output(params)
 
 
 if __name__ == "__main__":
