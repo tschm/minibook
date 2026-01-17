@@ -57,17 +57,18 @@ class TestPDFPluginImportError:
             output_file = Path(tmpdir) / "test.pdf"
             plugin = PDFPlugin()
 
-            # Mock the import to simulate missing fpdf2
-            with patch.dict("sys.modules", {"fpdf": None}):
-                with patch("builtins.__import__", side_effect=ImportError("No module named 'fpdf'")):
-                    with pytest.raises(ImportError) as exc_info:
-                        plugin.generate(
-                            title="Test",
-                            links=[("Link", "https://example.com")],
-                            output_file=output_file,
-                        )
+            # Mock the FPDF variable in the plugins module to simulate missing fpdf2
+            with (
+                patch("minibook.plugins.FPDF", None),
+                pytest.raises(ImportError) as exc_info,
+            ):
+                plugin.generate(
+                    title="Test",
+                    links=[("Link", "https://example.com")],
+                    output_file=output_file,
+                )
 
-                    assert "fpdf2" in str(exc_info.value)
+            assert "fpdf2" in str(exc_info.value)
 
 
 class TestEPUBPluginImportError:
@@ -79,14 +80,15 @@ class TestEPUBPluginImportError:
             output_file = Path(tmpdir) / "test.epub"
             plugin = EPUBPlugin()
 
-            # Mock the import to simulate missing ebooklib
-            with patch.dict("sys.modules", {"ebooklib": None}):
-                with patch("builtins.__import__", side_effect=ImportError("No module named 'ebooklib'")):
-                    with pytest.raises(ImportError) as exc_info:
-                        plugin.generate(
-                            title="Test",
-                            links=[("Link", "https://example.com")],
-                            output_file=output_file,
-                        )
+            # Mock the epub variable in the plugins module to simulate missing ebooklib
+            with (
+                patch("minibook.plugins.epub", None),
+                pytest.raises(ImportError) as exc_info,
+            ):
+                plugin.generate(
+                    title="Test",
+                    links=[("Link", "https://example.com")],
+                    output_file=output_file,
+                )
 
-                    assert "ebooklib" in str(exc_info.value)
+            assert "ebooklib" in str(exc_info.value)

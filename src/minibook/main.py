@@ -9,6 +9,7 @@ import sys
 import time
 from os import getenv
 from pathlib import Path
+from typing import NamedTuple
 from urllib.parse import urlparse
 
 import requests
@@ -16,8 +17,28 @@ import typer
 
 from minibook.utils import get_timestamp, load_template
 
+# HTTP status codes
+HTTP_BAD_REQUEST = 400
 
-def validate_url_format(url: str) -> tuple[bool, str | None]:
+# Minimum elements in a list-formatted link
+MIN_LINK_ELEMENTS = 2
+
+# Minimum parts in a domain name
+MIN_DOMAIN_PARTS = 2
+
+
+class GenerationParams(NamedTuple):
+    """Parameters for minibook generation."""
+
+    output_format: str
+    title: str
+    link_tuples: list[tuple[str, str]]
+    subtitle: str | None
+    output: str
+    template: str | None
+
+
+def validate_url_format(url: str) -> tuple[bool, str | None]:  # noqa: PLR0911
     """Validate URL format and scheme.
 
     Checks that the URL is a non-empty string with http or https scheme, or a relative path.
@@ -101,46 +122,46 @@ def validate_url_format(url: str) -> tuple[bool, str | None]:
 
     try:
         parsed = urlparse(url)
-
-        # Block dangerous schemes
-        dangerous_schemes = ("javascript", "data", "file", "vbscript", "about")
-        if parsed.scheme in dangerous_schemes:
-            return False, f"Invalid URL scheme '{parsed.scheme}': blocked for security"
-
-        # Handle URLs with no scheme
-        if not parsed.scheme:
-            # Reject malformed URLs like "://example.com"
-            if url.startswith("://"):
-                return False, "Invalid URL scheme '': malformed URL with '://' but no scheme"
-
-            # Reject domain-like strings without scheme (e.g., "example.com", "sub.example.com")
-            # These look like absolute URLs missing the scheme
-            # Valid relative paths typically start with ./, ../, or contain / early in the path
-            if not url.startswith("./") and not url.startswith("../"):
-                # Get the part before the first path separator
-                first_part = url.split("/")[0].split("?")[0].split("#")[0]
-
-                # If it contains a dot and looks like a domain name (no path separators at all)
-                # OR has multiple dot-separated parts suggesting a domain
-                if "." in first_part:
-                    parts = first_part.split(".")
-                    # Domain-like: has 2+ parts and no empty parts (e.g., "example.com", "sub.example.com")
-                    if len(parts) >= 2 and all(part for part in parts):
-                        return False, "Invalid URL scheme '': looks like a domain without http:// or https://"
-
-            # Accept as relative path
-            return True, None
-
-        # For absolute URLs, require http or https with a valid host
-        if parsed.scheme in ("http", "https"):
-            if not parsed.netloc:
-                return False, "URL must have a valid host"
-            return True, None
-
-        # Any other scheme is not allowed
-        return False, f"Invalid URL scheme '{parsed.scheme}': only http, https, or relative paths allowed"
     except Exception as e:
         return False, f"Invalid URL: {e}"
+
+    # Block dangerous schemes
+    dangerous_schemes = ("javascript", "data", "file", "vbscript", "about")
+    if parsed.scheme in dangerous_schemes:
+        return False, f"Invalid URL scheme '{parsed.scheme}': blocked for security"
+
+    # Handle URLs with no scheme
+    if not parsed.scheme:
+        # Reject malformed URLs like "://example.com"
+        if url.startswith("://"):
+            return False, "Invalid URL scheme '': malformed URL with '://' but no scheme"
+
+        # Reject domain-like strings without scheme (e.g., "example.com", "sub.example.com")
+        # These look like absolute URLs missing the scheme
+        # Valid relative paths typically start with ./, ../, or contain / early in the path
+        if not url.startswith("./") and not url.startswith("../"):
+            # Get the part before the first path separator
+            first_part = url.split("/")[0].split("?")[0].split("#")[0]
+
+            # If it contains a dot and looks like a domain name (no path separators at all)
+            # OR has multiple dot-separated parts suggesting a domain
+            if "." in first_part:
+                parts = first_part.split(".")
+                # Domain-like: has 2+ parts and no empty parts (e.g., "example.com", "sub.example.com")
+                if len(parts) >= MIN_DOMAIN_PARTS and all(part for part in parts):
+                    return False, "Invalid URL scheme '': looks like a domain without http:// or https://"
+
+        # Accept as relative path
+        return True, None
+
+    # For absolute URLs, require http or https with a valid host
+    if parsed.scheme in ("http", "https"):
+        if not parsed.netloc:
+            return False, "URL must have a valid host"
+        return True, None
+
+    # Any other scheme is not allowed
+    return False, f"Invalid URL scheme '{parsed.scheme}': only http, https, or relative paths allowed"
 
 
 def validate_link_name(name: str) -> tuple[bool, str | None]:
@@ -230,11 +251,11 @@ def validate_url(url, timeout=5, delay=0):
         response = requests.head(url, timeout=timeout, allow_redirects=True)
 
         # If the HEAD request fails, try a GET request as some servers don't support HEAD
-        if response.status_code >= 400:
+        if response.status_code >= HTTP_BAD_REQUEST:
             response = requests.get(url, timeout=timeout, allow_redirects=True)
 
         # Check if the response status code indicates success
-        if response.status_code < 400:
+        if response.status_code < HTTP_BAD_REQUEST:
             return True, None
         else:
             return False, f"HTTP error: {response.status_code}"
@@ -336,10 +357,12 @@ def parse_links_from_json(links_json: str) -> tuple[list[tuple[str, str]], list[
         # If it's a list of lists/arrays: [["name", "url"], ...]
         if all(isinstance(item, list) for item in json_data):
             for i, item in enumerate(json_data):
-                if len(item) >= 2:
+                if len(item) >= MIN_LINK_ELEMENTS:
                     validate_and_append(item[0], item[1], f" at index {i}")
                 else:
-                    warnings.append(f"Skipping item at index {i}: array must have at least 2 elements")
+                    warnings.append(
+                        f"Skipping item at index {i}: array must have at least {MIN_LINK_ELEMENTS} elements"
+                    )
         # If it's a list of objects: [{"name": "...", "url": "..."}, ...]
         elif all(isinstance(item, dict) for item in json_data):
             for i, item in enumerate(json_data):
@@ -379,11 +402,83 @@ def validate_link_list(link_tuples: list[tuple[str, str]], delay: float = 0) -> 
     return len(invalid_links) == 0, invalid_links
 
 
+def _handle_parsing(links: str) -> list[tuple[str, str]]:
+    """Helper to parse links and handle errors."""
+    try:
+        link_tuples, parse_warnings = parse_links_from_json(links)
+    except (json.JSONDecodeError, TypeError):
+        typer.echo("JSON parsing failed, falling back to legacy format")
+        return []
+
+    typer.echo(f"Parsed JSON links: {link_tuples}")
+
+    # Display warnings for skipped items
+    if parse_warnings:
+        typer.echo(f"\nWarning: {len(parse_warnings)} item(s) skipped due to validation errors:", err=True)
+        for warning in parse_warnings:
+            typer.echo(f"  - {warning}", err=True)
+
+    return link_tuples
+
+
+def _handle_validation(link_tuples: list[tuple[str, str]], request_delay: float) -> bool:
+    """Helper to validate links and ask for confirmation."""
+    typer.echo("Validating links...")
+    all_valid, invalid_links = validate_link_list(link_tuples, delay=request_delay)
+
+    # Report invalid links
+    if not all_valid:
+        typer.echo(f"\nFound {len(invalid_links)} invalid links:", err=True)
+        for name, url, error in invalid_links:
+            typer.echo(f"  - {name} ({url}): {error}", err=True)
+
+        # Ask user if they want to continue
+        return typer.confirm("Do you want to continue with invalid links?")
+    else:
+        typer.echo("All links are valid!")
+        return True
+
+
+def _generate_output(params: GenerationParams) -> int:
+    """Helper to generate output using the appropriate plugin."""
+    from minibook.plugins import get_plugin  # noqa: PLC0415
+
+    try:
+        plugin_cls = get_plugin(params.output_format)
+    except ValueError as e:
+        typer.echo(f"Error: {e}", err=True)
+        return 1
+
+    # Determine output filename based on format
+    output_filenames = {
+        "html": "index.html",
+        "markdown": "links.md",
+        "md": "links.md",
+        "json": "links.json",
+        "pdf": "links.pdf",
+    }
+    filename = output_filenames.get(params.output_format.lower(), f"output{plugin_cls.extension}")
+    output_file = Path(params.output) / filename
+
+    try:
+        # Create plugin instance (with template for HTML)
+        is_html = params.output_format.lower() == "html"
+        plugin = plugin_cls(template_path=params.template) if is_html and params.template else plugin_cls()
+
+        output_path = plugin.generate(params.title, params.link_tuples, params.subtitle, output_file)
+    except (FileNotFoundError, ImportError) as e:
+        typer.echo(f"Error: {e}", err=True)
+        return 1
+
+    typer.echo(f"{params.output_format.upper()} minibook created successfully: {Path(output_path).absolute()}")
+    return 0
+
+
 app = typer.Typer(help="Create a minibook from a list of links")
 
 
 @app.command()
-def entrypoint(
+def entrypoint(  # noqa: PLR0913
     title: str = typer.Option("My Links", "--title", "-t", help="Title of the minibook"),
     subtitle: str | None = typer.Option(None, "--subtitle", help="Subtitle of the minibook"),
     output: str = typer.Option("artifacts", "--output", "-o", help="Output directory"),
@@ -410,77 +505,27 @@ def entrypoint(
     typer.echo(f"Parsing links: {links}")
 
     # Parse links from JSON
-    try:
-        link_tuples, parse_warnings = parse_links_from_json(links)
-        typer.echo(f"Parsed JSON links: {link_tuples}")
-
-        # Display warnings for skipped items
-        if parse_warnings:
-            typer.echo(f"\nWarning: {len(parse_warnings)} item(s) skipped due to validation errors:", err=True)
-            for warning in parse_warnings:
-                typer.echo(f"  - {warning}", err=True)
-
+    link_tuples = _handle_parsing(links)
+    if not link_tuples:
         # Exit if no valid links remain
-        if not link_tuples:
-            typer.echo("Error: No valid links to process.", err=True)
-            return 1
-
-    except (json.JSONDecodeError, TypeError):
-        typer.echo("JSON parsing failed, falling back to legacy format")
+        typer.echo("Error: No valid links to process.", err=True)
         return 1
 
     # Validate links if requested
-    if validate_links:
-        typer.echo("Validating links...")
-        all_valid, invalid_links = validate_link_list(link_tuples, delay=request_delay)
-
-        # Report invalid links
-        if not all_valid:
-            typer.echo(f"\nFound {len(invalid_links)} invalid links:", err=True)
-            for name, url, error in invalid_links:
-                typer.echo(f"  - {name} ({url}): {error}", err=True)
-
-            # Ask user if they want to continue
-            if not typer.confirm("Do you want to continue with invalid links?"):
-                typer.echo("Aborting due to invalid links.", err=True)
-                return 1
-        else:
-            typer.echo("All links are valid!")
-
-    # Generate output using plugin system
-    from minibook.plugins import get_plugin
-
-    try:
-        plugin_cls = get_plugin(output_format)
-    except ValueError as e:
-        typer.echo(f"Error: {e}", err=True)
+    if validate_links and not _handle_validation(link_tuples, request_delay):
+        typer.echo("Aborting due to invalid links.", err=True)
         return 1
 
-    # Determine output filename based on format
-    output_filenames = {
-        "html": "index.html",
-        "markdown": "links.md",
-        "md": "links.md",
-        "json": "links.json",
-        "pdf": "links.pdf",
-    }
-    filename = output_filenames.get(output_format.lower(), f"output{plugin_cls.extension}")
-    output_file = Path(output) / filename
-
-    try:
-        # Create plugin instance (with template for HTML)
-        plugin = plugin_cls(template_path=template) if output_format.lower() == "html" and template else plugin_cls()
-
-        output_path = plugin.generate(title, link_tuples, subtitle, output_file)
-        typer.echo(f"{output_format.upper()} minibook created successfully: {Path(output_path).absolute()}")
-    except FileNotFoundError as e:
-        typer.echo(f"Error: {e}", err=True)
-        return 1
-    except ImportError as e:
-        typer.echo(f"Error: {e}", err=True)
-        return 1
-
-    return 0
+    # Generate output
+    params = GenerationParams(
+        output_format=output_format,
+        title=title,
+        link_tuples=link_tuples,
+        subtitle=subtitle,
+        output=output,
+        template=template,
+    )
+    return _generate_output(params)
 
 
 if __name__ == "__main__":
