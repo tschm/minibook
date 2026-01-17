@@ -13,6 +13,7 @@
 .github/agents/summarise.md
 .github/copilot-instructions.md
 .github/github.mk
+.github/workflows/rhiza_benchmarks.yml
 .github/workflows/rhiza_book.yml
 .github/workflows/rhiza_ci.yml
 .github/workflows/rhiza_codeql.yml
@@ -21,6 +22,7 @@
 .github/workflows/rhiza_marimo.yml
 .github/workflows/rhiza_pre-commit.yml
 .github/workflows/rhiza_release.yml
+.github/workflows/rhiza_security.yml
 .github/workflows/rhiza_sync.yml
 .github/workflows/rhiza_validate.yml
 .gitignore
@@ -52,6 +54,7 @@
 .rhiza/requirements/tests.txt
 .rhiza/requirements/tools.txt
 .rhiza/rhiza.mk
+.rhiza/scripts/check_workflow_names.py
 .rhiza/scripts/release.sh
 .rhiza/utils/version_matrix.py
 CODE_OF_CONDUCT.md
