@@ -210,11 +210,10 @@ class PluginDependencyError(PluginError):
         install_command: Command to install the dependency
 
     Examples:
-        >>> raise PluginDependencyError("pdf", "fpdf2", "pip install minibook[pdf]")
+        >>> raise PluginDependencyError("", "fpdf2", "pip install minibook[pdf]")
         Traceback (most recent call last):
         ...
-        minibook.exceptions.PluginDependencyError: Plugin 'pdf' error: Missing dependency 'fpdf2'.
-        ... Install with: pip install minibook[pdf]
+        minibook.exceptions.PluginDependencyError: Missing dependency 'fpdf2'. Install with: pip install minibook[pdf]
     """
 
     def __init__(self, plugin_name: str, dependency: str, install_command: str | None = None):
