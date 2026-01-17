@@ -163,6 +163,50 @@ minibook --title "My Favorite Sites" \
 This will check each link to ensure it's accessible.
 If any links are invalid, you'll be prompted to continue or abort.
 
+#### Output Formats
+
+MiniBook supports multiple output formats beyond HTML. Use the `--format` option to specify the desired format:
+
+| Format | Extension | Description |
+|--------|-----------|-------------|
+| `html` | `.html` | Beautiful HTML with Tailwind CSS (default) |
+| `markdown` / `md` | `.md` | Markdown format |
+| `json` | `.json` | Structured JSON data |
+| `rst` | `.rst` | reStructuredText format |
+| `asciidoc` / `adoc` | `.adoc` | AsciiDoc format |
+| `pdf` | `.pdf` | PDF document (requires `fpdf2`) |
+| `epub` | `.epub` | EPUB ebook (requires `ebooklib`) |
+
+**Examples:**
+
+Generate Markdown output:
+
+```bash
+minibook --title "My Links" \
+         --output "artifacts" \
+         --format markdown \
+         --links '{"Python": "https://www.python.org"}'
+```
+
+Generate JSON output:
+
+```bash
+minibook --title "My Links" \
+         --output "artifacts" \
+         --format json \
+         --links '{"Python": "https://www.python.org"}'
+```
+
+Generate PDF output (requires `fpdf2`):
+
+```bash
+pip install fpdf2
+minibook --title "My Links" \
+         --output "artifacts" \
+         --format pdf \
+         --links '{"Python": "https://www.python.org"}'
+```
+
 ## 🔄 GitHub Action
 
 MiniBook is also available as a GitHub Action that
