@@ -23,7 +23,7 @@ def get_timestamp() -> str:
     Examples:
         >>> import re
         >>> ts = get_timestamp()
-        >>> bool(re.match(r'\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}', ts))
+        >>> bool(re.match(r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}', ts))
         True
     """
     return datetime.now().strftime(TIMESTAMP_FORMAT)
