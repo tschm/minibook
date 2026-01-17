@@ -82,6 +82,13 @@ def validate_url_format(url: str) -> tuple[bool, str | None]:
         >>> validate_url_format("https://")
         (False, 'URL must have a valid host')
 
+        Malformed URLs that look like domains without scheme are rejected:
+
+        >>> validate_url_format("example.com")
+        (False, "Invalid URL scheme '': looks like a domain without http:// or https://")
+        >>> validate_url_format("://example.com")
+        (False, "Invalid URL scheme '': malformed URL with '://' but no scheme")
+
     """
     if not isinstance(url, str) or not url.strip():
         return False, "URL must be a non-empty string"
@@ -94,8 +101,29 @@ def validate_url_format(url: str) -> tuple[bool, str | None]:
         if parsed.scheme in dangerous_schemes:
             return False, f"Invalid URL scheme '{parsed.scheme}': blocked for security"
 
-        # Allow relative paths (empty scheme)
+        # Handle URLs with no scheme
         if not parsed.scheme:
+            # Reject malformed URLs like "://example.com"
+            if url.startswith("://"):
+                return False, "Invalid URL scheme '': malformed URL with '://' but no scheme"
+            
+            # Reject domain-like strings without scheme (e.g., "example.com", "sub.example.com")
+            # These look like absolute URLs missing the scheme
+            # Check if it looks like a domain: contains "." and no "/" before the first "."
+            if "." in url:
+                # Get the part before any path separator
+                first_part = url.split("/")[0].split("?")[0].split("#")[0]
+                # If it contains "." and looks like a domain (not starting with ./ or ../)
+                if "." in first_part and not url.startswith("./") and not url.startswith("../"):
+                    # Additional check: if there's no path separator at all, it's likely a domain
+                    if "/" not in url and "?" not in url and "#" not in url:
+                        return False, "Invalid URL scheme '': looks like a domain without http:// or https://"
+                    # Or if the first part before "/" looks like a domain (has multiple parts with dots)
+                    parts = first_part.split(".")
+                    if len(parts) >= 2 and all(len(p) > 0 for p in parts):
+                        return False, "Invalid URL scheme '': looks like a domain without http:// or https://"
+            
+            # Accept as relative path
             return True, None
 
         # For absolute URLs, require http or https with a valid host
