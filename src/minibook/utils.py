@@ -68,7 +68,8 @@ def load_template(template_path: str | None = None, default_template: str = "htm
     if template_path:
         template_file = Path(template_path)
         if not template_file.exists():
-            raise FileNotFoundError(f"Template file not found: {template_path}")
+            msg = f"Template file not found: {template_path}"
+            raise FileNotFoundError(msg)
 
         template_dir = template_file.parent
         env = create_jinja_env(template_dir)
