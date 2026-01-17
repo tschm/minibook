@@ -58,7 +58,7 @@ class TestMaliciousURLs:
     """Tests for dangerous URL scheme blocking."""
 
     @pytest.mark.parametrize(
-        "dangerous_url,expected_error",
+        ("dangerous_url", "expected_error"),
         [
             ("javascript:alert('XSS')", "Invalid URL scheme"),
             ("javascript:void(0)", "Invalid URL scheme"),
@@ -205,7 +205,7 @@ class TestInputValidation:
         # JSON with newlines, tabs, and special chars
         json_input = '{"Line\\nBreak": "https://example.com", "Tab\\there": "https://example.org"}'
 
-        links, warnings = parse_links_from_json(json_input)
+        links, _warnings = parse_links_from_json(json_input)
 
         assert len(links) == 2
 
