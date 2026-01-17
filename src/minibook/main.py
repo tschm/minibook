@@ -20,7 +20,7 @@ from minibook.utils import get_timestamp, load_template
 def validate_url_format(url: str) -> tuple[bool, str | None]:
     """Validate URL format and scheme.
 
-    Checks that the URL is a non-empty string with http or https scheme.
+    Checks that the URL is a non-empty string with http or https scheme, or a relative path.
     Blocks potentially dangerous schemes like javascript:, data:, and file:.
 
     Args:
@@ -39,20 +39,35 @@ def validate_url_format(url: str) -> tuple[bool, str | None]:
         >>> validate_url_format("https://example.com?query=value&foo=bar")
         (True, None)
 
+        Relative paths are allowed for local file references:
+
+        >>> validate_url_format("./tests/html-report/report.html")
+        (True, None)
+        >>> validate_url_format("../docs/index.html")
+        (True, None)
+        >>> validate_url_format("path/to/file.html")
+        (True, None)
+
+        Note: Bare filenames without path separators or ./ prefix may be rejected
+        if they look like domain names (contain dots). Use explicit path notation:
+
+        >>> validate_url_format("./file.tar.gz")
+        (True, None)
+
         JavaScript URLs are rejected to prevent XSS attacks:
 
         >>> validate_url_format("javascript:alert(1)")
-        (False, "Invalid URL scheme 'javascript', must be http or https")
+        (False, "Invalid URL scheme 'javascript': blocked for security")
 
         Data URLs are rejected to prevent code injection:
 
         >>> validate_url_format("data:text/html,<script>alert(1)</script>")
-        (False, "Invalid URL scheme 'data', must be http or https")
+        (False, "Invalid URL scheme 'data': blocked for security")
 
         File URLs are rejected to prevent local file access:
 
         >>> validate_url_format("file:///etc/passwd")
-        (False, "Invalid URL scheme 'file', must be http or https")
+        (False, "Invalid URL scheme 'file': blocked for security")
 
         Empty strings and whitespace-only strings are rejected:
 
@@ -68,15 +83,17 @@ def validate_url_format(url: str) -> tuple[bool, str | None]:
         >>> validate_url_format(123)
         (False, 'URL must be a non-empty string')
 
-        URLs without a valid host are rejected:
+        Absolute URLs without a valid host are rejected:
 
         >>> validate_url_format("https://")
         (False, 'URL must have a valid host')
 
-        URLs without a scheme are rejected:
+        Malformed URLs that look like domains without scheme are rejected:
 
         >>> validate_url_format("example.com")
-        (False, "Invalid URL scheme '', must be http or https")
+        (False, "Invalid URL scheme '': looks like a domain without http:// or https://")
+        >>> validate_url_format("://example.com")
+        (False, "Invalid URL scheme '': malformed URL with '://' but no scheme")
 
     """
     if not isinstance(url, str) or not url.strip():
@@ -84,11 +101,44 @@ def validate_url_format(url: str) -> tuple[bool, str | None]:
 
     try:
         parsed = urlparse(url)
-        if parsed.scheme not in ("http", "https"):
-            return False, f"Invalid URL scheme '{parsed.scheme}', must be http or https"
-        if not parsed.netloc:
-            return False, "URL must have a valid host"
-        return True, None
+
+        # Block dangerous schemes
+        dangerous_schemes = ("javascript", "data", "file", "vbscript", "about")
+        if parsed.scheme in dangerous_schemes:
+            return False, f"Invalid URL scheme '{parsed.scheme}': blocked for security"
+
+        # Handle URLs with no scheme
+        if not parsed.scheme:
+            # Reject malformed URLs like "://example.com"
+            if url.startswith("://"):
+                return False, "Invalid URL scheme '': malformed URL with '://' but no scheme"
+
+            # Reject domain-like strings without scheme (e.g., "example.com", "sub.example.com")
+            # These look like absolute URLs missing the scheme
+            # Valid relative paths typically start with ./, ../, or contain / early in the path
+            if not url.startswith("./") and not url.startswith("../"):
+                # Get the part before the first path separator
+                first_part = url.split("/")[0].split("?")[0].split("#")[0]
+
+                # If it contains a dot and looks like a domain name (no path separators at all)
+                # OR has multiple dot-separated parts suggesting a domain
+                if "." in first_part:
+                    parts = first_part.split(".")
+                    # Domain-like: has 2+ parts and no empty parts (e.g., "example.com", "sub.example.com")
+                    if len(parts) >= 2 and all(part for part in parts):
+                        return False, "Invalid URL scheme '': looks like a domain without http:// or https://"
+
+            # Accept as relative path
+            return True, None
+
+        # For absolute URLs, require http or https with a valid host
+        if parsed.scheme in ("http", "https"):
+            if not parsed.netloc:
+                return False, "URL must have a valid host"
+            return True, None
+
+        # Any other scheme is not allowed
+        return False, f"Invalid URL scheme '{parsed.scheme}': only http, https, or relative paths allowed"
     except Exception as e:
         return False, f"Invalid URL: {e}"
 
@@ -419,10 +469,7 @@ def entrypoint(
 
     try:
         # Create plugin instance (with template for HTML)
-        if output_format.lower() == "html" and template:
-            plugin = plugin_cls(template_path=template)
-        else:
-            plugin = plugin_cls()
+        plugin = plugin_cls(template_path=template) if output_format.lower() == "html" and template else plugin_cls()
 
         output_path = plugin.generate(title, link_tuples, subtitle, output_file)
         typer.echo(f"{output_format.upper()} minibook created successfully: {Path(output_path).absolute()}")
