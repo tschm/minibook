@@ -58,6 +58,15 @@ dev = [
 [tool.deptry.package_module_name_map]
 fpdf2 = "fpdf"
 ebooklib = "ebooklib"
+jinja2 = "jinja2"
+typer = "typer"
+requests = "requests"
+marimo = "marimo"
+numpy = "numpy"
+plotly = "plotly"
+pandas = "pandas"
+hypothesis = "hypothesis"
+pytest-watch = "pytest_watch"
 
 
 [project.urls]
