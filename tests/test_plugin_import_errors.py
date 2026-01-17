@@ -29,19 +29,22 @@ class TestOutputPluginAbstract:
     def test_output_plugin_base_class_generate(self):
         """Test calling generate on the base class directly (coverage for pass statement)."""
         # This test ensures the abstract method's pass statement is covered
-        # We bypass the abstract method check to call the base implementation
-        original_abstractmethods = OutputPlugin.__abstractmethods__
-        OutputPlugin.__abstractmethods__ = frozenset()
-
-        try:
-            # Now we can instantiate the base class
-            plugin = OutputPlugin()
-            result = plugin.generate("Title", [("Link", "https://example.com")])
-            # The base implementation just has 'pass', so it returns None
-            assert result is None
-        finally:
-            # Restore the abstract methods
-            OutputPlugin.__abstractmethods__ = original_abstractmethods
+        # Create a concrete subclass that properly implements the abstract method
+        class MinimalPlugin(OutputPlugin):
+            name = "minimal"
+            extension = ".txt"
+            description = "Minimal plugin for testing"
+            
+            def generate(self, title, links, subtitle=None, output_file="output", **kwargs):
+                # Call the parent's generate method to cover its pass statement
+                # This will return None as the base implementation just has 'pass'
+                return super().generate(title, links, subtitle, output_file, **kwargs)
+        
+        # Instantiate and test
+        plugin = MinimalPlugin()
+        result = plugin.generate("Title", [("Link", "https://example.com")])
+        # The base implementation just has 'pass', so it returns None
+        assert result is None
 
 
 class TestPDFPluginImportError:
