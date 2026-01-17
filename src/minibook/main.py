@@ -88,22 +88,22 @@ def validate_url_format(url: str) -> tuple[bool, str | None]:
 
     try:
         parsed = urlparse(url)
-        
+
         # Block dangerous schemes
         dangerous_schemes = ("javascript", "data", "file", "vbscript", "about")
         if parsed.scheme in dangerous_schemes:
             return False, f"Invalid URL scheme '{parsed.scheme}': blocked for security"
-        
+
         # Allow relative paths (empty scheme)
         if not parsed.scheme:
             return True, None
-        
+
         # For absolute URLs, require http or https with a valid host
         if parsed.scheme in ("http", "https"):
             if not parsed.netloc:
                 return False, "URL must have a valid host"
             return True, None
-        
+
         # Any other scheme is not allowed
         return False, f"Invalid URL scheme '{parsed.scheme}': only http, https, or relative paths allowed"
     except Exception as e:
