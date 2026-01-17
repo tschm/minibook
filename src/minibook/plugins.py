@@ -246,7 +246,7 @@ class PDFPlugin(OutputPlugin):
             ImportError: If fpdf2 is not installed
         """
         if FPDF is None:
-            raise ImportError("PDF generation requires fpdf2. Install with: uv add fpdf2")
+            raise ImportError("PDF generation requires fpdf2. Install with: uv add fpdf2")  # noqa: TRY003
 
         timestamp = get_timestamp()
 
@@ -389,7 +389,7 @@ class EPUBPlugin(OutputPlugin):
             ImportError: If ebooklib is not installed
         """
         if epub is None:
-            raise ImportError("EPUB generation requires ebooklib. Install with: pip install minibook[epub]")
+            raise ImportError("EPUB generation requires ebooklib. Install with: pip install minibook[epub]")  # noqa: TRY003
 
         timestamp = get_timestamp()
         author = kwargs.get("author", "MiniBook")

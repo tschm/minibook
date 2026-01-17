@@ -38,7 +38,7 @@ class GenerationParams(NamedTuple):
     template: str | None
 
 
-def validate_url_format(url: str) -> tuple[bool, str | None]:
+def validate_url_format(url: str) -> tuple[bool, str | None]:  # noqa: PLR0911
     """Validate URL format and scheme.
 
     Checks that the URL is a non-empty string with http or https scheme, or a relative path.
@@ -441,7 +441,7 @@ def _handle_validation(link_tuples: list[tuple[str, str]], request_delay: float)
 
 def _generate_output(params: GenerationParams) -> int:
     """Helper to generate output using the appropriate plugin."""
-    from minibook.plugins import get_plugin
+    from minibook.plugins import get_plugin  # noqa: PLC0415
 
     try:
         plugin_cls = get_plugin(params.output_format)
@@ -478,7 +478,7 @@ app = typer.Typer(help="Create a minibook from a list of links")
 
 
 @app.command()
-def entrypoint(
+def entrypoint(  # noqa: PLR0913
     title: str = typer.Option("My Links", "--title", "-t", help="Title of the minibook"),
     subtitle: str | None = typer.Option(None, "--subtitle", help="Subtitle of the minibook"),
     output: str = typer.Option("artifacts", "--output", "-o", help="Output directory"),
