@@ -6,8 +6,9 @@ import sys
 from pathlib import Path
 
 import pytest
+from typer.testing import CliRunner
 
-from minibook.main import generate_html
+from minibook.main import app, generate_html
 
 
 def _setup_pythonpath_env():
@@ -249,10 +250,6 @@ def test_generate_html_with_nonexistent_template(tmp_path):
 
 def test_command_line_with_nonexistent_template(tmp_path):
     """Test the command-line with a nonexistent template file."""
-    from typer.testing import CliRunner
-
-    from minibook.main import app
-
     # Create a runner for testing Typer CLI applications
     runner = CliRunner()
 

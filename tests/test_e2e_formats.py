@@ -5,6 +5,7 @@ they work correctly in an end-to-end scenario.
 """
 
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -52,8 +53,6 @@ def _run_minibook_cli(tmp_path: Path, format_name: str, extra_args: list | None 
         cmd.extend(extra_args)
 
     # Set up environment with PYTHONPATH
-    import os
-
     env = os.environ.copy()
     src_path = str((Path(__file__).parent.parent / "src").resolve())
     env["PYTHONPATH"] = src_path + os.pathsep + env.get("PYTHONPATH", "")

@@ -1,5 +1,7 @@
 """Tests for link parsing functions."""
 
+import json
+
 import pytest
 
 from minibook.main import parse_links_from_json
@@ -43,7 +45,7 @@ def test_parse_links_from_json_with_whitespace():
 def test_parse_links_from_json_invalid_json():
     """Test parsing invalid JSON raises JSONDecodeError."""
     json_str = "not valid json"
-    with pytest.raises(Exception):  # json.JSONDecodeError
+    with pytest.raises(json.JSONDecodeError):
         parse_links_from_json(json_str)
 
 

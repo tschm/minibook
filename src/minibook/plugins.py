@@ -5,6 +5,7 @@ Each plugin implements the OutputPlugin interface to provide consistent output g
 """
 
 import json
+import secrets
 from abc import ABC, abstractmethod
 from pathlib import Path
 
@@ -81,8 +82,6 @@ class HTMLPlugin(OutputPlugin):
         Returns:
             str: Path to the generated HTML file
         """
-        import secrets
-
         template = load_template(self.template_path)
         timestamp = get_timestamp()
         nonce = kwargs.get("nonce") or secrets.token_urlsafe(16)
@@ -239,7 +238,8 @@ class PDFPlugin(OutputPlugin):
         try:
             from fpdf import FPDF
         except ImportError as e:
-            raise ImportError("PDF generation requires fpdf2. Install with: uv add fpdf2") from e
+            msg = "PDF generation requires fpdf2. Install with: uv add fpdf2"
+            raise ImportError(msg) from e
 
         timestamp = get_timestamp()
 
@@ -384,7 +384,8 @@ class EPUBPlugin(OutputPlugin):
         try:
             from ebooklib import epub
         except ImportError as e:
-            raise ImportError("EPUB generation requires ebooklib. Install with: pip install minibook[epub]") from e
+            msg = "EPUB generation requires ebooklib. Install with: pip install minibook[epub]"
+            raise ImportError(msg) from e
 
         timestamp = get_timestamp()
         author = kwargs.get("author", "MiniBook")
@@ -552,7 +553,8 @@ def get_plugin(name: str) -> type[OutputPlugin]:
     name_lower = name.lower()
     if name_lower not in PLUGINS:
         available = ", ".join(sorted(set(PLUGINS.keys())))
-        raise ValueError(f"Unknown output format '{name}'. Available formats: {available}")
+        msg = f"Unknown output format '{name}'. Available formats: {available}"
+        raise ValueError(msg)
     return PLUGINS[name_lower]
 
 

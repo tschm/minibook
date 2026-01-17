@@ -7,6 +7,8 @@ This module tests various security edge cases including:
 - Dangerous URL scheme blocking
 """
 
+import re
+
 import pytest
 
 from minibook.main import generate_html, parse_links_from_json, validate_url_format
@@ -239,8 +241,6 @@ class TestCSPAndSRI:
         content2 = output2.read_text()
 
         # Extract nonces
-        import re
-
         nonces1 = re.findall(r"nonce=['\"]([^'\"]+)['\"]", content1)
         nonces2 = re.findall(r"nonce=['\"]([^'\"]+)['\"]", content2)
 

@@ -58,16 +58,18 @@ class TestPDFPluginImportError:
             plugin = PDFPlugin()
 
             # Mock the import to simulate missing fpdf2
-            with patch.dict("sys.modules", {"fpdf": None}):
-                with patch("builtins.__import__", side_effect=ImportError("No module named 'fpdf'")):
-                    with pytest.raises(ImportError) as exc_info:
-                        plugin.generate(
-                            title="Test",
-                            links=[("Link", "https://example.com")],
-                            output_file=output_file,
-                        )
+            with (
+                patch.dict("sys.modules", {"fpdf": None}),
+                patch("builtins.__import__", side_effect=ImportError("No module named 'fpdf'")),
+                pytest.raises(ImportError) as exc_info,
+            ):
+                plugin.generate(
+                    title="Test",
+                    links=[("Link", "https://example.com")],
+                    output_file=output_file,
+                )
 
-                    assert "fpdf2" in str(exc_info.value)
+            assert "fpdf2" in str(exc_info.value)
 
 
 class TestEPUBPluginImportError:
@@ -80,13 +82,15 @@ class TestEPUBPluginImportError:
             plugin = EPUBPlugin()
 
             # Mock the import to simulate missing ebooklib
-            with patch.dict("sys.modules", {"ebooklib": None}):
-                with patch("builtins.__import__", side_effect=ImportError("No module named 'ebooklib'")):
-                    with pytest.raises(ImportError) as exc_info:
-                        plugin.generate(
-                            title="Test",
-                            links=[("Link", "https://example.com")],
-                            output_file=output_file,
-                        )
+            with (
+                patch.dict("sys.modules", {"ebooklib": None}),
+                patch("builtins.__import__", side_effect=ImportError("No module named 'ebooklib'")),
+                pytest.raises(ImportError) as exc_info,
+            ):
+                plugin.generate(
+                    title="Test",
+                    links=[("Link", "https://example.com")],
+                    output_file=output_file,
+                )
 
-                    assert "ebooklib" in str(exc_info.value)
+            assert "ebooklib" in str(exc_info.value)

@@ -19,7 +19,7 @@ class TestPluginBenchmarks:
     """Performance benchmarks for all output format plugins."""
 
     @pytest.mark.parametrize(
-        ("plugin_class", "extension"),
+        "plugin_info",
         [
             (HTMLPlugin, "html"),
             (MarkdownPlugin, "md"),
@@ -32,8 +32,9 @@ class TestPluginBenchmarks:
         "link_fixture",
         ["small_link_list", "medium_link_list", "large_link_list", "extra_large_link_list"],
     )
-    def test_generation(self, benchmark, tmp_path, plugin_class, extension, link_fixture, request):
+    def test_generation(self, benchmark, tmp_path, plugin_info, link_fixture, request):
         """Benchmark plugin generation with varying link list sizes."""
+        plugin_class, extension = plugin_info
         plugin = plugin_class()
         output_file = tmp_path / f"output.{extension}"
         links = request.getfixturevalue(link_fixture)
