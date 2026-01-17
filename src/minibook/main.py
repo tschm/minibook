@@ -48,6 +48,12 @@ def validate_url_format(url: str) -> tuple[bool, str | None]:
         >>> validate_url_format("path/to/file.html")
         (True, None)
 
+        Note: Bare filenames without path separators or ./ prefix may be rejected
+        if they look like domain names (contain dots). Use explicit path notation:
+
+        >>> validate_url_format("./file.tar.gz")
+        (True, None)
+
         JavaScript URLs are rejected to prevent XSS attacks:
 
         >>> validate_url_format("javascript:alert(1)")
