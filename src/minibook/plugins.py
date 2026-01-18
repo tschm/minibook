@@ -8,17 +8,18 @@ import json
 import secrets
 from abc import ABC, abstractmethod
 from pathlib import Path
+from typing import Any
 
 from minibook.main import get_git_repo_url
 from minibook.utils import get_timestamp, load_template
 
 try:
-    from fpdf import FPDF
+    from fpdf import FPDF  # type: ignore[import-untyped]
 except ImportError:
     FPDF = None
 
 try:
-    from ebooklib import epub
+    from ebooklib import epub  # type: ignore[import-untyped]
 except ImportError:
     epub = None
 
@@ -41,7 +42,7 @@ class OutputPlugin(ABC):
         links: list[tuple[str, str]],
         subtitle: str | None = None,
         output_file: str | Path = "output",
-        **kwargs,
+        **kwargs: Any,
     ) -> str:
         """Generate output in the plugin's format.
 
@@ -78,7 +79,7 @@ class HTMLPlugin(OutputPlugin):
         links: list[tuple[str, str]],
         subtitle: str | None = None,
         output_file: str | Path = "index.html",
-        **kwargs,
+        **kwargs: Any,
     ) -> str:
         """Generate HTML output.
 
@@ -125,7 +126,7 @@ class MarkdownPlugin(OutputPlugin):
         links: list[tuple[str, str]],
         subtitle: str | None = None,
         output_file: str | Path = "links.md",
-        **kwargs,
+        **kwargs: Any,
     ) -> str:
         """Generate Markdown output.
 
@@ -179,7 +180,7 @@ class JSONPlugin(OutputPlugin):
         links: list[tuple[str, str]],
         subtitle: str | None = None,
         output_file: str | Path = "links.json",
-        **kwargs,
+        **kwargs: Any,
     ) -> str:
         """Generate JSON output.
 
@@ -228,7 +229,7 @@ class PDFPlugin(OutputPlugin):
         links: list[tuple[str, str]],
         subtitle: str | None = None,
         output_file: str | Path = "links.pdf",
-        **kwargs,
+        **kwargs: Any,
     ) -> str:
         """Generate PDF output.
 
@@ -311,7 +312,7 @@ class RSTPlugin(OutputPlugin):
         links: list[tuple[str, str]],
         subtitle: str | None = None,
         output_file: str | Path = "links.rst",
-        **kwargs,
+        **kwargs: Any,
     ) -> str:
         """Generate reStructuredText output.
 
@@ -371,7 +372,7 @@ class EPUBPlugin(OutputPlugin):
         links: list[tuple[str, str]],
         subtitle: str | None = None,
         output_file: str | Path = "links.epub",
-        **kwargs,
+        **kwargs: Any,
     ) -> str:
         """Generate EPUB output.
 
@@ -474,7 +475,7 @@ class AsciiDocPlugin(OutputPlugin):
         links: list[tuple[str, str]],
         subtitle: str | None = None,
         output_file: str | Path = "links.adoc",
-        **kwargs,
+        **kwargs: Any,
     ) -> str:
         """Generate AsciiDoc output.
 

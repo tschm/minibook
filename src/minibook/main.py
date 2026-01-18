@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import NamedTuple
 from urllib.parse import urlparse
 
-import requests
+import requests  # type: ignore[import-untyped]
 import typer
 
 from minibook.utils import get_timestamp, load_template
@@ -229,7 +229,7 @@ def get_git_repo_url() -> str:
     return f"https://github.com/{github_repo}"
 
 
-def validate_url(url, timeout=5, delay=0):
+def validate_url(url: str, timeout: int = 5, delay: float = 0) -> tuple[bool, str | None]:
     """Validate if a URL is accessible.
 
     Args:
@@ -270,7 +270,13 @@ def validate_url(url, timeout=5, delay=0):
         return False, f"Unexpected error: {e!s}"
 
 
-def generate_html(title, links, subtitle=None, output_file="index.html", template_path=None):
+def generate_html(
+    title: str,
+    links: list[tuple[str, str]],
+    subtitle: str | None = None,
+    output_file: str = "index.html",
+    template_path: str | None = None,
+) -> str:
     """Generate an HTML page with the given title and links using Jinja2.
 
     Args:
@@ -336,7 +342,7 @@ def parse_links_from_json(links_json: str) -> tuple[list[tuple[str, str]], list[
     link_tuples = []
     warnings = []
 
-    def validate_and_append(name, url, context: str = ""):
+    def validate_and_append(name: str, url: str, context: str = "") -> None:
         """Validate a name/url pair and append if valid, otherwise add warning."""
         # Validate name
         name_valid, name_error = validate_link_name(name)
@@ -378,7 +384,9 @@ def parse_links_from_json(links_json: str) -> tuple[list[tuple[str, str]], list[
     return link_tuples, warnings
 
 
-def validate_link_list(link_tuples: list[tuple[str, str]], delay: float = 0) -> tuple[bool, list[tuple[str, str, str]]]:
+def validate_link_list(
+    link_tuples: list[tuple[str, str]], delay: float = 0
+) -> tuple[bool, list[tuple[str, str, str]]]:
     """Validate a list of links and return invalid ones.
 
     Args:
@@ -391,13 +399,14 @@ def validate_link_list(link_tuples: list[tuple[str, str]], delay: float = 0) -> 
             - list: List of (name, url, error_message) tuples for invalid links
 
     """
-    invalid_links = []
+    invalid_links: list[tuple[str, str, str]] = []
 
     with typer.progressbar(link_tuples) as progress:
         for name, url in progress:
             is_valid, error_message = validate_url(url, delay=delay)
             if not is_valid:
-                invalid_links.append((name, url, error_message))
+                # error_message is always set when is_valid is False
+                invalid_links.append((name, url, error_message or "Unknown error"))
 
     return len(invalid_links) == 0, invalid_links
 
@@ -461,9 +470,15 @@ def _generate_output(params: GenerationParams) -> int:
     output_file = Path(params.output) / filename
 
     try:
+        from minibook.plugins import HTMLPlugin, OutputPlugin
+
         # Create plugin instance (with template for HTML)
         is_html = params.output_format.lower() == "html"
-        plugin = plugin_cls(template_path=params.template) if is_html and params.template else plugin_cls()
+        plugin: OutputPlugin
+        if is_html and params.template:
+            plugin = HTMLPlugin(template_path=params.template)
+        else:
+            plugin = plugin_cls()
 
         output_path = plugin.generate(params.title, params.link_tuples, params.subtitle, output_file)
     except (FileNotFoundError, ImportError) as e:
