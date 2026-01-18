@@ -53,6 +53,8 @@ dev = [
     "fpdf2>=2.8.5",
     "ebooklib>=0.18",
     "pytest-watch>=4.2.0",
+    "pytest-cov>=7.0.0",
+    "python-dotenv>=1.2.1",
 ]
 
 [tool.deptry.package_module_name_map]
