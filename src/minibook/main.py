@@ -384,9 +384,7 @@ def parse_links_from_json(links_json: str) -> tuple[list[tuple[str, str]], list[
     return link_tuples, warnings
 
 
-def validate_link_list(
-    link_tuples: list[tuple[str, str]], delay: float = 0
-) -> tuple[bool, list[tuple[str, str, str]]]:
+def validate_link_list(link_tuples: list[tuple[str, str]], delay: float = 0) -> tuple[bool, list[tuple[str, str, str]]]:
     """Validate a list of links and return invalid ones.
 
     Args:
