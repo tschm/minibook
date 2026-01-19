@@ -15,13 +15,13 @@ from minibook.utils import get_timestamp, load_template
 
 try:
     from fpdf import FPDF  # type: ignore[import-untyped]
-except ImportError:
-    FPDF = None
+except ImportError:  # pragma: no cover
+    FPDF = None  # pragma: no cover
 
 try:
     from ebooklib import epub  # type: ignore[import-untyped]
-except ImportError:
-    epub = None
+except ImportError:  # pragma: no cover
+    epub = None  # pragma: no cover
 
 
 class OutputPlugin(ABC):
