@@ -52,9 +52,7 @@ dev = [
     "hypothesis>=6.150.2",
     "fpdf2>=2.8.5",
     "ebooklib>=0.18",
-    "pytest-watch>=4.2.0",
-    "pytest-cov>=7.0.0",
-    "python-dotenv>=1.2.1",
+    "pytest-watch>=4.2.0"
 ]
 
 [tool.deptry.package_module_name_map]
@@ -96,3 +94,19 @@ include = [
     "README.md",
     "src/minibook"
 ]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = [
+    "jinja2.*",
+    "typer.*",
+    "requests.*",
+    "fpdf.*",
+    "ebooklib.*",
+]
+ignore_missing_imports = true

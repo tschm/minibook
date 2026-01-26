@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import NamedTuple
 from urllib.parse import urlparse
 
-import requests  # type: ignore[import-untyped]
+import requests
 import typer
 
 from minibook.utils import get_timestamp, load_template
@@ -440,7 +440,7 @@ def _handle_validation(link_tuples: list[tuple[str, str]], request_delay: float)
             typer.echo(f"  - {name} ({url}): {error}", err=True)
 
         # Ask user if they want to continue
-        return typer.confirm("Do you want to continue with invalid links?")
+        return bool(typer.confirm("Do you want to continue with invalid links?"))
     else:
         typer.echo("All links are valid!")
         return True
@@ -490,7 +490,7 @@ def _generate_output(params: GenerationParams) -> int:
 app = typer.Typer(help="Create a minibook from a list of links")
 
 
-@app.command()
+@app.command()  # type: ignore[untyped-decorator]
 def entrypoint(
     title: str = typer.Option("My Links", "--title", "-t", help="Title of the minibook"),
     subtitle: str | None = typer.Option(None, "--subtitle", help="Subtitle of the minibook"),

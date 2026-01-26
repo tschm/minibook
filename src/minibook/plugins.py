@@ -14,12 +14,12 @@ from minibook.main import get_git_repo_url
 from minibook.utils import get_timestamp, load_template
 
 try:
-    from fpdf import FPDF  # type: ignore[import-untyped]
+    from fpdf import FPDF
 except ImportError:  # pragma: no cover
     FPDF = None  # pragma: no cover
 
 try:
-    from ebooklib import epub  # type: ignore[import-untyped]
+    from ebooklib import epub
 except ImportError:  # pragma: no cover
     epub = None  # pragma: no cover
 
