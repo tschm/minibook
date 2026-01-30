@@ -490,7 +490,7 @@ def _generate_output(params: GenerationParams) -> int:
 app = typer.Typer(help="Create a minibook from a list of links")
 
 
-@app.command()  # type: ignore[untyped-decorator]
+@app.command()
 def entrypoint(
     title: str = typer.Option("My Links", "--title", "-t", help="Title of the minibook"),
     subtitle: str | None = typer.Option(None, "--subtitle", help="Subtitle of the minibook"),

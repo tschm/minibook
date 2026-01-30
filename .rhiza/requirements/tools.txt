@@ -4,3 +4,4 @@ python-dotenv==1.2.1
 # for now needed until rhiza-tools is finished
 typer==0.21.1
 mypy==1.19.1
+types-requests==2.32.0.20250515

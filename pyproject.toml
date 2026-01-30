@@ -96,17 +96,10 @@ include = [
 ]
 
 [tool.mypy]
-python_version = "3.11"
 warn_return_any = true
 warn_unused_ignores = true
 disallow_untyped_defs = true
 
 [[tool.mypy.overrides]]
-module = [
-    "jinja2.*",
-    "typer.*",
-    "requests.*",
-    "fpdf.*",
-    "ebooklib.*",
-]
+module = ["ebooklib.*", "fpdf.*"]
 ignore_missing_imports = true
