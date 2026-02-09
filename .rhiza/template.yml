@@ -3,7 +3,6 @@ template-branch: main
 include:
 - .devcontainer
 - .github
-- tests
 - .editorconfig
 - .gitignore
 - .pre-commit-config.yaml
