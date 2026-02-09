@@ -18,5 +18,6 @@ include:
 - renovate.json
 exclude:
 - .github/workflows/rhiza_docker.yml
+- .github/workflows/rhiza_benchmarks.yml
 - .github/dependabot.yml
 
