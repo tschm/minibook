@@ -7,10 +7,8 @@ This conftest provides:
 - SPLIT_MAKEFILES: List of split Makefile paths
 
 Security Notes:
-- S101 (assert usage): Asserts are used in pytest tests to validate conditions
-- S603/S607 (subprocess usage): Any subprocess calls (via run_make) are for testing
-  Makefile targets in isolated environments with controlled inputs
-- Test code operates in a controlled environment with trusted inputs
+- S101 (assert usage): Asserts are appropriate in test code for validating conditions
+- S603/S607 (subprocess usage): Any subprocess calls use controlled inputs in test environments
 """
 
 from __future__ import annotations
