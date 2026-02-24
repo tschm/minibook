@@ -473,10 +473,7 @@ def _generate_output(params: GenerationParams) -> int:
         # Create plugin instance (with template for HTML)
         is_html = params.output_format.lower() == "html"
         plugin: OutputPlugin
-        if is_html and params.template:
-            plugin = HTMLPlugin(template_path=params.template)
-        else:
-            plugin = plugin_cls()
+        plugin = HTMLPlugin(template_path=params.template) if is_html and params.template else plugin_cls()
 
         output_path = plugin.generate(params.title, params.link_tuples, params.subtitle, output_file)
     except (FileNotFoundError, ImportError) as e:
