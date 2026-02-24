@@ -4,6 +4,7 @@ This module provides a plugin system for generating output in different formats.
 Each plugin implements the OutputPlugin interface to provide consistent output generation.
 """
 
+import contextlib
 import json
 import secrets
 from abc import ABC, abstractmethod
@@ -13,15 +14,14 @@ from typing import Any
 from minibook.main import get_git_repo_url
 from minibook.utils import get_timestamp, load_template
 
-try:
-    from fpdf import FPDF
-except ImportError:  # pragma: no cover
-    FPDF = None  # pragma: no cover
+FPDF: type[Any] | None = None
+epub: Any = None
 
-try:
-    from ebooklib import epub
-except ImportError:  # pragma: no cover
-    epub = None  # pragma: no cover
+with contextlib.suppress(ImportError):
+    from fpdf import FPDF  # pragma: no cover
+
+with contextlib.suppress(ImportError):
+    from ebooklib import epub  # pragma: no cover
 
 
 class OutputPlugin(ABC):
