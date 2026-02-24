@@ -16,7 +16,7 @@ from minibook.utils import get_timestamp, load_template
 try:
     from fpdf import FPDF
 except ImportError:  # pragma: no cover
-    FPDF = None  # pragma: no cover
+    FPDF = None  # type: ignore[assignment]  # pragma: no cover
 
 try:
     from ebooklib import epub
