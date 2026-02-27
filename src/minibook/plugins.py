@@ -390,7 +390,7 @@ class EPUBPlugin(OutputPlugin):
             ImportError: If ebooklib is not installed
         """
         if epub is None:
-            raise ImportError("EPUB generation requires ebooklib. Install with: pip install minibook[epub]")  # noqa: TRY003
+            raise ImportError("EPUB generation requires ebooklib. Install with: uv add minibook[epub]")  # noqa: TRY003
 
         timestamp = get_timestamp()
         author = kwargs.get("author", "MiniBook")

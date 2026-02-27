@@ -3,6 +3,7 @@
 Generates a clean, responsive HTML webpage using Jinja2 templates.
 """
 
+import configparser
 import json
 import secrets
 import sys
@@ -216,21 +217,45 @@ def validate_link_name(name: str) -> tuple[bool, str | None]:
 def get_git_repo_url() -> str:
     """Retrieve the GitHub repository URL.
 
-    Generates the GitHub repository URL based on the repository name
-    retrieved from the environment variable 'GITHUB_REPOSITORY'. If the environment
-    variable is not set, it defaults to 'tschm/minibook'. This URL can then be used
-    for interactions with the repository.
+    Checks, in order:
+    1. The ``GITHUB_REPOSITORY`` environment variable (e.g. set by GitHub Actions).
+    2. The ``[remote "origin"]`` URL in ``.git/config`` (works in local clones).
+    3. Falls back to the hardcoded default ``tschm/minibook``.
 
     Returns:
-        The full URL for the GitHub repository.
+        The full HTTPS URL for the GitHub repository.
     """
-    # Fallback to environment variable if git command fails
-    github_repo = getenv("GITHUB_REPOSITORY", default="tschm/minibook")
-    return f"https://github.com/{github_repo}"
+    github_repo = getenv("GITHUB_REPOSITORY")
+    if github_repo:
+        return f"https://github.com/{github_repo}"
+
+    # Try to read the origin remote URL from .git/config
+    try:
+        git_config_path = Path(".git/config")
+        if git_config_path.exists():
+            config = configparser.ConfigParser()
+            config.read(str(git_config_path))
+            remote_url = config.get('remote "origin"', "url", fallback=None)
+            if remote_url:
+                # Normalize SSH URL (git@github.com:owner/repo.git) to HTTPS
+                if remote_url.startswith("git@github.com:"):
+                    repo = remote_url[len("git@github.com:") :].removesuffix(".git")
+                    return f"https://github.com/{repo}"
+                # Normalize HTTPS URL (https://github.com/owner/repo[.git])
+                if remote_url.startswith(("https://github.com/", "http://github.com/")):
+                    repo = remote_url.split("github.com/", 1)[1].removesuffix(".git")
+                    return f"https://github.com/{repo}"
+    except (OSError, configparser.Error):
+        pass
+
+    return "https://github.com/tschm/minibook"
 
 
 def validate_url(url: str, timeout: int = 5, delay: float = 0) -> tuple[bool, str | None]:
     """Validate if a URL is accessible.
+
+    For HTTP/HTTPS URLs, makes a network request to check accessibility.
+    For relative paths, checks whether the file exists on the local filesystem.
 
     Args:
         url (str): The URL to validate
@@ -244,6 +269,14 @@ def validate_url(url: str, timeout: int = 5, delay: float = 0) -> tuple[bool, st
     """
     if delay > 0:
         time.sleep(delay)
+
+    # Relative paths are validated by checking local filesystem accessibility
+    parsed = urlparse(url)
+    if not parsed.scheme or parsed.scheme not in ("http", "https"):
+        path = Path(url)
+        if path.exists():
+            return True, None
+        return False, f"Relative path not accessible: {url}"
 
     try:
         # Make a HEAD request to check if the URL is accessible
@@ -413,8 +446,8 @@ def _handle_parsing(links: str) -> list[tuple[str, str]]:
     """Helper to parse links and handle errors."""
     try:
         link_tuples, parse_warnings = parse_links_from_json(links)
-    except (json.JSONDecodeError, TypeError):
-        typer.echo("JSON parsing failed, falling back to legacy format")
+    except (json.JSONDecodeError, TypeError) as e:
+        typer.echo(f"JSON parsing failed, falling back to legacy format: {e}")
         return []
 
     typer.echo(f"Parsed JSON links: {link_tuples}")
