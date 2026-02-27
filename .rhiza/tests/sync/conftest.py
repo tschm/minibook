@@ -4,8 +4,10 @@ Provides environment setup for template sync, workflow versioning,
 and content validation tests.
 
 Security Notes:
-- S101 (assert usage): Asserts are appropriate in test code for validating conditions
-- S603/S607 (subprocess usage): Any subprocess calls use controlled inputs in test environments
+- S101 (assert usage): Asserts are used in pytest tests to validate conditions
+- S603/S607 (subprocess usage): Any subprocess calls are for testing sync targets
+  in isolated environments with controlled inputs
+- Test code operates in a controlled environment with trusted inputs
 """
 
 from __future__ import annotations
@@ -85,7 +87,7 @@ def setup_sync_env(logger, root, tmp_path: Path):
     os.chdir(tmp_path)
     logger.debug("Changed working directory to %s", tmp_path)
 
-    # Initialize a git repo so that commands checking for it (like materialize) don't fail validation
+    # Initialize a git repo so that commands checking for it (like sync) don't fail validation
     setup_rhiza_git_repo()
 
     # Create src and tests directories to satisfy validate
