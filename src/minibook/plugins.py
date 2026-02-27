@@ -247,7 +247,7 @@ class PDFPlugin(OutputPlugin):
             ImportError: If fpdf2 is not installed
         """
         if FPDF is None:
-            raise ImportError("PDF generation requires fpdf2. Install with: uv add fpdf2")  # noqa: TRY003
+            raise ImportError("PDF generation requires fpdf2. Install with: uv add minibook[pdf]")  # noqa: TRY003
 
         timestamp = get_timestamp()
 
