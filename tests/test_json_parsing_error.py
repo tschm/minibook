@@ -32,12 +32,9 @@ def test_json_parsing_error(tmp_path):
     result = runner.invoke(app, args)
 
     # Print the output for debugging
-    print(f"Command output: {result.stdout}")
+    print(f"Command output: {result.output}")
 
-    # Check that the command executed successfully (it should fall back to legacy format)
-    assert result.exit_code == 0, f"Command failed with error: {result.stdout}"
-
-    # Check that the output contains the JSON parsing error message with error details
-    assert "JSON parsing failed, falling back to legacy format" in result.stdout
-    # Error details from the JSONDecodeError should be included in the message
-    assert "JSON parsing failed, falling back to legacy format: " in result.stdout
+    # Check that the error message was written with actionable guidance
+    # (Typer's CliRunner merges stdout/stderr into output by default)
+    assert "Error: JSON parsing failed" in result.output
+    assert "Please check your JSON syntax" in result.output

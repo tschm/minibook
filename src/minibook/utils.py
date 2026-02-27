@@ -6,7 +6,7 @@ This module provides shared utility functions used across MiniBook modules.
 from datetime import datetime
 from pathlib import Path
 
-from jinja2 import Environment, FileSystemLoader, Template, select_autoescape
+from jinja2 import Environment, FileSystemLoader, Template, TemplateSyntaxError, select_autoescape
 
 TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S"
 
@@ -73,7 +73,11 @@ def load_template(template_path: str | None = None, default_template: str = "htm
 
         template_dir = template_file.parent
         env = create_jinja_env(template_dir)
-        return env.get_template(template_file.name)
+        try:
+            return env.get_template(template_file.name)
+        except TemplateSyntaxError as e:
+            msg = f"Template syntax error in '{template_path}' at line {e.lineno}: {e.message}"
+            raise ValueError(msg) from e
 
     # Use default template from package
     template_dir = Path(__file__).parent / "templates"

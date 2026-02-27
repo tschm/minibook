@@ -82,14 +82,17 @@ def test_validate_url_invalid():
 
 
 def test_validate_url_connection_error():
-    """Test the validate_url function with a connection error."""
-    # Mock a connection error
-    with patch("requests.head", side_effect=requests.exceptions.ConnectionError("Connection refused")) as mock_head:
+    """Test the validate_url function with a connection error (retried)."""
+    # Mock a connection error - with retries, head will be called DEFAULT_RETRIES+1 times
+    with (
+        patch("requests.head", side_effect=requests.exceptions.ConnectionError("Connection refused")) as mock_head,
+        patch("time.sleep"),  # Skip actual sleep during retries
+    ):
         # Test a URL that causes a connection error
         is_valid, error_message = validate_url("https://nonexistent.example.com")
 
-        # Check that the function made a HEAD request
-        mock_head.assert_called_once_with("https://nonexistent.example.com", timeout=5, allow_redirects=True)
+        # With DEFAULT_RETRIES=2, head is called 3 times total
+        assert mock_head.call_count == 3
 
         # Check that the function returned the expected result
         assert is_valid is False
@@ -97,14 +100,17 @@ def test_validate_url_connection_error():
 
 
 def test_validate_url_timeout():
-    """Test the validate_url function with a timeout error."""
-    # Mock a timeout error
-    with patch("requests.head", side_effect=requests.exceptions.Timeout("Request timed out")) as mock_head:
+    """Test the validate_url function with a timeout error (retried)."""
+    # Mock a timeout error - with retries, head will be called DEFAULT_RETRIES+1 times
+    with (
+        patch("requests.head", side_effect=requests.exceptions.Timeout("Request timed out")) as mock_head,
+        patch("time.sleep"),  # Skip actual sleep during retries
+    ):
         # Test a URL that causes a timeout
         is_valid, error_message = validate_url("https://slow.example.com")
 
-        # Check that the function made a HEAD request
-        mock_head.assert_called_once_with("https://slow.example.com", timeout=5, allow_redirects=True)
+        # With DEFAULT_RETRIES=2, head is called 3 times total
+        assert mock_head.call_count == 3
 
         # Check that the function returned the expected result
         assert is_valid is False

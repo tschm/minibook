@@ -8,6 +8,7 @@ import json
 import secrets
 import sys
 import time
+import warnings
 from os import getenv
 from pathlib import Path
 from typing import NamedTuple
@@ -18,14 +19,27 @@ import typer
 
 from minibook.utils import get_timestamp, load_template
 
-# HTTP status codes
+# HTTP status codes: 400+ are client/server errors; below 400 means success or redirect
 HTTP_BAD_REQUEST = 400
 
-# Minimum elements in a list-formatted link
+# Minimum elements in a list-formatted link: need at least a name and a URL
 MIN_LINK_ELEMENTS = 2
 
-# Minimum parts in a domain name
+# Minimum parts in a domain name: "example.com" has 2 parts (host + TLD)
 MIN_DOMAIN_PARTS = 2
+
+# Default timeout for URL validation requests (seconds)
+DEFAULT_TIMEOUT = 5
+
+# Default number of retries for transient HTTP/network failures
+DEFAULT_RETRIES = 2
+
+# Base delay (seconds) for exponential backoff between retries
+RETRY_BASE_DELAY = 1.0
+
+# Default fallback repository URL used when GITHUB_REPOSITORY env var is not set
+# and no .git/config origin remote is found
+DEFAULT_REPO_URL = "https://github.com/tschm/minibook"
 
 
 class GenerationParams(NamedTuple):
@@ -248,19 +262,30 @@ def get_git_repo_url() -> str:
     except (OSError, configparser.Error):
         pass
 
-    return "https://github.com/tschm/minibook"
+    warnings.warn(
+        f"Could not determine repository URL from environment or .git/config; "
+        f"falling back to default '{DEFAULT_REPO_URL}'. "
+        "Set the GITHUB_REPOSITORY environment variable or ensure .git/config contains a remote origin.",
+        UserWarning,
+        stacklevel=2,
+    )
+    return DEFAULT_REPO_URL
 
 
-def validate_url(url: str, timeout: int = 5, delay: float = 0) -> tuple[bool, str | None]:
+def validate_url(
+    url: str, timeout: int = DEFAULT_TIMEOUT, delay: float = 0, retries: int = DEFAULT_RETRIES
+) -> tuple[bool, str | None]:
     """Validate if a URL is accessible.
 
     For HTTP/HTTPS URLs, makes a network request to check accessibility.
+    Transient errors (timeout, connection error) are retried with exponential backoff.
     For relative paths, checks whether the file exists on the local filesystem.
 
     Args:
         url (str): The URL to validate
         timeout (int, optional): Timeout in seconds for the request
-        delay (float, optional): Delay in seconds before making the request (rate limiting)
+        delay (float, optional): Delay in seconds before making the first request (rate limiting)
+        retries (int, optional): Number of retries for transient failures
 
     Returns:
         tuple: (is_valid, error_message) where is_valid is a boolean and error_message is a string
@@ -278,29 +303,36 @@ def validate_url(url: str, timeout: int = 5, delay: float = 0) -> tuple[bool, st
             return True, None
         return False, f"Relative path not accessible: {url}"
 
-    try:
-        # Make a HEAD request to check if the URL is accessible
-        # HEAD is more efficient than GET as it doesn't download the full content
-        response = requests.head(url, timeout=timeout, allow_redirects=True)
+    last_error: str = "Unknown error"
+    for attempt in range(retries + 1):
+        if attempt > 0:
+            # Exponential backoff between retries
+            time.sleep(RETRY_BASE_DELAY * (2 ** (attempt - 1)))
+        try:
+            # Make a HEAD request to check if the URL is accessible
+            # HEAD is more efficient than GET as it doesn't download the full content
+            response = requests.head(url, timeout=timeout, allow_redirects=True)
 
-        # If the HEAD request fails, try a GET request as some servers don't support HEAD
-        if response.status_code >= HTTP_BAD_REQUEST:
-            response = requests.get(url, timeout=timeout, allow_redirects=True)
+            # If the HEAD request fails, try a GET request as some servers don't support HEAD
+            if response.status_code >= HTTP_BAD_REQUEST:
+                response = requests.get(url, timeout=timeout, allow_redirects=True)
 
-        # Check if the response status code indicates success
-        if response.status_code < HTTP_BAD_REQUEST:
-            return True, None
-        else:
-            return False, f"HTTP error: {response.status_code}"
+            # Check if the response status code indicates success
+            if response.status_code < HTTP_BAD_REQUEST:
+                return True, None
+            else:
+                # Non-transient HTTP error; do not retry
+                return False, f"HTTP error: {response.status_code}"
 
-    except requests.exceptions.Timeout:
-        return False, "Timeout error"
-    except requests.exceptions.ConnectionError:
-        return False, "Connection error"
-    except requests.exceptions.RequestException as e:
-        return False, f"Request error: {e!s}"
-    except Exception as e:
-        return False, f"Unexpected error: {e!s}"
+        except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as e:
+            # Transient errors: retry
+            last_error = f"{'Timeout' if isinstance(e, requests.exceptions.Timeout) else 'Connection'} error"
+        except requests.exceptions.RequestException as e:
+            return False, f"Request error: {e!s}"
+        except Exception as e:
+            return False, f"Unexpected error: {e!s}"
+
+    return False, last_error
 
 
 def generate_html(
@@ -447,7 +479,13 @@ def _handle_parsing(links: str) -> list[tuple[str, str]]:
     try:
         link_tuples, parse_warnings = parse_links_from_json(links)
     except (json.JSONDecodeError, TypeError) as e:
-        typer.echo(f"JSON parsing failed, falling back to legacy format: {e}")
+        typer.echo(f"Error: JSON parsing failed: {e}", err=True)
+        typer.echo(
+            "Please check your JSON syntax. Supported formats: "
+            'dict {"name": "url"}, list of objects [{"name":..,"url":..}], '
+            "or list of arrays [[name, url]].",
+            err=True,
+        )
         return []
 
     typer.echo(f"Parsed JSON links: {link_tuples}")
