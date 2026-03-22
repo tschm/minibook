@@ -3,7 +3,8 @@ name = 'minibook'
 version = "1.4.2"
 description = "A simple tool for creating beautiful minibooks from a list of links"
 authors = [{name='Thomas Schmelzer', email= 'thomas.schmelzer@gmail.com'}]
-license = {text = "MIT"}
+license = "MIT"
+license-files = ["LICENSE"]
 readme = "README.md"
 requires-python = ">=3.11"
 keywords = [
